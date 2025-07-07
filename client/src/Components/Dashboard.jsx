@@ -20,8 +20,8 @@ const Sidemenu = () => {
       <nav className="navbar navbar-custom d-flex align-items-center justify-content-between fixed-top">
         {/* Left: Logo */}
         <div className="d-flex align-items-center navbar-logo">
-          <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Logo" />
-          <span className="fs-5 fw-semibold text-secondary">phoenix</span>
+          {/* <img src="https://cdn-icons-png.flaticon.com/512/616/616408.png" alt="Logo" /> */}
+          <span className="fs-5 fw-semibold text-secondary">Omni Rental</span>
         </div>
 
         {/* Center: Search Bar */}
