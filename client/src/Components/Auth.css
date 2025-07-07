@@ -1,0 +1,75 @@
+.bg-gradient {
+  background: linear-gradient(to right, #0d6efd, #3a8de4);
+}
+
+
+
+.otp_input_container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap:1rem;
+}
+
+.otp_input{
+text-align: center;
+font-weight: 600;
+
+}
+
+.otp_input_container input[type='number']::-webkit-outer-spin-button,
+.otp_input_container input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.sidebar {
+  background-color: #1e3a8a;
+  color: white;
+  padding: 1rem;
+  height: 100vh;
+}
+
+.card {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.property-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.status-active {
+  background-color: #16a34a;
+  color: white;
+}
+
+.status-pending {
+  background-color: #eab308;
+  color: white;
+}
+
+.status-overdue {
+  background-color: #dc2626;
+  color: white;
+}
+
+
+
+/* ✅ Media query for desktop */
+@media (min-width: 768px) {
+  .register-card {
+    flex-direction: row;
+  }
+
+  .register-left {
+    display: block;
+    width: 50%;
+  }
+
+  .register-form {
+    width: 50%;
+  }
+}

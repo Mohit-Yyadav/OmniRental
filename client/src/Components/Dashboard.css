@@ -1,0 +1,173 @@
+.navbar-custom {
+      height: 60px;
+      background-color: #fff;
+      padding: 0 20px;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .navbar-logo img {
+      height: 30px;
+      margin-right: 8px;
+    }
+
+    .search-bar {
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .search-bar input {
+      border-radius: 30px;
+      padding-left: 35px;
+    }
+
+    .search-icon {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+      color: #6c757d;
+    }
+
+    .nav-icon {
+      margin-left: 15px;
+      font-size: 1.2rem;
+      color: #555;
+      cursor: pointer;
+    }
+
+    .theme-btn {
+      background-color: #fff4e6;
+      border-radius: 50%;
+      padding: 8px;
+    }
+
+    .avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-left: 15px;
+    }
+/* sidebar */
+.sidebar {
+  height: 100vh;
+  width: 260px;
+  background-color: #fff;
+  border-right: 1px solid #dee2e6;
+  padding: 20px;
+}
+
+.sidebar .logo {
+  font-weight: bold;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.sidebar .logo img {
+  width: 30px;
+  margin-right: 10px;
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  color: #6c757d; /* Bootstrap's text-secondary */
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  color: #0d6efd; /* Optional: on hover turns primary blue */
+}
+
+.menu-icon {
+  font-size: 25px;
+  margin-right: 10px;
+}
+
+.menu-text {
+  font-size: 1.5rem;
+}
+
+.sidebar-section {
+  margin-bottom: 20px;
+}
+
+.sidebar-section .section-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #254867; /* muted grey */
+  margin-bottom: 12px;
+}
+
+/* .section-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6c757d; /* muted grey 
+  margin-bottom: 12px;
+} */
+
+.sidebar-menu-text {
+  text-decoration: none;
+  color: inherit;
+}
+
+
+.Menu-item {
+  display: flex;
+  align-items: center;
+  color: #444;
+  font-size: 0.95rem;
+  font-weight: 540;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.menu-item.active, 
+.Menu-item.active {
+  color: #0d6efd !important;
+  font-weight: 600;
+}
+.Menu-item:hover {
+  color: #0d6efd; /* Optional: hover effect */
+}
+
+/* .Menu-icon {
+  font-size: 18px;
+  color: #282b2e;
+  margin-right: 10px;
+} */
+
+
+.Menu-item.active .Menu-icon {
+  color: #0d6efd !important;
+}
+
+
+.sidebar a {
+  text-decoration: none;
+  color: #333;
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 0.95rem;
+}
+
+.sidebar a:hover {
+  color: #0d6efd;
+} 
+
+.sidebar a.active {
+  color: #0d6efd;
+  font-weight: 500;
+} 
+
+/* In Component.css or global CSS */
+.table th, .table td {
+  vertical-align: middle;
+}
+
