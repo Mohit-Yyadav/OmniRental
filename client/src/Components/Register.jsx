@@ -30,52 +30,55 @@ const Register = () => {
     }));
   };
 
-  const submitHandler = async (e) => {
-    e.preventDefault();
+ const submitHandler = async (e) => {
+  e.preventDefault();
 
-    // Validation
-    if (!formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
-      setMessage("All fields are required");
-      setMessageType("danger");
-      return;
+  // Validation
+  if (!formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
+    setMessage("All fields are required");
+    setMessageType("danger");
+    return;
+  }
+
+  if (formData.password !== formData.confirmPassword) {
+    setMessage("Passwords do not match");
+    setMessageType("danger");
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/register", {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role // Ensure role is included
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Registration failed");
     }
 
-    if (formData.password !== formData.confirmPassword) {
-      setMessage("Passwords do not match");
-      setMessageType("danger");
-      return;
-    }
-
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-          role: formData.role
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setMessage(data.message || "Registration failed");
-        setMessageType("danger");
-      } else {
-        setMessage("Registration Successful!");
-        setMessageType("success");
-        setTimeout(() => {
-          navigate("/login");
-        }, 1000);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      setMessage("Something went wrong. Please try again.");
-      setMessageType("danger");
-    }
-  };
+    setMessage("Registration Successful!");
+    setMessageType("success");
+    
+    // Log the full response for debugging
+    console.log("Registration response:", data);
+    
+    setTimeout(() => navigate("/login"), 1000);
+  } catch (error) {
+    console.error("Registration error:", error);
+    setMessage(error.message || "Something went wrong. Please try again.");
+    setMessageType("danger");
+  }
+};
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-gradient">

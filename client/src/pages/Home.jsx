@@ -179,7 +179,7 @@ const Home = () => {
   ></div>
 
   <Container className="h-100 d-flex align-items-center">
-    <Row className="justify-content-center text-center">
+    <Row className="justify-content-center text-center ">
       <Col lg={8} className="animate__animated animate__fadeIn">
         <h1 className="display-3 fw-bold mb-4" style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.5)' }}>
           Rent Anything You Need, <span className="text-warning">Anytime</span>
