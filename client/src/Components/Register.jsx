@@ -1,42 +1,46 @@
 import React, { useState } from 'react';
-import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaUser, FaLock, FaEye, FaEyeSlash, FaBuilding, FaHome } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { MdEmail } from "react-icons/md";
 import './Auth.css';
-import rent from '../assets/images/rent.jpg'; // ✅ Your image
+import rent from '../assets/images/rent.jpg';
 
 const Register = () => {
   const navigate = useNavigate();
 
-  const [username, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    role: 'tenant' // default to tenant
+  });
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
 
-  const usernameChange = (e) => setName(e.target.value);
-  const emailChange = (e) => setEmail(e.target.value);
-  const changePassword = (e) => setPassword(e.target.value);
-  const changeConfirmPassword = (e) => setConfirmPassword(e.target.value);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const submitHandler = async (e) => {
     e.preventDefault();
 
-    // ✅ Check if all fields are filled
-    if (!username || !email || !password || !confirmPassword) {
+    // Validation
+    if (!formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
       setMessage("All fields are required");
       setMessageType("danger");
       return;
     }
 
-    // ✅ Check if passwords match
-    if (password !== confirmPassword) {
+    if (formData.password !== formData.confirmPassword) {
       setMessage("Passwords do not match");
       setMessageType("danger");
       return;
@@ -46,7 +50,12 @@ const Register = () => {
       const res = await fetch("http://localhost:5000/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password }),
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+          role: formData.role
+        }),
       });
 
       const data = await res.json();
@@ -71,17 +80,15 @@ const Register = () => {
   return (
     <div className="d-flex justify-content-center align-items-center vh-100 bg-gradient">
       <div className="container p-4 rounded shadow-lg bg-white d-flex flex-md-row flex-column" style={{ maxWidth: '900px' }}>
-        
-        {/* ✅ Left side with image */}
+        {/* Left side with image */}
         <div className="bg-primary text-white p-5 rounded-start w-100 w-md-50 text-center">
           <img src={rent} alt="Rent" className="img-fluid rounded shadow" />
         </div>
 
-        {/* ✅ Right side - Registration Form */}
+        {/* Right side - Registration Form */}
         <div className="p-5 w-100 w-md-50">
           <h3 className="mb-4 fw-bold">Register Now</h3>
 
-          {/* ✅ Alert message box */}
           {message && (
             <div className={`alert alert-${messageType} alert-dismissible fade show`} role="alert">
               {message}
@@ -95,13 +102,49 @@ const Register = () => {
           )}
 
           <form onSubmit={submitHandler}>
+            {/* Role Selection */}
+            <div className="mb-3">
+              <label className="form-label">Register as:</label>
+              <div className="d-flex gap-3">
+                <div className="form-check flex-grow-1">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="role"
+                    id="tenant"
+                    value="tenant"
+                    checked={formData.role === 'tenant'}
+                    onChange={handleChange}
+                  />
+                  <label className="form-check-label d-flex align-items-center" htmlFor="tenant">
+                    <FaHome className="me-2" /> Tenant
+                  </label>
+                </div>
+                <div className="form-check flex-grow-1">
+                  <input
+                    className="form-check-input"
+                    type="radio"
+                    name="role"
+                    id="owner"
+                    value="owner"
+                    checked={formData.role === 'owner'}
+                    onChange={handleChange}
+                  />
+                  <label className="form-check-label d-flex align-items-center" htmlFor="owner">
+                    <FaBuilding className="me-2" /> Property Owner
+                  </label>
+                </div>
+              </div>
+            </div>
+
             {/* Username Field */}
             <div className="form-group mb-3">
               <label htmlFor="username" className="form-label">
                 <FaUser className="me-2" /> User Name
               </label>
               <input
-                onChange={usernameChange}
+                name="username"
+                onChange={handleChange}
                 type="text"
                 className="form-control"
                 id="username"
@@ -113,10 +156,11 @@ const Register = () => {
             {/* Email Field */}
             <div className="form-group mb-3">
               <label htmlFor="email" className="form-label">
-                <MdEmail  className="me-2" /> Email
+                <MdEmail className="me-2" /> Email
               </label>
               <input
-                onChange={emailChange}
+                name="email"
+                onChange={handleChange}
                 type="email"
                 className="form-control"
                 id="email"
@@ -132,11 +176,12 @@ const Register = () => {
               </label>
               <div className="input-group">
                 <input
+                  name="password"
                   type={showPassword ? "text" : "password"}
                   className="form-control"
                   id="password"
-                  value={password}
-                  onChange={changePassword}
+                  value={formData.password}
+                  onChange={handleChange}
                   placeholder="Enter password"
                   required
                 />
@@ -157,11 +202,12 @@ const Register = () => {
               </label>
               <div className="input-group">
                 <input
+                  name="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   className="form-control"
                   id="confirmPassword"
-                  value={confirmPassword}
-                  onChange={changeConfirmPassword}
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
                   placeholder="Confirm password"
                   required
                 />
@@ -175,10 +221,8 @@ const Register = () => {
               </div>
             </div>
 
-            {/* Submit Button */}
             <button type="submit" className="btn btn-primary w-100">Register</button>
 
-            {/* Login Link */}
             <div className="text-center mt-3">
               <small>
                 Already have an account?{" "}

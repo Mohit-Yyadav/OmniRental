@@ -1,140 +1,214 @@
 import React, { useState } from 'react';
-import { FaLock, FaUser, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaLock, FaUser, FaEye, FaEyeSlash, FaSpinner } from 'react-icons/fa';
 import { MdEmail } from "react-icons/md";
-import { useNavigate } from 'react-router-dom';
-import './Auth.css';
-import rent2 from '../assets/images/rent2.jpg';
+import { useNavigate, Link } from 'react-router-dom';
+import { Container, Row, Col, Form, Button, Alert, InputGroup } from 'react-bootstrap';
+import rentImage from '../assets/images/rent2.jpg';
 
 const Login = () => {
   const navigate = useNavigate();
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
   const [showPassword, setShowPassword] = useState(false);
-  const [message, setMessage] = useState('');
-  const [messageType, setMessageType] = useState('');
+  const [message, setMessage] = useState({ text: '', type: '' });
+  const [isLoading, setIsLoading] = useState(false);
 
-  const changeEmail = (event) => setEmail(event.target.value);
-  const changePassword = (event) => setPassword(event.target.value);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
-  const submitHandler = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setMessage({ text: '', type: '' });
+
     try {
       const res = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
+        headers: { 
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData)
       });
 
       const data = await res.json();
 
-      if (res.ok && data.token) {
-        localStorage.setItem("token", data.token);
-        setMessage("Login successful!");
-        setMessageType("success");
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 1000);
-      } else {
-        setMessage(data.message || "Login failed");
-        setMessageType("danger");
+      if (!res.ok) {
+        throw new Error(data.message || 'Login failed');
       }
+
+      localStorage.setItem("token", data.token);
+      setMessage({ 
+        text: "Login successful! Redirecting...", 
+        type: "success" 
+      });
+      
+      setTimeout(() => navigate("/dashboard"), 1500);
     } catch (error) {
       console.error("Login error:", error);
-      setMessage("Something went wrong. Please try again.");
-      setMessageType("danger");
+      setMessage({ 
+        text: error.message || "Something went wrong. Please try again.", 
+        type: "danger" 
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100 bg-gradient">
-      <div className="container p-4 rounded shadow-lg bg-white d-flex flex-md-row flex-column" style={{ maxWidth: '900px' }}>
-        
-        {/* ✅ Left side image */}
-        <div className="bg-primary text-white p-5 rounded-start w-100 w-md-50 text-center">
-          <img src={rent2} alt="Rent" className="img-fluid rounded shadow" />
-        </div>
+    <div className="min-vh-100 d-flex align-items-center bg-light">
+      <Container className="my-5">
+        <Row className="justify-content-center">
+          <Col md={10} lg={8} xl={7}>
+            <div className="card shadow-lg overflow-hidden">
+              <Row className="g-0">
+                {/* Image Section */}
+                <Col md={6} className="d-none d-md-flex">
+                  <div 
+                    className="h-100 w-100" 
+                    style={{
+                      backgroundImage: `url(${rentImage})`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      minHeight: '500px'
+                    }}
+                  />
+                </Col>
 
-        {/* ✅ Right side login form */}
-        <div className="p-5 w-100 w-md-50">
-          <h3 className="mb-4 fw-bold">Login</h3>
+                {/* Form Section */}
+                <Col md={6}>
+                  <div className="p-4 p-md-5">
+                    <div className="text-center mb-4">
+                      <h2 className="fw-bold text-primary">Welcome Back</h2>
+                      <p className="text-muted">Sign in to your account</p>
+                    </div>
 
-          {/* ✅ Alert message */}
-          {message && (
-            <div className={`alert alert-${messageType} alert-dismissible fade show`} role="alert">
-              {message}
-              <button
-                type="button"
-                className="btn-close"
-                onClick={() => setMessage('')}
-                aria-label="Close"
-              ></button>
+                    {/* Alert Message */}
+                    {message.text && (
+                      <Alert 
+                        variant={message.type} 
+                        dismissible
+                        onClose={() => setMessage({ text: '', type: '' })}
+                        className="mb-4"
+                      >
+                        {message.text}
+                      </Alert>
+                    )}
+
+                    <Form onSubmit={handleSubmit}>
+                      {/* Email Field */}
+                      <Form.Group className="mb-3">
+                        <Form.Label>
+                          <MdEmail className="me-2" />
+                          Email Address
+                        </Form.Label>
+                        <InputGroup>
+                          <InputGroup.Text>
+                            <MdEmail />
+                          </InputGroup.Text>
+                          <Form.Control
+                            type="email"
+                            name="email"
+                            placeholder="Enter your email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                          />
+                        </InputGroup>
+                      </Form.Group>
+
+                      {/* Password Field */}
+                      <Form.Group className="mb-3">
+                        <Form.Label>
+                          <FaLock className="me-2" />
+                          Password
+                        </Form.Label>
+                        <InputGroup>
+                          <InputGroup.Text>
+                            <FaLock />
+                          </InputGroup.Text>
+                          <Form.Control
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            placeholder="Enter your password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            required
+                          />
+                          <InputGroup.Text 
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                          </InputGroup.Text>
+                        </InputGroup>
+                      </Form.Group>
+
+                      {/* Remember Me & Forgot Password */}
+                      <div className="d-flex justify-content-between align-items-center mb-4">
+                        <Form.Check
+                          type="checkbox"
+                          id="rememberMe"
+                          label="Remember me"
+                        />
+                        <Link to="/forgot-password" className="text-decoration-none">
+                          Forgot password?
+                        </Link>
+                      </div>
+
+                      {/* Submit Button */}
+                      <Button 
+                        variant="primary" 
+                        type="submit" 
+                        className="w-100 py-2 mb-3"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? (
+                          <>
+                            <FaSpinner className="fa-spin me-2" />
+                            Signing In...
+                          </>
+                        ) : (
+                          'Sign In'
+                        )}
+                      </Button>
+
+                      {/* Social Login Options */}
+                      <div className="text-center mb-4">
+                        <span className="text-muted">or sign in with</span>
+                      </div>
+                      <div className="d-flex gap-2 mb-4">
+                        <Button variant="outline-primary" className="flex-grow-1">
+                          <FaUser className="me-2" />
+                          Google
+                        </Button>
+                        <Button variant="outline-dark" className="flex-grow-1">
+                          <FaUser className="me-2" />
+                          Facebook
+                        </Button>
+                      </div>
+
+                      {/* Register Link */}
+                      <div className="text-center">
+                        <span className="text-muted">Don't have an account? </span>
+                        <Link to="/register" className="text-decoration-none fw-bold">
+                          Sign up
+                        </Link>
+                      </div>
+                    </Form>
+                  </div>
+                </Col>
+              </Row>
             </div>
-          )}
-
-          <form onSubmit={submitHandler}>
-            {/* Email Field */}
-            <div className="form-group mb-3">
-              <label htmlFor="email" className="form-label">
-                <MdEmail className="me-2" /> Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                placeholder="Enter your email"
-                className="form-control"
-                value={email}
-                onChange={changeEmail}
-                required
-              />
-            </div>
-
-            {/* Password Field */}
-            <div className="form-group mb-3">
-              <label htmlFor="password" className="form-label">
-                <FaLock className="me-2" /> Password
-              </label>
-              <div className="input-group">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  id="password"
-                  placeholder="Enter your password"
-                  className="form-control"
-                  value={password}
-                  onChange={changePassword}
-                  required
-                />
-                <span
-                  className="input-group-text"
-                  onClick={() => setShowPassword(!showPassword)}
-                  style={{ cursor: "pointer" }}
-                >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </span>
-              </div>
-            </div>
-
-            {/* Remember Me & Forgot */}
-            <div className="d-flex justify-content-between align-items-center mb-3">
-              <div className="form-check">
-                <input type="checkbox" className="form-check-input" id="remember" />
-                <label htmlFor="remember" className="form-check-label">Remember me</label>
-              </div>
-              <a href="/forgotpassword" className="text-decoration-none">
-                Forgot Password?
-              </a>
-            </div>
-
-            {/* Submit Button */}
-            <button type="submit" className="btn btn-primary w-100" to="/dashboard">Login</button>
-
-            {/* Register Link */}
-            <div className="text-center mt-3">
-              <a href="/register" className="text-decoration-none">Register a new account!</a>
-            </div>
-          </form>
-        </div>
-      </div>
+          </Col>
+        </Row>
+      </Container>
     </div>
   );
 };
