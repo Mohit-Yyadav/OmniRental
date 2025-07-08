@@ -6,18 +6,23 @@ import Login from './components/Login';
 import Register from './components/Register';
 
 // Dashboard Components
-import Dashboard from './components/Dashboard';
-import TenantList from './components/TenantList';
-import AddTenant from './components/AddTenant';
-import Edittenant from './components/Edittenant'; // Note: filename is Edittenant.jsx (with two 't's)
+import Dashboard from './pages/Dashboard/Dashboard';
+import TenantList from './Pages/Dashboard/TenantList';
+import AddTenant from './pages/Dashboard/AddTenant';
+import Edittenant from './pages/Dashboard/Edittenant';
+// Note: filename is Edittenant.jsx (with two 't's)
 
 // Auth Route
 import AuthRoute from './components/AuthRoute';
 
 // Tenant Components
-import TenantSignup from './components/TenantSignup';
-import TenantDashboard from './pages/TenantDashboard';
-import TenantProfile from "./components/TenantProfile";  // Most likely correct
+// File: src/App.jsx
+
+import TenantSignup from './pages/Dashboard/TenantSignup';
+import TenantProfile from './pages/Dashboard/TenantProfile';
+
+import TenantDashboard from './pages/Dashboard/TenantDashboard';
+ // Most likely correct
 
 // Public Pages
 import Home from './pages/Home';
@@ -28,7 +33,8 @@ import PropertyDetail from './pages/PropertyDetail';
 
 // Styles
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './assets/css/Dashboard.css';
+import "./assets/css/DashboardCss/Dashboard.css";
+
 
 function App() {
   return (

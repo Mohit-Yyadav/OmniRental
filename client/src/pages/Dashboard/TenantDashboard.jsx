@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Tab, Tabs, Card, Button, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import PropertyList from '../components/PropertyList';
-import RentalHistory from '../components/RentalHistory';
+import PropertyList from '../../components/PropertyList';
+import RentalHistory from '../../components/RentalHistory';
 
 const TenantDashboard = () => {
   const [key, setKey] = useState('properties');

@@ -1,5 +1,7 @@
 import React from 'react';
-import './Dashboard.css';
+import "../../assets/css/DashboardCss/Dashboard.css";
+
+
 import { Link } from "react-router-dom";
 
 import { HiOutlineHome } from "react-icons/hi";
@@ -12,6 +14,7 @@ import { MdApartment } from "react-icons/md";
 import { FaLightbulb } from "react-icons/fa";
 import { IoLocationSharp } from "react-icons/io5";
 import { RiSecurePaymentFill } from "react-icons/ri";
+import { CiBellOn } from "react-icons/ci";
 
 const Sidemenu = () => {
   return (
@@ -32,15 +35,15 @@ const Sidemenu = () => {
 
         {/* Right: Icons */}
         <div className="d-flex align-items-center">
-          <div className="theme-btn nav-icon">🌞</div>
-          <div className="nav-icon">🔔</div>
-          <div className="nav-icon">🔳</div>
+          <CiBellOn className="nav-icon" />
+          
+          
           <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" className="avatar" />
         </div>
       </nav>
 
       {/* ========== Sidebar (Starts Below Navbar) ========== */}
-      <div className="sidebar d-flex flex-column mt-navbar">
+      <div className="sidebar d-flex flex-column ">
         
         {/* Dashboard */}
         <div className="d-flex align-items-center justify-content-center mb-2">
