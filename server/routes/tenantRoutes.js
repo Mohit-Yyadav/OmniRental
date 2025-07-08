@@ -82,19 +82,21 @@
 //     res.status(500).json({ error: err.message });
 //   }
 // });
+// ✅ ES Module version (import/export)
+// server/routes/tenantRoutes.js
 
-// export default router;
-const express = require('express');
-const router = express.Router();
-const {
+import express from 'express';
+import {
   registerTenant,
   loginTenant,
   getMe,
   updateTenant,
   getRentalHistory,
   applyForRental
-} = require('../controllers/tenantController');
-const { protect } = require('../middleware/authMiddleware');
+} from '../controllers/tenantController.js';
+import { protect } from '../middleware/authMiddleware.js';
+
+const router = express.Router();
 
 router.post('/register', registerTenant);
 router.post('/login', loginTenant);
@@ -103,4 +105,5 @@ router.put('/update', protect, updateTenant);
 router.get('/history', protect, getRentalHistory);
 router.post('/apply/:tenderId', protect, applyForRental);
 
-module.exports = router;
+// ✅ Final Export - ES Module style
+export default router;

@@ -1,10 +1,10 @@
 import express from 'express';
 import {
   getProperties,
-  getProperty,
+  getPropertyById,
   createProperty,
-  updateProperty,
-  deleteProperty
+  deleteProperty,
+  updateProperty
 } from '../controllers/propertyController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 
@@ -15,7 +15,7 @@ router.route('/')
   .post(protect, authorize('owner'), createProperty);
 
 router.route('/:id')
-  .get(getProperty)
+  .get(getPropertyById)
   .put(protect, authorize('owner'), updateProperty)
   .delete(protect, authorize('owner'), deleteProperty);
 

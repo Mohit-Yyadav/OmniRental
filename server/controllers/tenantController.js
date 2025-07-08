@@ -1,13 +1,13 @@
-const Tenant = require('../models/Tenant');
-const Tender = require('../models/Tender');
-const Application = require('../models/Application');
-const asyncHandler = require('express-async-handler');
-const generateToken = require('../utils/generateToken');
+import Tenant from '../models/Tenant.js';
+
+ import Application from '../models/Application.js';
+import asyncHandler from 'express-async-handler';
+import generateToken from '../utils/generateToken.js';
 
 // @desc    Register a new tenant
 // @route   POST /api/tenants/register
 // @access  Public
-const registerTenant = asyncHandler(async (req, res) => {
+export const registerTenant = asyncHandler(async (req, res) => {
   const { name, email, password, phone } = req.body;
 
   const tenantExists = await Tenant.findOne({ email });
@@ -40,7 +40,7 @@ const registerTenant = asyncHandler(async (req, res) => {
 // @desc    Authenticate tenant & get token
 // @route   POST /api/tenants/login
 // @access  Public
-const loginTenant = asyncHandler(async (req, res) => {
+export const loginTenant = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const tenant = await Tenant.findOne({ email });
@@ -61,7 +61,7 @@ const loginTenant = asyncHandler(async (req, res) => {
 // @desc    Get tenant profile
 // @route   GET /api/tenants/me
 // @access  Private
-const getMe = asyncHandler(async (req, res) => {
+export const getMe = asyncHandler(async (req, res) => {
   const tenant = await Tenant.findById(req.tenant._id).select('-password');
   
   if (!tenant) {
@@ -75,7 +75,7 @@ const getMe = asyncHandler(async (req, res) => {
 // @desc    Update tenant profile
 // @route   PUT /api/tenants/update
 // @access  Private
-const updateTenant = asyncHandler(async (req, res) => {
+export const updateTenant = asyncHandler(async (req, res) => {
   const tenant = await Tenant.findById(req.tenant._id);
 
   if (tenant) {
@@ -110,7 +110,7 @@ const updateTenant = asyncHandler(async (req, res) => {
 // @desc    Get tenant's rental history
 // @route   GET /api/tenants/history
 // @access  Private
-const getRentalHistory = asyncHandler(async (req, res) => {
+export const getRentalHistory = asyncHandler(async (req, res) => {
   const applications = await Application.find({ tenant: req.tenant._id })
     .populate('tender', 'title pricePerDay location')
     .sort('-createdAt');
@@ -121,7 +121,7 @@ const getRentalHistory = asyncHandler(async (req, res) => {
 // @desc    Apply for a rental
 // @route   POST /api/tenants/apply/:tenderId
 // @access  Private
-const applyForRental = asyncHandler(async (req, res) => {
+export const applyForRental = asyncHandler(async (req, res) => {
   const { startDate, endDate, message } = req.body;
   const tender = await Tender.findById(req.params.tenderId);
 
@@ -130,7 +130,6 @@ const applyForRental = asyncHandler(async (req, res) => {
     throw new Error('Tender not found');
   }
 
-  // Check if dates are available
   const existingApplications = await Application.find({
     tender: tender._id,
     $or: [
@@ -155,12 +154,3 @@ const applyForRental = asyncHandler(async (req, res) => {
 
   res.status(201).json(application);
 });
-
-module.exports = {
-  registerTenant,
-  loginTenant,
-  getMe,
-  updateTenant,
-  getRentalHistory,
-  applyForRental
-};
