@@ -14,6 +14,27 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [isLoading, setIsLoading] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
+
+  const validateForm = () => {
+    const errors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!formData.email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!emailRegex.test(formData.email)) {
+      errors.email = 'Please enter a valid email address';
+    }
+
+    if (!formData.password) {
+      errors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      errors.password = 'Password must be at least 6 characters';
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,57 +42,77 @@ const Login = () => {
       ...prev,
       [name]: value
     }));
+
+    // Clear validation error when user types
+    if (validationErrors[name]) {
+      setValidationErrors(prev => ({
+        ...prev,
+        [name]: null
+      }));
+    }
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setIsLoading(true);
-  setMessage({ text: '', type: '' });
-
-  try {
-    const res = await fetch("http://localhost:5000/api/auth/login", {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData)
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.message || 'Login failed');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
     }
 
-    // Save token & user info
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.user));
+    setIsLoading(true);
+    setMessage({ text: '', type: '' });
 
-    setMessage({ 
-      text: "Login successful! Redirecting...", 
-      type: "success" 
-    });
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+        },
+        credentials: 'include', // For httpOnly cookies
+        body: JSON.stringify(formData)
+      });
 
-    // Redirect based on role
-    setTimeout(() => {
-      if (data.user.role === 'owner') {
-        navigate('/owner-dashboard');
-      } else {
-        navigate('/home');
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || 'Login failed');
       }
-    }, 1500);
 
-  } catch (error) {
-    console.error("Login error:", error);
-    setMessage({ 
-      text: error.message || "Something went wrong. Please try again.", 
-      type: "danger" 
-    });
-  } finally {
-    setIsLoading(false);
-  }
-};
+      // Save user info (token should be httpOnly cookie)
+      localStorage.setItem("user", JSON.stringify(data.user));
 
+      setMessage({ 
+        text: "Login successful! Redirecting...", 
+        type: "success" 
+      });
+
+      // Redirect based on role with additional checks
+      setTimeout(() => {
+        if (data.user.role === 'owner') {
+          navigate('/owner-dashboard', { replace: true });
+        } else if (data.user.role === 'tenant') {
+          navigate('/home', { replace: true });
+        } else {
+          navigate('/', { replace: true }); // Default redirect for unknown roles
+        }
+      }, 1500);
+
+    } catch (error) {
+      console.error("Login error:", error);
+      setMessage({ 
+        text: error.message || "Invalid credentials. Please try again.", 
+        type: "danger" 
+      });
+      
+      // Clear form on error for security
+      setFormData({
+        email: formData.email, // Keep email for convenience
+        password: ''
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-vh-100 d-flex align-items-center bg-light">
@@ -113,14 +154,14 @@ const handleSubmit = async (e) => {
                       </Alert>
                     )}
 
-                    <Form onSubmit={handleSubmit}>
+                    <Form onSubmit={handleSubmit} noValidate>
                       {/* Email Field */}
                       <Form.Group className="mb-3">
                         <Form.Label>
                           <MdEmail className="me-2" />
                           Email Address
                         </Form.Label>
-                        <InputGroup>
+                        <InputGroup hasValidation>
                           <InputGroup.Text>
                             <MdEmail />
                           </InputGroup.Text>
@@ -130,8 +171,12 @@ const handleSubmit = async (e) => {
                             placeholder="Enter your email"
                             value={formData.email}
                             onChange={handleChange}
+                            isInvalid={!!validationErrors.email}
                             required
                           />
+                          <Form.Control.Feedback type="invalid">
+                            {validationErrors.email}
+                          </Form.Control.Feedback>
                         </InputGroup>
                       </Form.Group>
 
@@ -141,7 +186,7 @@ const handleSubmit = async (e) => {
                           <FaLock className="me-2" />
                           Password
                         </Form.Label>
-                        <InputGroup>
+                        <InputGroup hasValidation>
                           <InputGroup.Text>
                             <FaLock />
                           </InputGroup.Text>
@@ -151,6 +196,7 @@ const handleSubmit = async (e) => {
                             placeholder="Enter your password"
                             value={formData.password}
                             onChange={handleChange}
+                            isInvalid={!!validationErrors.password}
                             required
                           />
                           <InputGroup.Text 
@@ -159,6 +205,9 @@ const handleSubmit = async (e) => {
                           >
                             {showPassword ? <FaEyeSlash /> : <FaEye />}
                           </InputGroup.Text>
+                          <Form.Control.Feedback type="invalid">
+                            {validationErrors.password}
+                          </Form.Control.Feedback>
                         </InputGroup>
                       </Form.Group>
 
@@ -191,16 +240,21 @@ const handleSubmit = async (e) => {
                         )}
                       </Button>
 
-                      {/* Social Login Options */}
-                      <div className="text-center mb-4">
-                        <span className="text-muted">or sign in with</span>
+                      {/* Divider */}
+                      <div className="position-relative my-4">
+                        <div className="border-bottom"></div>
+                        <div className="position-absolute top-50 start-50 translate-middle bg-white px-2 text-muted">
+                          or
+                        </div>
                       </div>
+
+                      {/* Social Login Options */}
                       <div className="d-flex gap-2 mb-4">
-                        <Button variant="outline-primary" className="flex-grow-1">
+                        <Button variant="outline-primary" className="flex-grow-1" disabled>
                           <FaUser className="me-2" />
                           Google
                         </Button>
-                        <Button variant="outline-dark" className="flex-grow-1">
+                        <Button variant="outline-dark" className="flex-grow-1" disabled>
                           <FaUser className="me-2" />
                           Facebook
                         </Button>

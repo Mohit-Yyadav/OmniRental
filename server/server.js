@@ -8,7 +8,7 @@ import rateLimit from 'express-rate-limit';
 
 // Routes
 import tenantRoutes from './routes/tenantRoutes.js';
-import authRoutes from './routes/auth.js';
+import authRoutes from './routes/authRoutes.js';
 
 dotenv.config();
 const app = express();
