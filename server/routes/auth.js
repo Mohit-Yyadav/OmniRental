@@ -48,13 +48,17 @@ router.post('/login', async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Incorrect password' });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-    
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
+      expiresIn: '1d'
+    });
+
     res.json({
       token,
       user: {
+        id: user._id,
         username: user.username,
-        email: user.email
+        email: user.email,
+        role: user.role
       }
     });
 
@@ -64,11 +68,14 @@ router.post('/login', async (req, res) => {
   }
 });
 
-
-//get all user(for dashboard)
-router.get('/users',async (req,res)=>{
-    const users=await User.find().select('-password');
+// ✅ Get All Users (for admin/dashboard)
+router.get('/users', async (req, res) => {
+  try {
+    const users = await User.find().select('-password');
     res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
 });
 
 export default router;
