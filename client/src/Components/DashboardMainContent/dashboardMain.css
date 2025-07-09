@@ -1,0 +1,87 @@
+.dashboard-container {
+  padding: 20px;
+  margin-top:0px
+}
+
+.dashboard-title {
+  margin-bottom: 30px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-top: 70px;
+}
+.Cardblock{
+    width:33%
+    
+}
+
+.dashboard-card {
+    margin-top: 0;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+  
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.income-card .card-icon {
+  background-color: rgba(46, 204, 113, 0.2);
+  color: #2ecc71;
+}
+
+.tenants-card .card-icon {
+  background-color: rgba(52, 152, 219, 0.2);
+  color: #3498db;
+}
+
+.admitted-card .card-icon {
+  background-color: rgba(155, 89, 182, 0.2);
+  color: #9b59b6;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #7f8c8d;
+  margin-bottom: 10px;
+}
+
+.card-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 15px 0;
+}
+
+.card-link a {
+  display: flex;
+  align-items: center;
+  color: #7f8c8d;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.card-link a:hover {
+  color: #3498db;
+}
+
+.card-link svg {
+  margin-left: 5px;
+  font-size: 12px;
+}
