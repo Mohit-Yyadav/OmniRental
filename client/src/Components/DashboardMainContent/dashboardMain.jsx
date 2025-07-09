@@ -17,7 +17,7 @@ const DashboardBlocks = () => {
           <Col md={6} lg={3} className="Cardblock">
             <Card className="dashboard-card income-card">
               <Card.Body>
-                <div className="d-flex align-items-center mb-3">
+                <div className="d-flex align-items-center icon-title mb-3">
                   <div className="card-icon me-3">
                     <FaMoneyBillWave size={20} />
                   </div>
