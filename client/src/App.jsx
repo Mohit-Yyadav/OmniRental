@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 // Auth Components
-import Login from './components/Login';
+import Login from './Components/Login';
 import Register from './components/Register';
 
 // Dashboard Components
@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import TenantList from './Pages/Dashboard/TenantList';
 import AddTenant from './pages/Dashboard/AddTenant';
 import Edittenant from './pages/Dashboard/Edittenant';
+
 // Note: filename is Edittenant.jsx (with two 't's)
 
 // Auth Route
@@ -51,7 +52,7 @@ function App() {
 
         {/* Tenant Routes */}
         <Route path="/tenant/signup" element={<TenantSignup />} />
-        <Route 
+        {/* <Route 
           path="/tenant/dashboard" 
           element={
             <AuthRoute allowedRoles={['tenant']}>
@@ -66,26 +67,27 @@ function App() {
               <TenantProfile />
             </AuthRoute>
           } 
-        />
+        /> */}
 
         {/* Admin Routes */}
         <Route
           path="/dashboard"
           element={
-            <AuthRoute allowedRoles={['admin', 'owner']}>
+            
               <Dashboard />
-            </AuthRoute>
+            
           }
         />
-        <Route
+        {/* <Route
           path="/tenants"
           element={
             <AuthRoute allowedRoles={['admin', 'owner']}>
               <TenantList />
             </AuthRoute>
           }
-        />
-        <Route
+        /> */}
+          
+        {/* <Route
           path="/add-tenant"
           element={
             <AuthRoute allowedRoles={['admin', 'owner']}>
@@ -100,7 +102,7 @@ function App() {
               <Edittenant />
             </AuthRoute>
           }
-        />
+        /> */}
 
         {/* Fallback route */}
         <Route path="*" element={<Navigate to="/" />} />

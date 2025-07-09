@@ -1,0 +1,35 @@
+.navbar{
+    background-color: rgb(37, 37, 101);
+}
+
+.navbar-brand{
+    font-size:26px
+}
+.searchbar{
+    border-radius: 20px;
+}
+
+.profile-icon{
+    border-radius: 50%;
+    border: none;
+}
+.dropdown-menu {
+  animation: 0.5s slideup;
+}
+
+@keyframes slideup {
+  from {
+    transform: translateY(10%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+
+}
+
+@media (max-width: 768px) {
+    .navbar{
+        background-color: blue;
+    }
+}
