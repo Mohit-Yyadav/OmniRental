@@ -2,42 +2,34 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import User from '../models/user.js';
-const router=express.Router();
-import { registerUser } from '../controllers/authController.js'; 
-//Registration
-// backend/routes/auth.js
-// router.post('/register', async (req, res) => {
-//   try {
-//     const { username, email, password } = req.body;
 
-//     if (!username || !email || !password) {
-//       return res.status(400).json({ message: "All fields are required" });
-//     }
+const router = express.Router();
 
-//     const userExists = await User.findOne({ email });
-//     if (userExists) return res.status(400).json({ message: 'User already exists' });
+// ✅ Registration Route
+router.post('/register', async (req, res) => {
+  try {
+    const { username, email, password, role = 'tenant' } = req.body;
 
-//     const hashedPassword = await bcrypt.hash(password, 10);
-//     const newUser = new User({ username, email, password: hashedPassword });
-//     await newUser.save();
+    if (!username || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
-//     // ✅ Always return JSON
-//     res.status(201).json({ message: "User registered successfully" });
+    const userExists = await User.findOne({ email });
+    if (userExists) return res.status(400).json({ message: 'User already exists' });
 
-//   } catch (error) {
-//     console.error("Registration error:", error);
-//     // ✅ Return error as JSON
-//     res.status(500).json({ message: "Internal server error", error: error.message });
-//   }
-// });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ username, email, password: hashedPassword, role });
+    await newUser.save();
 
-// In your registration route
+    res.status(201).json({ message: "User registered successfully" });
 
-router.post('/register', registerUser); 
+  } catch (error) {
+    console.error("Registration error:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+});
 
-
-//login
-
+// ✅ Login Route
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;

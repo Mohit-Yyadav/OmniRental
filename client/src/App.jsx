@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 // Auth Components
 import Login from './components/Login';
 import Register from './components/Register';
+
+// Dashboard Components
 import Dashboard from './pages/Dashboard/Dashboard';
 import TenantList from './Pages/Dashboard/TenantList';
 import AddTenant from './pages/Dashboard/AddTenant';
@@ -18,20 +20,25 @@ import AuthRoute from './components/AuthRoute';
 
 import TenantSignup from './pages/Dashboard/TenantSignup';
 import TenantProfile from './pages/Dashboard/TenantProfile';
+
 import TenantDashboard from './pages/Dashboard/TenantDashboard';
+ // Most likely correct
+
+// Public Pages
 import Home from './pages/Home';
 import Properties from './pages/Properties';
 import AboutUs from './pages/AboutUs';
 import Contact from './pages/Contact';
 import PropertyDetail from './pages/PropertyDetail';
-import ProtectedRoute from './components/ProtectedRoute';
 
+// Styles
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./assets/css/DashboardCss/Dashboard.css";
 
+
 function App() {
   return (
-    <Router>
+  
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
@@ -44,24 +51,24 @@ function App() {
 
         {/* Tenant Routes */}
         <Route path="/tenant/signup" element={<TenantSignup />} />
-        {/* <Route 
+        <Route 
           path="/tenant/dashboard" 
           element={
-            <ProtectedRoute allowedRoles={['tenant']}>
+            <AuthRoute allowedRoles={['tenant']}>
               <TenantDashboard />
-            </ProtectedRoute>
+            </AuthRoute>
           } 
         />
         <Route 
           path="/tenant/profile" 
           element={
-            <ProtectedRoute allowedRoles={['tenant']}>
+            <AuthRoute allowedRoles={['tenant']}>
               <TenantProfile />
-            </ProtectedRoute>
+            </AuthRoute>
           } 
-        /> */}
+        />
 
-        {/* Admin/Owner Routes */}
+        {/* Admin Routes */}
         <Route
           path="/dashboard"
           element={
@@ -70,36 +77,35 @@ function App() {
             </AuthRoute>
           }
         />
-        {/* <Route
+        <Route
           path="/tenants"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'owner']}>
+            <AuthRoute allowedRoles={['admin', 'owner']}>
               <TenantList />
-            </ProtectedRoute>
+            </AuthRoute>
           }
-        /> */}
-          
-        {/* <Route
+        />
+        <Route
           path="/add-tenant"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'owner']}>
+            <AuthRoute allowedRoles={['admin', 'owner']}>
               <AddTenant />
-            </ProtectedRoute>
+            </AuthRoute>
           }
         />
         <Route
           path="/edit-tenant/:id"
           element={
-            <ProtectedRoute allowedRoles={['admin', 'owner']}>
+            <AuthRoute allowedRoles={['admin', 'owner']}>
               <Edittenant />
-            </ProtectedRoute>
+            </AuthRoute>
           }
-        /> */}
+        />
 
         {/* Fallback route */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-    </Router>
+ 
   );
 }
 
