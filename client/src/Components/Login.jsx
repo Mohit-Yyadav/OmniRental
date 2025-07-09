@@ -23,43 +23,55 @@ const Login = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setMessage({ text: '', type: '' });
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
+  setMessage({ text: '', type: '' });
 
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData)
-      });
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData)
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (!res.ok) {
-        throw new Error(data.message || 'Login failed');
-      }
-
-      localStorage.setItem("token", data.token);
-      setMessage({ 
-        text: "Login successful! Redirecting...", 
-        type: "success" 
-      });
-      
-      setTimeout(() => navigate("/dashboard"), 1500);
-    } catch (error) {
-      console.error("Login error:", error);
-      setMessage({ 
-        text: error.message || "Something went wrong. Please try again.", 
-        type: "danger" 
-      });
-    } finally {
-      setIsLoading(false);
+    if (!res.ok) {
+      throw new Error(data.message || 'Login failed');
     }
-  };
+
+    // Save token & user info
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data.user));
+
+    setMessage({ 
+      text: "Login successful! Redirecting...", 
+      type: "success" 
+    });
+
+    // Redirect based on role
+    setTimeout(() => {
+      if (data.user.role === 'owner') {
+        navigate('/owner-dashboard');
+      } else {
+        navigate('/home');
+      }
+    }, 1500);
+
+  } catch (error) {
+    console.error("Login error:", error);
+    setMessage({ 
+      text: error.message || "Something went wrong. Please try again.", 
+      type: "danger" 
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <div className="min-vh-100 d-flex align-items-center bg-light">

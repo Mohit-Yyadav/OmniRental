@@ -39,6 +39,7 @@ const Register = () => {
     setMessageType("danger");
     return;
   }
+  
 
   if (formData.password !== formData.confirmPassword) {
     setMessage("Passwords do not match");
@@ -238,5 +239,8 @@ const Register = () => {
     </div>
   );
 };
+
+
+
 
 export default Register;
