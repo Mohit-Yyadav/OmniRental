@@ -8,8 +8,8 @@ import { HiOutlineHome } from "react-icons/hi";
 
 const DashboardBlocks = () => {
   return (
-    <div>
-      <div className="dashboard-container">
+    <div >
+      <div className="dashboard-section">
         <h2 className="dashboard-title">Dashboard</h2>
         
         <Row className="g-4">
@@ -75,7 +75,7 @@ const DashboardBlocks = () => {
         </Row>
       </div>
       
-      <div className="dashboard-container">
+      <div className="dashboard-section">
         <Row className="g-4">
           {/* All Tenants Block */}
           <Col md={6} lg={3} className="Cardblock">
@@ -139,7 +139,7 @@ const DashboardBlocks = () => {
         </Row>
       </div>
 
-      <div className="dashboard-container">
+      <div className="dashboard-section">
         <Row className="g-4">
           {/* Rent Collected Block */}
           <Col md={6} lg={3} className="Cardblock">
@@ -203,7 +203,7 @@ const DashboardBlocks = () => {
         </Row>
       </div>
 
-      <div className="dashboard-container">
+      <div className="dashboard-section">
         <Row className="g-4">
           {/* Apartments Block */}
           <Col md={6} lg={3} className="Cardblock">

@@ -10,12 +10,43 @@
 }
 
 .profile-icon{
-    border-radius: 50%;
+  
+border-radius: 50%;
     border: none;
 }
 .dropdown-menu {
   animation: 0.5s slideup;
 }
+
+
+
+.dropdown-menu.show {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-width: 160px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  z-index: 999;
+}
+
+.dropdown-item {
+  padding: 10px 15px;
+  font-size: 14px;
+  background: none;
+ 
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
 
 @keyframes slideup {
   from {

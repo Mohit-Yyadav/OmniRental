@@ -42,27 +42,18 @@ import DashboardBlocks from '../../Components/DashboardMainContent/dashboardMain
 
 const Sidemenu = () => {
   return (
-    <div className="d-flex flex-column vh-100">
-      {/* Navbar at the top */}
+    <div className="dashboard-layout">
       <Navbar />
-      
-      {/* Main content area */}
-      <Container fluid className="flex-grow-1 g-0 p-0 mw-100">
-        <Row className="g-0 h-100 mw-100">
-          {/* Sidebar - fixed width */}
-          <Col lg={2} className="d-none d-lg-block h-100 bg-light p-0">
-            <Sidebar />
-          </Col>
-          
-          {/* Main content - takes remaining space */}
-          <Col lg={10} className="h-100 p-0">
-            <div className="w-100 h-100">
-              <DashboardBlocks />
-              {/* Other dashboard content */}
-            </div>
-          </Col>
-        </Row>
-      </Container>
+
+      <div className="dashboard-body">
+        <div className="dashboard-sidebar">
+          <Sidebar />
+        </div>
+
+        <div className="dashboard-main">
+          <DashboardBlocks />
+        </div>
+      </div>
     </div>
   );
 };
