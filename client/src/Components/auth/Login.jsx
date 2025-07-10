@@ -15,6 +15,7 @@ import rentImage from "../../assets/images/rent2.jpg";
 
 const Login = () => {
   const navigate = useNavigate();
+  
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -60,67 +61,76 @@ const Login = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+// In your Login component's handleSubmit function
+const handleSubmit = async (e) => {
+  e.preventDefault();
+ e.stopPropagation();
+  if (!validateForm()) {
+    return;
+  }
 
-    if (!validateForm()) {
-      return;
+  setIsLoading(true);
+  setMessage({ text: "", type: "" });
+
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(formData),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Login failed");
     }
 
-    setIsLoading(true);
-    setMessage({ text: "", type: "" });
+    // Save user info
+    localStorage.setItem("user", JSON.stringify(data.user));
 
-    try {
-      const res = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // For httpOnly cookies
-        body: JSON.stringify(formData),
-      });
+    setMessage({
+      text: "Login successful! Redirecting...",
+      type: "success",
+    });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || "Login failed");
-      }
-
-      // Save user info (token should be httpOnly cookie)
-      localStorage.setItem("user", JSON.stringify(data.user));
-
-      setMessage({
-        text: "Login successful! Redirecting...",
-        type: "success",
-      });
-
-      // Redirect based on role with additional checks
-      setTimeout(() => {
-        if (data.user.role === "owner") {
-          navigate("/owner-dashboard", { replace: true });
-        } else if (data.user.role === "tenant") {
-          navigate("/home", { replace: true });
+    // Enhanced role-based redirection
+    setTimeout(() => {
+      
+      if (data.user.role === "owner") {
+        // Check if profile is complete
+        if (data.user.profileComplete) {
+          navigate("/dashboard", { replace: true });
         } else {
-          navigate("/", { replace: true }); // Default redirect for unknown roles
+          navigate("/my-profile", { replace: true });
         }
-      }, 1500);
-    } catch (error) {
-      console.error("Login error:", error);
-      setMessage({
-        text: error.message || "Invalid credentials. Please try again.",
-        type: "danger",
-      });
-
-      // Clear form on error for security
-      setFormData({
-        email: formData.email, // Keep email for convenience
-        password: "",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+      } else if (data.user.role === "tenant") {
+        // Check if profile is complete
+        if (data.user.profileComplete) {
+          navigate("/tenant/dashboard", { replace: true });
+        } else {
+          navigate("/tenant/profile", { replace: true });
+        }
+      } else {
+        navigate("/", { replace: true });
+      }
+    }, 1500);
+  } catch (error) {
+    console.error("Login error:", error);
+    setMessage({
+      text: error.message || "Invalid credentials. Please try again.",
+      type: "danger",
+    });
+    setFormData({
+      email: formData.email,
+      password: "",
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
   return (
     <div className="min-vh-100 d-flex align-items-center bg-light">
       <Container className="my-5">

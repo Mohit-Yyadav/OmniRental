@@ -1,0 +1,120 @@
+.dashboard-content {
+  padding: 20px;
+}
+
+.dashboard-content h2 {
+  margin-bottom: 20px;
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.dashboard-card {
+  height: 100%;
+}
+
+.rent-status {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.rent-info {
+  flex: 1;
+}
+
+.profile-content, .property-content, .payments-content, .requests-content {
+  padding: 20px;
+}
+
+.profile-header, .property-header, .payments-header, .requests-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.profile-details {
+  display: flex;
+  gap: 40px;
+}
+
+.profile-picture {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-form, .property-form {
+  flex: 1;
+}
+
+.property-status {
+  margin-bottom: 20px;
+}
+
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-col {
+  flex: 1;
+}
+
+.site-header {
+  background: #fff;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-name {
+  margin-left: 8px;
+}
+
+.site-content {
+  margin: 16px;
+  padding: 24px;
+  background: #fff;
+  min-height: calc(100vh - 64px - 32px);
+}
+
+.notifications-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.notification-item {
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.notification-item.unread {
+  font-weight: bold;
+}
+
+.notification-item small {
+  color: #888;
+}
+
+.logo {
+  height: 32px;
+  margin: 16px;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}

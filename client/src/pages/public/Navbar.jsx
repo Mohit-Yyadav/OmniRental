@@ -126,26 +126,72 @@ const Navbar = () => {
     >
       <div className="container-fluid">
         {/* Logo */}
-        <Link
-          to="/"
-          className="navbar-brand d-flex align-items-center text-decoration-none"
-        >
-          <div
-            className="me-2 p-2 rounded-circle bg-gradient text-white d-flex align-items-center justify-content-center shadow-sm"
-            style={styles.logoGradient}
-          >
-            <img
-              src="/src/assets/home-regular-24.png"
-              alt="logo"
-              className="img-fluid"
-              style={{ filter: "brightness(0) invert(1)", width: "20px" }}
-            />
-          </div>
-          <div className="d-flex flex-column">
-            <span className="fw-bold fs-4" style={styles.logoText}>OmniRental</span>
-            <small style={styles.logoSubtext}>Premium Properties</small>
-          </div>
-        </Link>
+       <Link
+  to="/"
+  className="navbar-brand d-flex align-items-center text-decoration-none"
+  aria-label="OmniRental Home"
+>
+  {/* Logo Container */}
+  <div
+    className="me-2 p-2 rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+    style={{
+      background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
+      width: "42px",
+      height: "42px",
+      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+      willChange: 'transform',
+      ':hover': {
+        transform: 'scale(1.05)',
+        boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)'
+      }
+    }}
+  >
+    {/* Dynamic logo handling - falls back to SVG if image not found */}
+    <img
+      src={currentUser?.photoURL || '/src/assets/logo.svg'}  // Use your actual logo path
+      alt="OmniRental Logo"
+      className="img-fluid"
+      style={{ 
+        width: "24px",
+        height: "24px",
+        filter: "brightness(0) invert(1)",
+        objectFit: "contain"
+      }}
+      onError={(e) => {
+        // Fallback to house icon if logo fails to load
+        e.target.onerror = null;
+        e.target.src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1ob3VzZSI+PHBhdGggZD0iTTE5IDIxVjEwYTIgMiAwIDAgMC0yLTJIN2EyIDIgMCAwIDAtMiAydjExIi8+PHBhdGggZD0iTTMgMjFsMTktMTgiLz48cGF0aCBkPSJNOSAyMXYtOGEyIDIgMCAwIDEgMi0yaDJhMiAyIDAgMCAxIDIgMnY4Ii8+PC9zdmc+"
+      }}
+    />
+  </div>
+
+  {/* Brand Text */}
+  <div className="d-flex flex-column">
+    <span 
+      className="fw-bold fs-4" 
+      style={{
+        color: scrolled ? '#3b82f6' : 'white',
+        transition: 'color 0.3s ease, text-shadow 0.3s ease',
+        textShadow: scrolled ? 'none' : '0 2px 4px rgba(0,0,0,0.1)',
+        letterSpacing: '-0.5px',
+        lineHeight: '1.1'
+      }}
+    >
+      OmniRental
+    </span>
+    <small 
+      style={{
+        color: scrolled ? '#6b7280' : 'rgba(255,255,255,0.85)',
+        fontSize: '0.7rem',
+        fontWeight: '500',
+        transition: 'color 0.3s ease',
+        letterSpacing: '0.5px'
+      }}
+    >
+      Premium Properties
+    </small>
+  </div>
+</Link>
 
         {/* Toggler for mobile */}
         <button
@@ -180,118 +226,162 @@ const Navbar = () => {
           </ul>
 
           {/* Right side buttons */}
-          <div className="d-flex align-items-center gap-3">
-            {currentUser ? (
-              <>
-                <button 
-                  className="btn btn-link position-relative p-2 text-decoration-none hover-shadow rounded-circle"
-                  style={{
-                    color: scrolled ? '#1e293b' : 'white',
-                    backgroundColor: scrolled ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.1)'
-                  }}
-                >
-                  <Bell size={20} />
-                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    3
-                  </span>
-                </button>
-                
-                <Dropdown show={showDropdown} onToggle={setShowDropdown}>
-                  <Dropdown.Toggle
-                    variant="transparent"
-                    id="dropdown-profile"
-                    className="d-flex align-items-center gap-2 rounded-pill p-1 border-0 hover-shadow"
-                    style={{ 
-                      background: scrolled ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)',
-                      boxShadow: 'none'
-                    }}
-                  >
-                    <div
-                      className="rounded-circle bg-primary d-flex align-items-center justify-content-center overflow-hidden shadow-sm"
-                      style={{ 
-                        width: "36px", 
-                        height: "36px",
-                        boxShadow: '0 2px 6px rgba(59, 130, 246, 0.3)'
-                      }}
-                    >
-                      {currentUser.photoURL ? (
-                        <img 
-                          src={currentUser.photoURL} 
-                          alt="Profile" 
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        />
-                      ) : (
-                        <User size={18} className="text-white" />
-                      )}
-                    </div>
-                    <span className={`d-none d-lg-inline ${scrolled ? 'text-dark' : 'text-white'}`}>
-                      {currentUser.displayName || "My Account"}
-                    </span>
-                  </Dropdown.Toggle>
-
-                  <Dropdown.Menu 
-                    className="shadow-lg border-0 mt-2" 
-                    style={styles.dropdownMenu}
-                  >
-                    <Dropdown.Header className="text-muted small">
-                      {currentUser.email || 'Logged in user'}
-                    </Dropdown.Header>
-                    <Dropdown.Divider />
-                    <Dropdown.Item
-                      as={Link}
-                      to="/dashboard"
-                      className="d-flex align-items-center gap-2 py-2 hover-bg-light"
-                      onClick={() => setShowDropdown(false)}
-                    >
-                      <User size={16} /> Dashboard
-                    </Dropdown.Item>
-                    <Dropdown.Item
-                      as={Link}
-                      to="/profile"
-                      className="d-flex align-items-center gap-2 py-2 hover-bg-light"
-                      onClick={() => setShowDropdown(false)}
-                    >
-                      <Settings size={16} /> My Profile
-                    </Dropdown.Item>
-                    <Dropdown.Item
-                      as={Link}
-                      to="/bookings"
-                      className="d-flex align-items-center gap-2 py-2 hover-bg-light"
-                      onClick={() => setShowDropdown(false)}
-                    >
-                      <Bookmark size={16} /> My Bookings
-                    </Dropdown.Item>
-                    <Dropdown.Divider />
-                    <Dropdown.Item
-                      onClick={handleLogout}
-                      className="d-flex align-items-center gap-2 py-2 text-danger hover-bg-light"
-                    >
-                      <LogOut size={16} /> Logout
-                    </Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
-              </>
+<div className="d-flex align-items-center gap-2">
+  {currentUser ? (
+    <>
+      {/* Notifications Button */}
+      <button 
+        className="btn btn-link position-relative p-2 text-decoration-none rounded-circle"
+        style={{
+          color: scrolled ? '#1e293b' : 'white',
+          backgroundColor: scrolled ? 'rgba(0,0,0,0.03)' : 'rgba(255,255,255,0.1)',
+          transition: 'all 0.2s ease',
+          border: 'none',
+          outline: 'none'
+        }}
+        aria-label="Notifications"
+        onClick={() => navigate('/notifications')}
+      >
+        <Bell size={20} />
+        <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+          3
+          <span className="visually-hidden">unread notifications</span>
+        </span>
+      </button>
+      
+      {/* User Profile Dropdown */}
+      <Dropdown show={showDropdown} onToggle={setShowDropdown}>
+        <Dropdown.Toggle
+          variant="transparent"
+          id="dropdown-profile"
+          className="d-flex align-items-center gap-2 rounded-pill p-1 border-0"
+          style={{ 
+            background: scrolled ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.1)',
+            boxShadow: 'none',
+            transition: 'all 0.2s ease',
+            cursor: 'pointer'
+          }}
+          aria-expanded={showDropdown}
+          aria-label="User profile menu"
+        >
+          <div
+            className="rounded-circle bg-primary d-flex align-items-center justify-content-center overflow-hidden shadow-sm"
+            style={{ 
+              width: "36px", 
+              height: "36px",
+              boxShadow: '0 2px 6px rgba(59, 130, 246, 0.3)',
+              transition: 'transform 0.2s ease'
+            }}
+          >
+            {currentUser.photoURL ? (
+              <img 
+                src={currentUser.photoURL} 
+                alt="Profile" 
+                style={{ 
+                  width: '100%', 
+                  height: '100%', 
+                  objectFit: 'cover' 
+                }}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLXVzZXIiPjxwYXRoIGQ9Ik0xOSAyMXYtMmE0IDQgMCAwIDAtNC00SDlhNCA0IDAgMCAwLTQgNHYyIi8+PGNpcmNsZSBjeD0iMTIiIGN5PSI3IiByPSI0Ii8+PC9zdmc+'
+                }}
+              />
             ) : (
-              <>
-                <Link 
-                  to="/login" 
-                  className={`btn ${scrolled ? 'btn-outline-primary hover-shadow' : 'btn-outline-light hover-shadow-white'} px-3 px-lg-4 rounded-pill`}
-                  style={{
-                    boxShadow: 'none'
-                  }}
-                >
-                  Sign in
-                </Link>
-                <Link 
-                  to="/signup" 
-                  className="btn btn-primary px-3 px-lg-4 rounded-pill shadow-sm hover-shadow-lg"
-                  style={styles.primaryButton}
-                >
-                  Get Started
-                </Link>
-              </>
+              <User size={18} className="text-white" />
             )}
           </div>
+          <span className={`d-none d-lg-inline ${scrolled ? 'text-dark' : 'text-white'}`}>
+            {currentUser.displayName?.split(' ')[0] || "My Account"}
+          </span>
+        </Dropdown.Toggle>
+
+        <Dropdown.Menu 
+          className="shadow-lg border-0 mt-2" 
+          style={{
+            minWidth: '220px',
+            boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)',
+            borderRadius: '12px',
+            overflow: 'hidden'
+          }}
+          align="end"
+        >
+          <Dropdown.Header className="text-muted small d-flex flex-column">
+            <span className="fw-bold">{currentUser.displayName || 'User'}</span>
+            <small>{currentUser.email || ''}</small>
+          </Dropdown.Header>
+          <Dropdown.Divider />
+          <Dropdown.Item
+            as={Link}
+            to="/dashboard"
+            className="d-flex align-items-center gap-2 py-2"
+            style={{ transition: 'all 0.2s ease' }}
+            onClick={() => setShowDropdown(false)}
+          >
+            <User size={16} /> Dashboard
+          </Dropdown.Item>
+          <Dropdown.Item
+            as={Link}
+            to="/profile"
+            className="d-flex align-items-center gap-2 py-2"
+            style={{ transition: 'all 0.2s ease' }}
+            onClick={() => setShowDropdown(false)}
+          >
+            <Settings size={16} /> My Profile
+          </Dropdown.Item>
+          <Dropdown.Item
+            as={Link}
+            to="/bookings"
+            className="d-flex align-items-center gap-2 py-2"
+            style={{ transition: 'all 0.2s ease' }}
+            onClick={() => setShowDropdown(false)}
+          >
+            <Bookmark size={16} /> My Bookings
+          </Dropdown.Item>
+          <Dropdown.Divider />
+          <Dropdown.Item
+            onClick={handleLogout}
+            className="d-flex align-items-center gap-2 py-2 text-danger"
+            style={{ transition: 'all 0.2s ease' }}
+          >
+            <LogOut size={16} /> Logout
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+    </>
+  ) : (
+    <>
+      <Link 
+        to="/login" 
+        className={`btn ${scrolled ? 'btn-outline-primary' : 'btn-outline-light'} px-3 px-lg-4 rounded-pill`}
+        style={{
+          transition: 'all 0.2s ease',
+          borderWidth: '2px',
+          fontWeight: '500'
+        }}
+      >
+        Sign in
+      </Link>
+      <Link 
+        to="/signup" 
+        className="btn btn-primary px-3 px-lg-4 rounded-pill"
+        style={{
+          background: 'linear-gradient(135deg, #3b82f6, #6366f1)',
+          border: 'none',
+          fontWeight: '500',
+          transition: 'all 0.2s ease',
+          boxShadow: '0 4px 14px rgba(59, 130, 246, 0.3)',
+          ':hover': {
+            transform: 'translateY(-1px)',
+            boxShadow: '0 6px 20px rgba(59, 130, 246, 0.4)'
+          }
+        }}
+      >
+        Get Started
+      </Link>
+    </>
+  )}
+</div>
         </div>
 
         {/* Mobile Menu */}

@@ -30,7 +30,8 @@ const Register = () => {
     }));
   };
 
- const submitHandler = async (e) => {
+// In your Register component's submitHandler
+const submitHandler = async (e) => {
   e.preventDefault();
 
   // Validation
@@ -39,7 +40,6 @@ const Register = () => {
     setMessageType("danger");
     return;
   }
-  
 
   if (formData.password !== formData.confirmPassword) {
     setMessage("Passwords do not match");
@@ -54,10 +54,10 @@ const Register = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username: formData.username,
+        name: formData.username, // Changed from username to name to match backend
         email: formData.email,
         password: formData.password,
-        role: formData.role // Ensure role is included
+        role: formData.role
       }),
     });
 
@@ -67,12 +67,10 @@ const Register = () => {
       throw new Error(data.message || "Registration failed");
     }
 
-    setMessage("Registration Successful!");
+    setMessage("Registration Successful! Redirecting to login...");
     setMessageType("success");
     
-    // Log the full response for debugging
-    console.log("Registration response:", data);
-    
+    // Automatically log in after registration if desired
     setTimeout(() => navigate("/login"), 1000);
   } catch (error) {
     console.error("Registration error:", error);

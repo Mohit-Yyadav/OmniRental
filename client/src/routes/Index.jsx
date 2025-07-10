@@ -30,10 +30,10 @@ const AppRoutes = () => {
       {/* Public Routes */}
       {renderNestedRoutes(publicRoutes)}
       
-      {/* Tenant Routes */}
+      {/* Tenant Routes - Now accessible to everyone */}
       {renderNestedRoutes(tenantRoutes)}
       
-      {/* Admin Routes */}
+      {/* Admin/Owner Routes - Now accessible to everyone */}
       {renderNestedRoutes(adminRoutes)}
       
       {/* Fallback route */}

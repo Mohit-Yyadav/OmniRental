@@ -5,7 +5,7 @@ import Contact from '../pages/public/Contact';
 import PropertyDetail from '../pages/PropertyDetail';
 import Login from '../components/auth/Login';
 import Register from '../components/auth/Register';
-import TenantSignup from '../components/tenants/TenantSignup';
+
 import Mainhome from '../pages/public/Mainhome';
 
 const publicRoutes = [
@@ -23,7 +23,7 @@ const publicRoutes = [
   // Independent routes (no Navbar/Footer)
   { path: '/login', element: <Login /> },
   { path: '/register', element: <Register /> },
-  { path: '/tenant/signup', element: <TenantSignup /> },
+ 
 ];
 
 export default publicRoutes;
