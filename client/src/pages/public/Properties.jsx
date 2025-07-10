@@ -2,8 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Search, MapPin, Home, Building, Star, Filter, Heart } from 'lucide-react';
 
+
 const Properties = () => {
-  // Sample property data
+  // Sample property data (now with 12 properties)
   const properties = [
     {
       id: 1,
@@ -52,136 +53,236 @@ const Properties = () => {
       type: "Studio",
       rating: 4.5,
       image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+    },
+    {
+      id: 5,
+      title: "Waterfront Condo",
+      location: "Seattle, WA",
+      price: "$2,800/month",
+      beds: 2,
+      baths: 2,
+      sqft: 1200,
+      type: "Condo",
+      rating: 4.7,
+      image: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+    },
+    {
+      id: 6,
+      title: "Historic Brownstone",
+      location: "Boston, MA",
+      price: "$3,500/month",
+      beds: 3,
+      baths: 2.5,
+      sqft: 1800,
+      type: "Townhouse",
+      rating: 4.8,
+      image: "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+    },
+    {
+      id: 7,
+      title: "Mountain View Cabin",
+      location: "Denver, CO",
+      price: "$1,200/month",
+      beds: 2,
+      baths: 1,
+      sqft: 900,
+      type: "Cabin",
+      rating: 4.6,
+      image: "https://images.unsplash.com/photo-1475855581690-80accde3ae2b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+    },
+    {
+      id: 8,
+      title: "Luxury Penthouse",
+      location: "Chicago, IL",
+      price: "$5,500/month",
+      beds: 3,
+      baths: 3,
+      sqft: 2400,
+      type: "Penthouse",
+      rating: 4.9,
+      image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+    },
+    {
+      id: 9,
+      title: "Beachfront Bungalow",
+      location: "San Diego, CA",
+      price: "$3,200/month",
+      beds: 2,
+      baths: 1,
+      sqft: 1100,
+      type: "Bungalow",
+      rating: 4.8,
+      image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+    },
+    {
+      id: 10,
+      title: "Modern Farmhouse",
+      location: "Nashville, TN",
+      price: "$2,100/month",
+      beds: 3,
+      baths: 2,
+      sqft: 1600,
+      type: "Farmhouse",
+      rating: 4.7,
+      image: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+    },
+    {
+      id: 11,
+      title: "Urban Loft",
+      location: "Portland, OR",
+      price: "$1,900/month",
+      beds: 1,
+      baths: 1,
+      sqft: 850,
+      type: "Loft",
+      rating: 4.6,
+      image: "https://images.unsplash.com/photo-1505692952047-1a78307da8a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
+    },
+    {
+      id: 12,
+      title: "Lakefront Cottage",
+      location: "Minneapolis, MN",
+      price: "$1,500/month",
+      beds: 2,
+      baths: 1,
+      sqft: 950,
+      type: "Cottage",
+      rating: 4.7,
+      image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60"
     }
   ];
 
   return (
-    <div className="container py-5">
-      <div className="row mb-4">
-        <div className="col-12">
-          <h1 className="display-5 fw-bold mb-3">Find Your Perfect Property</h1>
-          <p className="lead text-muted">
-            Browse our curated selection of premium rentals across the country
-          </p>
-        </div>
-      </div>
-
-      {/* Search and Filter Section */}
-      <div className="row mb-4">
-        <div className="col-12">
-          <div className="card shadow-sm border-0 p-3">
-            <div className="row g-3">
-              <div className="col-md-4">
-                <div className="input-group">
-                  <span className="input-group-text bg-white border-end-0">
-                    <Search size={18} />
-                  </span>
-                  <input 
-                    type="text" 
-                    className="form-control border-start-0" 
-                    placeholder="Search by location or property name"
-                  />
-                </div>
-              </div>
-              <div className="col-md-3">
-                <select className="form-select">
-                  <option>Property Type</option>
-                  <option>Apartment</option>
-                  <option>House</option>
-                  <option>Villa</option>
-                  <option>Condo</option>
-                </select>
-              </div>
-              <div className="col-md-3">
-                <select className="form-select">
-                  <option>Price Range</option>
-                  <option>$0 - $1,000</option>
-                  <option>$1,000 - $2,000</option>
-                  <option>$2,000 - $3,000</option>
-                  <option>$3,000+</option>
-                </select>
-              </div>
-              <div className="col-md-2">
-                <button className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
-                  <Filter size={18} /> Filter
-                </button>
-              </div>
-            </div>
+    <>
+   
+      <div className="container py-5">
+        <div className="row mb-4">
+          <div className="col-12">
+            <h1 className="display-5 fw-bold mb-3">Find Your Perfect Property</h1>
+            <p className="lead text-muted">
+              Browse our curated selection of premium rentals across the country
+            </p>
           </div>
         </div>
-      </div>
 
-      {/* Properties Grid */}
-      <div className="row g-4">
-        {properties.map((property) => (
-          <div key={property.id} className="col-md-6 col-lg-4 col-xl-3">
-            <div className="card h-100 border-0 shadow-sm overflow-hidden">
-              <div className="position-relative">
-                <img 
-                  src={property.image} 
-                  alt={property.title} 
-                  className="card-img-top property-image"
-                  style={{ height: '200px', objectFit: 'cover' }}
-                />
-                <div className="position-absolute top-0 end-0 m-2">
-                  <button className="btn btn-sm btn-light rounded-circle">
-                    <Heart size={16} />
+        {/* Search and Filter Section */}
+        <div className="row mb-4">
+          <div className="col-12">
+            <div className="card shadow-sm border-0 p-3">
+              <div className="row g-3">
+                <div className="col-md-4">
+                  <div className="input-group">
+                    <span className="input-group-text bg-white border-end-0">
+                      <Search size={18} />
+                    </span>
+                    <input 
+                      type="text" 
+                      className="form-control border-start-0" 
+                      placeholder="Search by location or property name"
+                    />
+                  </div>
+                </div>
+                <div className="col-md-3">
+                  <select className="form-select">
+                    <option>Property Type</option>
+                    <option>Apartment</option>
+                    <option>House</option>
+                    <option>Villa</option>
+                    <option>Condo</option>
+                  </select>
+                </div>
+                <div className="col-md-3">
+                  <select className="form-select">
+                    <option>Price Range</option>
+                    <option>$0 - $1,000</option>
+                    <option>$1,000 - $2,000</option>
+                    <option>$2,000 - $3,000</option>
+                    <option>$3,000+</option>
+                  </select>
+                </div>
+                <div className="col-md-2">
+                  <button className="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2">
+                    <Filter size={18} /> Filter
                   </button>
                 </div>
               </div>
-              <div className="card-body">
-                <div className="d-flex justify-content-between align-items-start mb-2">
-                  <h5 className="card-title mb-0">{property.title}</h5>
-                  <div className="d-flex align-items-center gap-1">
-                    <Star size={16} className="text-warning" fill="currentColor" />
-                    <span>{property.rating}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Properties Grid */}
+        <div className="row g-4">
+          {properties.map((property) => (
+            <div key={property.id} className="col-md-6 col-lg-4 col-xl-3">
+              <div className="card h-100 border-0 shadow-sm overflow-hidden">
+                <div className="position-relative">
+                  <img 
+                    src={property.image} 
+                    alt={property.title} 
+                    className="card-img-top property-image"
+                    style={{ height: '200px', objectFit: 'cover' }}
+                  />
+                  <div className="position-absolute top-0 end-0 m-2">
+                    <button className="btn btn-sm btn-light rounded-circle">
+                      <Heart size={16} />
+                    </button>
                   </div>
                 </div>
-                <p className="card-text text-muted d-flex align-items-center gap-1 mb-2">
-                  <MapPin size={16} className="text-primary" />
-                  <small>{property.location}</small>
-                </p>
-                <div className="d-flex gap-3 mb-3">
-                  <small className="text-muted d-flex align-items-center gap-1">
-                    <Home size={16} />
-                    {property.type}
-                  </small>
-                  <small className="text-muted d-flex align-items-center gap-1">
-                    <Building size={16} />
-                    {property.beds} beds, {property.baths} baths
-                  </small>
-                </div>
-                <div className="d-flex justify-content-between align-items-center">
-                  <h5 className="mb-0 text-primary">{property.price}</h5>
-                  <Link to={`/property/${property.id}`} className="btn btn-sm btn-outline-primary">
-                    View Details
-                  </Link>
+                <div className="card-body">
+                  <div className="d-flex justify-content-between align-items-start mb-2">
+                    <h5 className="card-title mb-0">{property.title}</h5>
+                    <div className="d-flex align-items-center gap-1">
+                      <Star size={16} className="text-warning" fill="currentColor" />
+                      <span>{property.rating}</span>
+                    </div>
+                  </div>
+                  <p className="card-text text-muted d-flex align-items-center gap-1 mb-2">
+                    <MapPin size={16} className="text-primary" />
+                    <small>{property.location}</small>
+                  </p>
+                  <div className="d-flex gap-3 mb-3">
+                    <small className="text-muted d-flex align-items-center gap-1">
+                      <Home size={16} />
+                      {property.type}
+                    </small>
+                    <small className="text-muted d-flex align-items-center gap-1">
+                      <Building size={16} />
+                      {property.beds} beds, {property.baths} baths
+                    </small>
+                  </div>
+                  <div className="d-flex justify-content-between align-items-center">
+                    <h5 className="mb-0 text-primary">{property.price}</h5>
+                    <Link to={`/property/${property.id}`} className="btn btn-sm btn-outline-primary">
+                      View Details
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      {/* Pagination */}
-      <div className="row mt-4">
-        <div className="col-12">
-          <nav aria-label="Page navigation">
-            <ul className="pagination justify-content-center">
-              <li className="page-item disabled">
-                <span className="page-link">Previous</span>
-              </li>
-              <li className="page-item active"><span className="page-link">1</span></li>
-              <li className="page-item"><a className="page-link" href="#">2</a></li>
-              <li className="page-item"><a className="page-link" href="#">3</a></li>
-              <li className="page-item">
-                <a className="page-link" href="#">Next</a>
-              </li>
-            </ul>
-          </nav>
+        {/* Pagination */}
+        <div className="row mt-4">
+          <div className="col-12">
+            <nav aria-label="Page navigation">
+              <ul className="pagination justify-content-center">
+                <li className="page-item disabled">
+                  <span className="page-link">Previous</span>
+                </li>
+                <li className="page-item active"><span className="page-link">1</span></li>
+                <li className="page-item"><a className="page-link" href="#">2</a></li>
+                <li className="page-item"><a className="page-link" href="#">3</a></li>
+                <li className="page-item">
+                  <a className="page-link" href="#">Next</a>
+                </li>
+              </ul>
+            </nav>
+          </div>
         </div>
       </div>
-    </div>
+    
+    </>
   );
 };
 

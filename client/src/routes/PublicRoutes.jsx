@@ -6,15 +6,23 @@ import PropertyDetail from '../pages/PropertyDetail';
 import Login from '../components/auth/Login';
 import Register from '../components/auth/Register';
 import TenantSignup from '../components/tenants/TenantSignup';
+import Mainhome from '../pages/public/Mainhome';
 
 const publicRoutes = [
-  { path: '/', element: <Home /> },
-  { path: '/properties', element: <Properties /> },
-  { path: '/about', element: <AboutUs /> },
-  { path: '/contact', element: <Contact /> },
-  { path: '/register', element: <Register /> },
+  {
+    path: '/',
+    element: <Home />,
+    children: [
+      { index: true, element: <Mainhome /> },  // Renders at /
+      { path: 'properties', element: <Properties /> },
+      { path: 'about', element: <AboutUs /> },
+      { path: 'contact', element: <Contact /> },
+      { path: 'property/:id', element: <PropertyDetail /> },
+    ],
+  },
+  // Independent routes (no Navbar/Footer)
   { path: '/login', element: <Login /> },
-  { path: '/property/:id', element: <PropertyDetail /> },
+  { path: '/register', element: <Register /> },
   { path: '/tenant/signup', element: <TenantSignup /> },
 ];
 

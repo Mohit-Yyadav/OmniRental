@@ -1,28 +1,43 @@
+// src/routes/AppRoutes.js
 import { Routes, Route, Navigate } from 'react-router-dom';
 import publicRoutes from './PublicRoutes';
 import tenantRoutes from './TenantRoutes';
 import adminRoutes from './adminRoutes';
 
+const renderNestedRoutes = (routes) => {
+  return routes.map((route) => (
+    <Route
+      key={route.path}
+      path={route.path}
+      element={route.element}
+    >
+      {/* Render child routes if they exist */}
+      {route.children?.map((child) => (
+        <Route
+          key={child.path || 'index'}
+          index={child.index}
+          path={child.path}
+          element={child.element}
+        />
+      ))}
+    </Route>
+  ));
+};
+
 const AppRoutes = () => {
   return (
     <Routes>
       {/* Public Routes */}
-      {publicRoutes.map((route, index) => (
-        <Route key={index} path={route.path} element={route.element} />
-      ))}
-
+      {renderNestedRoutes(publicRoutes)}
+      
       {/* Tenant Routes */}
-      {tenantRoutes.map((route, index) => (
-        <Route key={`tenant-${index}`} path={route.path} element={route.element} />
-      ))}
-
+      {renderNestedRoutes(tenantRoutes)}
+      
       {/* Admin Routes */}
-      {adminRoutes.map((route, index) => (
-        <Route key={`admin-${index}`} path={route.path} element={route.element} />
-      ))}
-
+      {renderNestedRoutes(adminRoutes)}
+      
       {/* Fallback route */}
-      <Route path="*" element={<Navigate to="/" />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 };

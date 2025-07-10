@@ -1,6 +1,7 @@
 import React from 'react';
 import { Users, Home, Award, Shield, Heart } from 'lucide-react';
 
+
 const AboutUs = () => {
   const teamMembers = [
     {
@@ -41,7 +42,9 @@ const AboutUs = () => {
   ];
 
   return (
-    <div className="container py-5">
+ <>
+     
+     <div className="container py-5">
       {/* Hero Section */}
       <div className="row align-items-center mb-5">
         <div className="col-lg-6">
@@ -173,6 +176,12 @@ const AboutUs = () => {
         </div>
       </div>
     </div>
+
+   
+
+    </>
+
+    
   );
 };
 

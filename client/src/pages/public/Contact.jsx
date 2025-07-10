@@ -1,8 +1,7 @@
 import React from 'react';
 import { Container, Form, Button, Row, Col, Card } from 'react-bootstrap';
 import { Mail, Phone, MapPin, Send } from 'lucide-react';
-import Navbar from './Navbar';
-import Footer from './Footer';
+
 
 const Contact = () => {
   const contactMethods = [
@@ -28,7 +27,7 @@ const Contact = () => {
 
   return (
     <>
-      <Navbar />
+     
       <Container className="my-5 py-4">
         {/* Page Header */}
         <div className="text-center mb-5">
@@ -140,7 +139,7 @@ const Contact = () => {
           </Col>
         </Row>
       </Container>
-      <Footer />
+      
     </>
   );
 };

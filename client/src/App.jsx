@@ -172,11 +172,8 @@
 // export default App;
 
 
-import AppRoutes from './routes';
-
-// Styles
+import AppRoutes from './routes/index';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 
 function App() {
   return <AppRoutes />;
