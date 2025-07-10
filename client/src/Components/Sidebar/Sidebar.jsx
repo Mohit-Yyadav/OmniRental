@@ -130,19 +130,22 @@ import "./Sidebar.css";
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
 
   return (
     <>
       {/* Mobile Navbar */}
       <div className="navbar mobile-navbar bg-light d-flex justify-content-between align-items-center px-3 py-2 d-md-none d-lg-none">
         <h3 className="m-0 logo">OmniRental</h3>
-        <button className="btn d-md-none" onClick={() => setIsOpen(!isOpen)}>
-          <FaBars size={20} />
+        <button className="btn d-md-none" onClick={toggleSidebar}>
+          <FaBars  className="hamburger" size={20} />
         </button>
       </div>
 
       {/* Sidebar */}
-      <div className={`sidebar d-flex flex-column ${isOpen ? "open" : ""}`}>
+      <div className={`sidebar d-flex flex-column ${isOpen ? "open" : "closed"}`}>
         <div className="d-flex mb-2">
           <div className="menu-item">
             <span className="menu-icon"><HiOutlineHome /></span>
@@ -184,7 +187,7 @@ const Sidebar = () => {
 
       {/* Overlay for mobile */}
       {isOpen && (
-        <div className="sidebar-overlay" onClick={() => setIsOpen(false)}></div>
+        <div className="sidebar-overlay" onClick={toggleSidebar}></div>
       )}
     </>
   );
