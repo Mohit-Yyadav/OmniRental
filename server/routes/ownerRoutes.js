@@ -1,15 +1,24 @@
-// server/routes/ownerRoutes.js
 import express from 'express';
+import multer from 'multer';
 import {
-  getOwnerProfile,
-  updateOwnerProfile,
-  createOwnerProfile,
+  createOrUpdateOwnerProfile,
+  getOwnerProfile
 } from '../controllers/ownerController.js';
 
 const router = express.Router();
 
-router.post('/', createOwnerProfile);
-router.get('/:id', getOwnerProfile);
-router.put('/:id', updateOwnerProfile);
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/'),
+  filename: (req, file, cb) =>
+    cb(null, Date.now() + '-' + file.originalname),
+});
+
+const upload = multer({ storage });
+
+// POST or PUT owner profile
+router.post('/', upload.single('profileImage'), createOrUpdateOwnerProfile);
+// router.post("/api/owner", createOwner); 
+// GET owner profile by userId
+router.get('/:userId', getOwnerProfile);
 
 export default router;

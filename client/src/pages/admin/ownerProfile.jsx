@@ -1,52 +1,91 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import React, { useEffect, useState } from 'react';
+// import axios from 'axios';
+
+// const OwnerProfile = () => {
+//   const [profile, setProfile] = useState(null);
+//   const userId = localStorage.getItem('userId');
+
+//   useEffect(() => {
+//     const fetchProfile = async () => {
+//       try {
+//         const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/owners/${userId}`);
+//         setProfile(res.data);
+//       } catch (err) {
+//         console.error(err);
+//       }
+//     };
+//     fetchProfile();
+//   }, []);
+
+//   if (!profile) return <p>Loading...</p>;
+
+//   return (
+//     <div className="container mt-4">
+//       <h3>My Profile</h3>
+//       <p><strong>Name:</strong> {profile.name}</p>
+//       <p><strong>Email:</strong> {profile.email}</p>
+//       <p><strong>Phone:</strong> {profile.phone}</p>
+//       <p><strong>Address:</strong> {profile.address}</p>
+//       <p><strong>Bio:</strong> {profile.bio}</p>
+//       {profile.profileImage && (
+//         <img
+//           src={`http://localhost:5000/uploads/${profile.profileImage}`}
+//           alt="Profile"
+//           style={{ width: "150px", height: "150px", objectFit: "cover" }}
+//         />
+//       )}
+//     </div>
+//   );
+// };
+
+// export default OwnerProfile;
+
+
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const OwnerProfile = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    bio: ""
-  });
-
-  const ownerId = "64c9...."; // replace with actual logged-in owner's ID
+  const [profile, setProfile] = useState(null);
+  const userId = localStorage.getItem('userId');
 
   useEffect(() => {
-    axios.get(`/api/owners/${ownerId}`).then(res => {
-      setFormData(res.data);
-    });
-  }, [ownerId]);
+    const fetchProfile = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/owner/${userId}`);
+        setProfile(res.data);
+      } catch (err) {
+        console.error('Error loading profile:', err);
+      }
+    };
+    fetchProfile();
+  }, []);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    axios.put(`/api/owners/${ownerId}`, formData)
-      .then(() => alert("Profile updated"))
-      .catch((err) => alert(err.response.data.error));
-  };
+  if (!profile) return <p className="text-center mt-4">Loading profile...</p>;
 
   return (
-    <div className="container mt-4">
-      <h2>Owner Profile</h2>
-      <form onSubmit={handleSubmit}>
-        {["name", "email", "phone", "address", "bio"].map((field) => (
-          <div className="mb-3" key={field}>
-            <label className="form-label">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
-            <input
-              type="text"
-              className="form-control"
-              name={field}
-              value={formData[field]}
-              onChange={handleChange}
+    <div className="container mt-5">
+      <h2 className="mb-4">My Profile</h2>
+      <div className="row">
+        <div className="col-md-4">
+          {profile.profileImage ? (
+            <img
+              src={`http://localhost:5000/uploads/${profile.profileImage}`}
+              alt="Profile"
+              className="img-fluid rounded shadow"
+              style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
             />
-          </div>
-        ))}
-        <button className="btn btn-primary" type="submit">Update Profile</button>
-      </form>
+          ) : (
+            <p>No profile image</p>
+          )}
+        </div>
+        <div className="col-md-8">
+          <p><strong>Name:</strong> {profile.name}</p>
+          <p><strong>Email:</strong> {profile.email}</p>
+          <p><strong>Phone:</strong> {profile.phone}</p>
+          <p><strong>Address:</strong> {profile.address}</p>
+          <p><strong>Bio:</strong> {profile.bio}</p>
+        </div>
+      </div>
     </div>
   );
 };

@@ -86,6 +86,10 @@ const Navbar = ({ onToggleSidebar }) => {
     setShowDropdown(false);
   };
 
+    const handleEditProfileClick = () => {
+    navigate("/owner/edit-profile");
+    setShowDropdown(false);
+  };
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login");
@@ -136,6 +140,9 @@ const Navbar = ({ onToggleSidebar }) => {
               <div className="dropdown-menu show">
                 <button className="dropdown-item" onClick={handleProfileClick}>
                   My Profile
+                </button>
+                <button className="dropdown-item" onClick={handleEditProfileClick}>
+                  Edit Profile
                 </button>
                 <button className="dropdown-item" onClick={handleLogout} style={{color:'red'}}>
                   Logout<MdArrowForward />

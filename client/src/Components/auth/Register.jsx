@@ -8,13 +8,15 @@ import rent from '../../assets/images/rent.jpg';
 
 const Register = () => {
   const navigate = useNavigate();
+  const allowedRoles = ['tenant', 'owner'];
+
 
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'tenant' // default to tenant
+    role: '' // default to tenant
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -54,7 +56,7 @@ const submitHandler = async (e) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: formData.username, // Changed from username to name to match backend
+        username: formData.username, // Changed from username to name to match backend
         email: formData.email,
         password: formData.password,
         role: formData.role
@@ -105,7 +107,7 @@ const submitHandler = async (e) => {
 
           <form onSubmit={submitHandler}>
             {/* Role Selection */}
-            <div className="mb-3">
+            {/* <div className="mb-3">
               <label className="form-label">Register as:</label>
               <div className="d-flex gap-3">
                 <div className="form-check flex-grow-1">
@@ -137,7 +139,26 @@ const submitHandler = async (e) => {
                   </label>
                 </div>
               </div>
-            </div>
+            </div> */}
+            <div className="mb-3">
+  <label className="form-label">Select Role:</label>
+  <div className="d-flex gap-3">
+    {allowedRoles.map((role) => (
+      <label key={role} className="form-check-label d-flex align-items-center">
+        <input
+          className="form-check-input me-2"
+          type="radio"
+          name="role"
+          value={role}
+          checked={formData.role === role}
+          onChange={handleChange}
+        />
+        {role.charAt(0).toUpperCase() + role.slice(1)}
+      </label>
+    ))}
+  </div>
+</div>
+
 
             {/* Username Field */}
             <div className="form-group mb-3">

@@ -2,7 +2,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import publicRoutes from './PublicRoutes';
 import tenantRoutes from './TenantRoutes';
-import adminRoutes from './adminRoutes';
+import adminRoutes from './AdminRoutes';
 
 const renderNestedRoutes = (routes) => {
   return routes.map((route) => (

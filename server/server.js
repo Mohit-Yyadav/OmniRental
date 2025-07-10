@@ -5,11 +5,16 @@ import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-
+import ownerRoutes from './routes/ownerRoutes.js';
 // Routes
 import tenantRoutes from './routes/tenantRoutes.js';
 import authRoutes from './routes/authRoutes.js';
+import fs from 'fs';
+const uploadsDir = './uploads';
 
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+}
 dotenv.config();
 const app = express();
 
@@ -65,7 +70,10 @@ mongoose.connect(process.env.MONGO_URI, {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/tenants', tenantRoutes);
-
+//owner profile pr edit routes
+app.use('/api/owners', ownerRoutes);
+app.use('/uploads', express.static('uploads'));
+app.use("/api/owner", ownerRoutes);
 // Error Handling Middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);

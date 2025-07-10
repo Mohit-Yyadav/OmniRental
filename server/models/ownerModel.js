@@ -1,13 +1,18 @@
-// server/models/ownerModel.js
 import mongoose from 'mongoose';
 
 const ownerSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  phone: { type: String },
-  address: { type: String },
-  bio: { type: String },
-  profileImage: { type: String }, // optional
-}, { timestamps: true });
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // Assuming login user stored separately
+    required: true,
+    unique: true
+  },
+  name: String,
+  email: String,
+  phone: String,
+  address: String,
+  bio: String,
+  profileImage: String, // Store file path or URL
+});
 
 export default mongoose.model('Owner', ownerSchema);

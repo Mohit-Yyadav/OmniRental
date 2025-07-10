@@ -102,9 +102,9 @@ const handleSubmit = async (e) => {
       if (data.user.role === "owner") {
         // Check if profile is complete
         if (data.user.profileComplete) {
-          navigate("/dashboard", { replace: true });
+          navigate('/dashboard', { replace: true });
         } else {
-          navigate("/my-profile", { replace: true });
+          navigate("/owner/edit-profile", { replace: true });
         }
       } else if (data.user.role === "tenant") {
         // Check if profile is complete

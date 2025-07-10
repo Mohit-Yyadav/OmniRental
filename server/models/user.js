@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['tenant', 'owner'],  // ✅ restrict values
     required: true,
-    default: 'tenant'           // ✅ default value if not specified
+    // default: 'tenant'           // ✅ default value if not specified
   },
 
   createdAt: {
