@@ -1,18 +1,26 @@
-import React, { useState } from 'react';
-import { FaLock, FaUser, FaEye, FaEyeSlash, FaSpinner } from 'react-icons/fa';
+import React, { useState } from "react";
+import { FaLock, FaUser, FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
-import { useNavigate, Link } from 'react-router-dom';
-import { Container, Row, Col, Form, Button, Alert, InputGroup } from 'react-bootstrap';
-import rentImage from '../assets/images/rent2.jpg';
+import { useNavigate, Link } from "react-router-dom";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  Alert,
+  InputGroup,
+} from "react-bootstrap";
+import rentImage from "../../assets/images/rent2.jpg";
 
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [message, setMessage] = useState({ text: '', type: '' });
+  const [message, setMessage] = useState({ text: "", type: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
 
@@ -21,15 +29,15 @@ const Login = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!formData.email.trim()) {
-      errors.email = 'Email is required';
+      errors.email = "Email is required";
     } else if (!emailRegex.test(formData.email)) {
-      errors.email = 'Please enter a valid email address';
+      errors.email = "Please enter a valid email address";
     }
 
     if (!formData.password) {
-      errors.password = 'Password is required';
+      errors.password = "Password is required";
     } else if (formData.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters';
+      errors.password = "Password must be at least 6 characters";
     }
 
     setValidationErrors(errors);
@@ -38,76 +46,75 @@ const Login = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
 
     // Clear validation error when user types
     if (validationErrors[name]) {
-      setValidationErrors(prev => ({
+      setValidationErrors((prev) => ({
         ...prev,
-        [name]: null
+        [name]: null,
       }));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
     setIsLoading(true);
-    setMessage({ text: '', type: '' });
+    setMessage({ text: "", type: "" });
 
     try {
       const res = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
         },
-        credentials: 'include', // For httpOnly cookies
-        body: JSON.stringify(formData)
+        credentials: "include", // For httpOnly cookies
+        body: JSON.stringify(formData),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || 'Login failed');
+        throw new Error(data.message || "Login failed");
       }
 
       // Save user info (token should be httpOnly cookie)
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      setMessage({ 
-        text: "Login successful! Redirecting...", 
-        type: "success" 
+      setMessage({
+        text: "Login successful! Redirecting...",
+        type: "success",
       });
 
       // Redirect based on role with additional checks
       setTimeout(() => {
-        if (data.user.role === 'owner') {
-          navigate('/owner-dashboard', { replace: true });
-        } else if (data.user.role === 'tenant') {
-          navigate('/home', { replace: true });
+        if (data.user.role === "owner") {
+          navigate("/owner-dashboard", { replace: true });
+        } else if (data.user.role === "tenant") {
+          navigate("/home", { replace: true });
         } else {
-          navigate('/', { replace: true }); // Default redirect for unknown roles
+          navigate("/", { replace: true }); // Default redirect for unknown roles
         }
       }, 1500);
-
     } catch (error) {
       console.error("Login error:", error);
-      setMessage({ 
-        text: error.message || "Invalid credentials. Please try again.", 
-        type: "danger" 
+      setMessage({
+        text: error.message || "Invalid credentials. Please try again.",
+        type: "danger",
       });
-      
+
       // Clear form on error for security
       setFormData({
         email: formData.email, // Keep email for convenience
-        password: ''
+        password: "",
       });
     } finally {
       setIsLoading(false);
@@ -123,13 +130,13 @@ const Login = () => {
               <Row className="g-0">
                 {/* Image Section */}
                 <Col md={6} className="d-none d-md-flex">
-                  <div 
-                    className="h-100 w-100" 
+                  <div
+                    className="h-100 w-100"
                     style={{
                       backgroundImage: `url(${rentImage})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      minHeight: '500px'
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      minHeight: "500px",
                     }}
                   />
                 </Col>
@@ -144,10 +151,10 @@ const Login = () => {
 
                     {/* Alert Message */}
                     {message.text && (
-                      <Alert 
-                        variant={message.type} 
+                      <Alert
+                        variant={message.type}
                         dismissible
-                        onClose={() => setMessage({ text: '', type: '' })}
+                        onClose={() => setMessage({ text: "", type: "" })}
                         className="mb-4"
                       >
                         {message.text}
@@ -199,8 +206,8 @@ const Login = () => {
                             isInvalid={!!validationErrors.password}
                             required
                           />
-                          <InputGroup.Text 
-                            style={{ cursor: 'pointer' }}
+                          <InputGroup.Text
+                            style={{ cursor: "pointer" }}
                             onClick={() => setShowPassword(!showPassword)}
                           >
                             {showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -218,15 +225,18 @@ const Login = () => {
                           id="rememberMe"
                           label="Remember me"
                         />
-                        <Link to="/forgot-password" className="text-decoration-none">
+                        <Link
+                          to="/forgot-password"
+                          className="text-decoration-none"
+                        >
                           Forgot password?
                         </Link>
                       </div>
 
                       {/* Submit Button */}
-                      <Button 
-                        variant="primary" 
-                        type="submit" 
+                      <Button
+                        variant="primary"
+                        type="submit"
                         className="w-100 py-2 mb-3"
                         disabled={isLoading}
                       >
@@ -236,7 +246,7 @@ const Login = () => {
                             Signing In...
                           </>
                         ) : (
-                          'Sign In'
+                          "Sign In"
                         )}
                       </Button>
 
@@ -250,11 +260,19 @@ const Login = () => {
 
                       {/* Social Login Options */}
                       <div className="d-flex gap-2 mb-4">
-                        <Button variant="outline-primary" className="flex-grow-1" disabled>
+                        <Button
+                          variant="outline-primary"
+                          className="flex-grow-1"
+                          disabled
+                        >
                           <FaUser className="me-2" />
                           Google
                         </Button>
-                        <Button variant="outline-dark" className="flex-grow-1" disabled>
+                        <Button
+                          variant="outline-dark"
+                          className="flex-grow-1"
+                          disabled
+                        >
                           <FaUser className="me-2" />
                           Facebook
                         </Button>
@@ -262,8 +280,13 @@ const Login = () => {
 
                       {/* Register Link */}
                       <div className="text-center">
-                        <span className="text-muted">Don't have an account? </span>
-                        <Link to="/register" className="text-decoration-none fw-bold">
+                        <span className="text-muted">
+                          Don't have an account?{" "}
+                        </span>
+                        <Link
+                          to="/register"
+                          className="text-decoration-none fw-bold"
+                        >
                           Sign up
                         </Link>
                       </div>

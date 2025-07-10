@@ -3,8 +3,8 @@ import { FaUser, FaLock, FaEye, FaEyeSlash, FaBuilding, FaHome } from 'react-ico
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { MdEmail } from "react-icons/md";
-import './Auth.css';
-import rent from '../assets/images/rent.jpg';
+import '../../assets/css/Auth.css';
+import rent from '../../assets/images/rent.jpg';
 
 const Register = () => {
   const navigate = useNavigate();

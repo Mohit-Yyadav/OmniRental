@@ -35,9 +35,9 @@
 
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
-import "../../assets/css/DashboardCss/Dashboard.css";
-import Navbar from "../../Components/Navbar/navbar";
-import Sidebar from "../../Components/Sidebar/Sidebar";
+import "../../assets/css/Dashboard.css";
+import Navbar from "../../Components/layout/Navbar/navbar.jsx";
+import Sidebar from "../../Components/layout/Sidebar/Sidebar.jsx";
 import DashboardBlocks from '../../Components/DashboardMainContent/dashboardMain.jsx';
 
 const Sidemenu = () => {

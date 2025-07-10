@@ -1,8 +1,8 @@
 import { Container, Row, Col, Button, Card, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FaStar, FaMapMarkerAlt, FaChevronRight } from 'react-icons/fa';
-import Navbar from '../components/Home/Navbar';
-import Footer from '../components/Home/Footer';
+import Navbar from './Navbar';
+import Footer from './Footer';
 // Replace the import with a direct image URL
 const heroImage = 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80';
 
