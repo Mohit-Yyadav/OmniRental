@@ -6,61 +6,9 @@
   z-index: 1000;
 }
 
-.navbar-custom {
-      height: 60px;
-      background-color: #fff;
-      padding: 0 20px;
-      border-bottom: 1px solid #dee2e6;
-    }
-
-    .navbar-logo img {
-      height: 30px;
-      margin-right: 8px;
-    }
-
-    .search-bar {
-      max-width: 500px;
-      width: 100%;
-    }
-
-    .search-bar input {
-      border-radius: 30px;
-      padding-left: 35px;
-    }
-
-    .search-icon {
-      position: absolute;
-      top: 50%;
-      left: 12px;
-      transform: translateY(-50%);
-      color: #6c757d;
-    }
-
-    .nav-icon {
-      margin-left: 15px;
-      font-size: 1.2rem;
-      color: #555;
-      cursor: pointer;
-    }
-
-    .theme-btn {
-      background-color: #fff4e6;
-      border-radius: 50%;
-      padding: 8px;
-    }
-
-    .avatar {
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-left: 15px;
-    }
-/* sidebar */
+/* sidebar*/
 .sidebar {
-  
-  
-  margin-top: 40px;
+ margin-top: 40px;
   height: 100vh;
   width: 260px;
   background-color: #fff;
@@ -83,7 +31,7 @@
 .menu-item {
   display: flex;
   align-items: center;
-  color: #6c757d; /* Bootstrap's text-secondary */
+  color: #6c757d; 
   font-size: 1rem;
   font-weight: 500;
   margin-bottom: 10px;
@@ -91,7 +39,7 @@
 }
 
 .menu-item:hover {
-  color: #0d6efd; /* Optional: on hover turns primary blue */
+  color: #0d6efd; 
 }
 
 .menu-icon {
@@ -110,16 +58,16 @@
 .sidebar-section .section-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #999b9d; /* muted grey */
+  color: #999b9d; 
   margin-bottom: 12px;
-}
+} 
 
-/* .section-title {
+ .section-title {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #6c757d; /* muted grey 
+  color: #6c757d; 
   margin-bottom: 12px;
-} */
+} 
 
 .sidebar-menu-text {
   text-decoration: none;
@@ -144,14 +92,14 @@
   font-weight: 600;
 }
 .Menu-item:hover {
-  color: #0d6efd; /* Optional: hover effect */
+  color: #0d6efd; 
 }
 
-/* .Menu-icon {
+ .Menu-icon {
   font-size: 18px;
   color: #282b2e;
   margin-right: 10px;
-} */
+} 
 
 
 .Menu-item.active .Menu-icon {
@@ -177,7 +125,7 @@
   font-weight: 500;
 } 
 
-/* In Component.css or global CSS */
+ In Component.css or global CSS 
 .table th, .table td {
   vertical-align: middle;
 }
@@ -188,9 +136,9 @@
 
 /* =======================
    📱 Mobile View CSS
-   ======================= */
+   ======================= 
 @media (max-width: 768px) {
-  /* 📌 Navbar Adjustments */
+ 
   .navbar-custom {
     padding: 0 10px;
     height: 50px;
@@ -205,7 +153,7 @@
   .search-bar {
     margin-top: 5px;
     width: 45%;
-    height: 25px;           /* Set desired height for mobile */
+    height: 25px;          
     font-size: 12px; 
     
     
@@ -213,7 +161,7 @@
   .search-icon {
     top: 50%;
     transform: translateY(-50%);
-    font-size: 12px;        /* Optional: adjust icon size */
+    font-size: 12px;      
   }
 
   .nav-icon,
@@ -223,7 +171,7 @@
     margin-left: 10px;
   }
 
-  /* 📌 Sidebar becomes vertical under navbar */
+  
   .sidebar {
     width: 100%;
     height: auto;
@@ -252,14 +200,14 @@
     font-size: 0.9rem;
   }
 
-  /* Optional: shrink image */
+  
   .navbar-logo img,
   .sidebar .logo img {
     height: 20px;
     width: 20px;
   }
 
-  /* 📌 Table scrollable on small screens */
+ 
   .table-responsive {
     overflow-x: auto;
   }
