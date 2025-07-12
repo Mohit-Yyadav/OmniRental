@@ -1,113 +1,58 @@
-// src/context/AuthContext.jsx
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [state, setState] = useState({
-    user: null,
-    isAuthenticated: false,
-    loading: true,
-    error: null
-  });
-
-  const navigate = useNavigate();
-
-  const logout = useCallback(() => {
-    localStorage.removeItem('token');
-    setState({
-      user: null,
-      isAuthenticated: false,
-      loading: false,
-      error: null
-    });
-    navigate('/login');
-  }, [navigate]);
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (token) {
-          const res = await axios.get('/api/auth/verify', {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          
-          setState(prev => ({
-            ...prev,
-            user: res.data.user,
-            isAuthenticated: true,
-            loading: false
-          }));
-        } else {
-          setState(prev => ({ ...prev, loading: false }));
-        }
-      } catch (err) {
-        setState(prev => ({
-          ...prev,
-          error: err.response?.data?.message || 'Authentication failed',
-          loading: false
-        }));
-        logout();
-      }
-    };
-
-    checkAuth();
-  }, [logout]);
-
-  const login = async (email, password) => {
-    try {
-      setState(prev => ({ ...prev, loading: true, error: null }));
-      const res = await axios.post('/api/auth/login', { email, password });
-      
-      localStorage.setItem('token', res.data.token);
-      setState(prev => ({
-        ...prev,
-        user: res.data.user,
-        isAuthenticated: true,
-        loading: false
-      }));
-      
-      return res.data.user;
-    } catch (err) {
-      const error = err.response?.data?.message || 'Login failed';
-      setState(prev => ({ ...prev, error, loading: false }));
-      throw error;
+    const token = localStorage.getItem('token');
+    if (token) {
+      axios.get('http://localhost:5000/api/auth/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => {
+          setUser(res.data.user);
+          setIsAuthenticated(true);
+        })
+        .catch(() => {
+          setUser(null);
+          setIsAuthenticated(false);
+        })
+        .finally(() => setIsLoading(false));
+    } else {
+      setIsLoading(false);
     }
-  };
+  }, []);
 
-  const register = async (userData) => {
-    try {
-      setState(prev => ({ ...prev, loading: true, error: null }));
-      const res = await axios.post('/api/auth/register', userData);
-      return res.data;
-    } catch (err) {
-      const error = err.response?.data?.message || 'Registration failed';
-      setState(prev => ({ ...prev, error, loading: false }));
-      throw error;
-    }
+const login = async (email, password) => {
+  try {
+    const res = await axios.post('http://localhost:5000/api/auth/login', {
+      email,
+      password,
+    });
+
+    localStorage.setItem('token', res.data.token);
+    setUser(res.data.user);
+    setIsAuthenticated(true);
+    return res.data.user; // ✅ return user info to Login page
+  } catch (err) {
+    throw new Error(err?.response?.data?.message || 'Login failed');
+  }
+};
+
+const logout = () => {
+  localStorage.removeItem('token');
+  setUser(null);
+  setIsAuthenticated(false);
   };
 
   return (
-    <AuthContext.Provider value={{
-      ...state,
-      login,
-      logout,
-      register,
-      setError: (error) => setState(prev => ({ ...prev, error }))
-    }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
-};
-
-// Move this to a separate file (hooks/useAuth.js) to fix the first error
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 };

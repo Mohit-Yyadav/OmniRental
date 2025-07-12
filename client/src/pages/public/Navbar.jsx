@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { House, Search, Users, MessageCircle, User, LogOut, Settings, Bookmark, Bell } from "lucide-react";
-import { useAuth } from "../../context/AuthContext";
+import useAuth from '../../context/useAuth';
+
 import { Dropdown } from "react-bootstrap";
 
 const Navbar = () => {

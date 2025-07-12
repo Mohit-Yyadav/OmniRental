@@ -3,13 +3,14 @@ import React, { useState } from 'react';
 import { Layout } from 'antd';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
-import Dashboard from './TenantDashboard'; // example content component
+import Dashboard from './TenantDashboard';
 import Profile from './Profile';
 import Property from './Property';
 import Payments from './Payments';
 import Requests from './Requests';
 import History from './History';
 import './TenantDashboard.css';
+import useAuth from '../../context/useAuth'; // ✅
 
 const { Content } = Layout;
 
@@ -17,10 +18,8 @@ const TenantMain = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [activeMenu, setActiveMenu] = useState('dashboard');
 
-  const tenantProfile = {
-    name: 'John Doe',
-    profilePic: 'https://randomuser.me/api/portraits/men/1.jpg',
-  };
+  // ✅ Get user and logout function from context
+  const { user, logout } = useAuth();
 
   const notifications = [
     { id: 1, title: 'Payment Reminder', read: false },
@@ -28,8 +27,7 @@ const TenantMain = () => {
   ];
 
   const handleLogout = () => {
-    console.log('Logged out');
-    // Add logout logic (clear auth, redirect, etc.)
+    logout(); // ✅ Call logout from context
   };
 
   const renderPageContent = () => {
@@ -63,7 +61,7 @@ const TenantMain = () => {
         <Navbar
           collapsed={collapsed}
           setCollapsed={setCollapsed}
-          user={tenantProfile}
+          user={user} // ✅ Pass actual logged-in user data
           notifications={notifications}
           onLogout={handleLogout}
         />

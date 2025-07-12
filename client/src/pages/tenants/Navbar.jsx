@@ -35,9 +35,11 @@ const Navbar = ({
         </Tooltip>
 
         <div className="user-info">
-          <Avatar src={user?.profilePic} />
-          <span className="user-name">{user?.name}</span>
-        </div>
+  <Avatar src={user?.profilePic} />
+  <span className="user-name">{user?.username}</span> {/* ✅ Fixed */}
+</div>
+
+
 
         <Tooltip title="Logout">
           <Button type="text" icon={<LogoutOutlined />} onClick={onLogout} />

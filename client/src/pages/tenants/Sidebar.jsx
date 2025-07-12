@@ -18,32 +18,68 @@ const Sidebar = ({ collapsed, setCollapsed, activeMenu, handleMenuClick }) => {
     {
       key: 'dashboard',
       icon: <DashboardOutlined />,
-      label: 'Dashboard',
+      label: collapsed ? (
+        <Tooltip title="Dashboard" placement="right">
+          <DashboardOutlined />
+        </Tooltip>
+      ) : (
+        'Dashboard'
+      ),
     },
     {
       key: 'profile',
       icon: <UserOutlined />,
-      label: 'My Profile',
+      label: collapsed ? (
+        <Tooltip title="My Profile" placement="right">
+          <UserOutlined />
+        </Tooltip>
+      ) : (
+        'My Profile'
+      ),
     },
     {
       key: 'property',
       icon: <HomeOutlined />,
-      label: 'Property Details',
+      label: collapsed ? (
+        <Tooltip title="Property Details" placement="right">
+          <HomeOutlined />
+        </Tooltip>
+      ) : (
+        'Property Details'
+      ),
     },
     {
       key: 'payments',
       icon: <DollarOutlined />,
-      label: 'Payments',
+      label: collapsed ? (
+        <Tooltip title="Payments" placement="right">
+          <DollarOutlined />
+        </Tooltip>
+      ) : (
+        'Payments'
+      ),
     },
     {
       key: 'requests',
       icon: <EditOutlined />,
-      label: 'My Requests',
+      label: collapsed ? (
+        <Tooltip title="My Requests" placement="right">
+          <EditOutlined />
+        </Tooltip>
+      ) : (
+        'My Requests'
+      ),
     },
     {
       key: 'history',
       icon: <HistoryOutlined />,
-      label: 'Rental History',
+      label: collapsed ? (
+        <Tooltip title="Rental History" placement="right">
+          <HistoryOutlined />
+        </Tooltip>
+      ) : (
+        'Rental History'
+      ),
     },
   ];
 
@@ -71,19 +107,8 @@ const Sidebar = ({ collapsed, setCollapsed, activeMenu, handleMenuClick }) => {
         selectedKeys={[activeMenu]}
         onClick={handleMenuClick}
         className="sidebar-menu"
-      >
-        {menuItems.map((item) => (
-          <Menu.Item key={item.key} icon={item.icon} className="sidebar-menu-item">
-            {collapsed ? (
-              <Tooltip title={item.label} placement="right">
-                {item.icon}
-              </Tooltip>
-            ) : (
-              item.label
-            )}
-          </Menu.Item>
-        ))}
-      </Menu>
+        items={menuItems}
+      />
     </Sider>
   );
 };

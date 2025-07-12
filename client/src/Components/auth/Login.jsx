@@ -1,20 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaLock, FaUser, FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { useNavigate, Link } from "react-router-dom";
-import {
-  Container,
-  Row,
-  Col,
-  Form,
-  Button,
-  Alert,
-  InputGroup,
-} from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Alert, InputGroup } from "react-bootstrap";
 import rentImage from "../../assets/images/rent2.jpg";
+import useAuth from '../../context/useAuth'; // Adjust the import path as necessary
+
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login, isAuthenticated, user } = useAuth(); // ✅ Add 'user'
+
   
   const [formData, setFormData] = useState({
     email: "",
@@ -24,6 +20,17 @@ const Login = () => {
   const [message, setMessage] = useState({ text: "", type: "" });
   const [isLoading, setIsLoading] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // Redirect if already authenticated
+// Redirect if already authenticated
+useEffect(() => {
+  if (isAuthenticated && user) {
+    const redirectPath = user.role === 'tenant' ? '/tenant/dashboard' : '/dashboard';
+    navigate(redirectPath, { replace: true });
+  }
+}, [isAuthenticated, user, navigate]);
+
 
   const validateForm = () => {
     const errors = {};
@@ -61,76 +68,41 @@ const Login = () => {
     }
   };
 
-// In your Login component's handleSubmit function
-const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
   e.preventDefault();
- e.stopPropagation();
-  if (!validateForm()) {
-    return;
-  }
+
+  if (!validateForm()) return;
 
   setIsLoading(true);
   setMessage({ text: "", type: "" });
 
   try {
-    const res = await fetch("http://localhost:5000/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(formData),
-    });
+    const user = await login(formData.email, formData.password); // ✅ Now user is returned
 
-    const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.message || "Login failed");
-    }
-
-    // Save user info
-    localStorage.setItem("user", JSON.stringify(data.user));
+    const redirectPath = user.role === 'tenant'
+      ? '/tenant/dashboard'
+      : '/owner/dashboard';
 
     setMessage({
       text: "Login successful! Redirecting...",
       type: "success",
     });
 
-    // Enhanced role-based redirection
     setTimeout(() => {
-      
-      if (data.user.role === "owner") {
-        // Check if profile is complete
-        if (data.user.profileComplete) {
-          navigate('/dashboard', { replace: true });
-        } else {
-          navigate("/owner/edit-profile", { replace: true });
-        }
-      } else if (data.user.role === "tenant") {
-        // Check if profile is complete
-        if (data.user.profileComplete) {
-          navigate("/tenant/dashboard", { replace: true });
-        } else {
-          navigate("/tenant/profile", { replace: true });
-        }
-      } else {
-        navigate("/", { replace: true });
-      }
-    }, 1500);
+      navigate(redirectPath, { replace: true });
+    }, 1000);
   } catch (error) {
-    console.error("Login error:", error);
     setMessage({
       text: error.message || "Invalid credentials. Please try again.",
       type: "danger",
     });
-    setFormData({
-      email: formData.email,
-      password: "",
-    });
+    setFormData(prev => ({ ...prev, password: "" }));
   } finally {
     setIsLoading(false);
   }
 };
+
+
   return (
     <div className="min-vh-100 d-flex align-items-center bg-light">
       <Container className="my-5">
@@ -159,7 +131,6 @@ const handleSubmit = async (e) => {
                       <p className="text-muted">Sign in to your account</p>
                     </div>
 
-                    {/* Alert Message */}
                     {message.text && (
                       <Alert
                         variant={message.type}
@@ -190,6 +161,7 @@ const handleSubmit = async (e) => {
                             onChange={handleChange}
                             isInvalid={!!validationErrors.email}
                             required
+                            autoComplete="username"
                           />
                           <Form.Control.Feedback type="invalid">
                             {validationErrors.email}
@@ -215,10 +187,12 @@ const handleSubmit = async (e) => {
                             onChange={handleChange}
                             isInvalid={!!validationErrors.password}
                             required
+                            autoComplete="current-password"
                           />
                           <InputGroup.Text
                             style={{ cursor: "pointer" }}
                             onClick={() => setShowPassword(!showPassword)}
+                            className="bg-white"
                           >
                             {showPassword ? <FaEyeSlash /> : <FaEye />}
                           </InputGroup.Text>
@@ -234,10 +208,12 @@ const handleSubmit = async (e) => {
                           type="checkbox"
                           id="rememberMe"
                           label="Remember me"
+                          checked={rememberMe}
+                          onChange={(e) => setRememberMe(e.target.checked)}
                         />
                         <Link
                           to="/forgot-password"
-                          className="text-decoration-none"
+                          className="text-decoration-none text-primary"
                         >
                           Forgot password?
                         </Link>
@@ -247,7 +223,7 @@ const handleSubmit = async (e) => {
                       <Button
                         variant="primary"
                         type="submit"
-                        className="w-100 py-2 mb-3"
+                        className="w-100 py-2 mb-3 fw-bold"
                         disabled={isLoading}
                       >
                         {isLoading ? (
@@ -295,7 +271,7 @@ const handleSubmit = async (e) => {
                         </span>
                         <Link
                           to="/register"
-                          className="text-decoration-none fw-bold"
+                          className="text-decoration-none fw-bold text-primary"
                         >
                           Sign up
                         </Link>

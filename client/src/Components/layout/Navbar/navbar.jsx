@@ -1,101 +1,33 @@
-// // src/components/Navbar.jsx
-// import React from 'react';
-// import { Link } from 'react-router-dom';
-// import './navbar.css';
-// import { FaUserCircle, FaBars } from 'react-icons/fa';
-// import  { useState, useRef, useEffect } from "react";
-// import { useNavigate } from "react-router-dom";
-// const Navbar = ({ onToggleSidebar }) => {
-//    const [showDropdown, setShowDropdown] = useState(false);
-//   const dropdownRef = useRef(null);
-//   const navigate = useNavigate();
-
-//   const handleProfileClick = () => {
-//     navigate("/my-profile");
-//     setShowDropdown(false); // Close dropdown
-//   };
-
-//   const handleLogout = () => {
-//     // Perform your logout logic here (e.g. clear token, redirect)
-//     localStorage.clear();
-//     navigate("/login");
-//   };
-
-//   // Close dropdown if clicked outside
-//   useEffect(() => {
-//     const handleClickOutside = (event) => {
-//       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-//         setShowDropdown(false);
-//       }
-//     };
-//     document.addEventListener("mousedown", handleClickOutside);
-//     return () => document.removeEventListener("mousedown", handleClickOutside);
-//   }, []);
-
-//   return (
-//     <>
-//       {/* ✅ Mobile Top Bar (xs/sm only) */}
-      
-//       <div className="navbar bg-light d-flex justify-content-between align-items-center px-3 py-2 d-block d-md-none">
-//         <h3 className="m-0">OmniRental</h3>
-//         <button className="btn" onClick={onToggleSidebar}>
-//           <FaBars size={24}   onClick={() => setShowDropdown(!showDropdown)}/>
-//         </button>
-//       </div>
-
-//       {/* ✅ Main Navbar (md/lg only) */}
-//       <nav className="navbar navbar-expand-lg navbar-dark  d-none d-md-flex px-4">
-//         <div className="container-fluid">
-//           <Link className="navbar-brand logo" to="/">OmniRental</Link>
-
-//           <div className="ms-auto d-flex align-items-center ">
-//             <input
-//               className="form-control me-2 searchbar"
-//               type="search"
-//               placeholder="Search"
-//               aria-label="Search"
-//             />
-//             <Link to="/profile" className="btn btn-outline-light profile-icon ms-2">
-//               <FaUserCircle size={30} />
-//             </Link>
-            
-//           </div>
-
-//         </div>
-         
-//       </nav>
-//     </>
-//   );
-// };
-
-// export default Navbar;
-
-// src/components/Navbar.jsx
+// src/components/layout/Navbar/navbar.jsx
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './navbar.css';
 import { FaUserCircle, FaBars } from 'react-icons/fa';
-import { MdArrowForward } from "react-icons/md";
+import { MdArrowForward } from 'react-icons/md';
+import useAuth from '../../../context/useAuth';
+import './navbar.css';
+
 const Navbar = ({ onToggleSidebar }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const { user, logout } = useAuth(); // ✅ Get user from context
 
   const handleProfileClick = () => {
-    navigate("/my-profile");
+    navigate(`/${user?.role}/profile`);
     setShowDropdown(false);
   };
 
-    const handleEditProfileClick = () => {
-    navigate("/owner/edit-profile");
+  const handleEditProfileClick = () => {
+    navigate(`/${user?.role}/edit-profile`);
     setShowDropdown(false);
   };
+
   const handleLogout = () => {
-    localStorage.clear();
-    navigate("/login");
+    logout();
+    setShowDropdown(false);
   };
 
-  // Close dropdown if clicked outside
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -105,6 +37,10 @@ const Navbar = ({ onToggleSidebar }) => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const avatar = user?.profilePic || 'https://via.placeholder.com/40';
+  const username = user?.fullname || user?.name || 'User';
+
 
   return (
     <>
@@ -129,23 +65,30 @@ const Navbar = ({ onToggleSidebar }) => {
               aria-label="Search"
             />
 
-            <FaUserCircle
-              size={60}
-              className="btn btn-outline-light profile-icon ms-2"
+            <div
+              className="d-flex align-items-center btn btn-outline-light ms-2 px-2 py-1 rounded"
               onClick={() => setShowDropdown(!showDropdown)}
               style={{ cursor: 'pointer' }}
-            />
+            >
+              <img
+                src={avatar}
+                alt="avatar"
+                className="rounded-circle me-2"
+                style={{ width: '40px', height: '40px', objectFit: 'cover' }}
+              />
+              <span className="text-white fw-semibold d-none d-md-inline">{user.username}</span>
+            </div>
 
             {showDropdown && (
-              <div className="dropdown-menu show">
+              <div className="dropdown-menu dropdown-menu-end show mt-2">
                 <button className="dropdown-item" onClick={handleProfileClick}>
                   My Profile
                 </button>
                 <button className="dropdown-item" onClick={handleEditProfileClick}>
                   Edit Profile
                 </button>
-                <button className="dropdown-item" onClick={handleLogout} style={{color:'red'}}>
-                  Logout<MdArrowForward />
+                <button className="dropdown-item text-danger d-flex align-items-center" onClick={handleLogout}>
+                  Logout <MdArrowForward className="ms-1" />
                 </button>
               </div>
             )}

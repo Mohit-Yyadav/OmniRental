@@ -1,117 +1,100 @@
-// controllers/authController.js
+const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-const User = require('../models/user');
 const { validationResult } = require('express-validator');
 
-// Helper function to generate token
-const generateToken = (user) => {
-  return jwt.sign(
-    { 
-      id: user._id, 
-      role: user.role,
-      profileComplete: user.profileComplete 
-    }, 
-    process.env.JWT_SECRET, 
-    { expiresIn: '1d' }
-  );
-};
-
+// @desc    Register a new user
+// @route   POST /api/auth/register
 exports.register = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
 
+  const { username, email, password, role } = req.body;
+
   try {
-    const { name, email, password, role } = req.body;
-    
-    // Validate role
-    const allowedRoles = ['tenant', 'owner', 'admin'];
-    if (!allowedRoles.includes(role)) {
-      return res.status(400).json({ error: 'Invalid role' });
-    }
-
     // Check if user exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ error: 'Email already in use' });
+    let user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({ message: 'User already exists' });
     }
 
-    const user = new User({ 
-      name, 
-      email, 
-      password, 
-      role,
-      profileComplete: false
-    });
-    
+    // Create new user
+    user = new User({ username, email, password, role });
     await user.save();
 
-    const token = generateToken(user);
+    // Generate JWT
+    const token = jwt.sign(
+      { userId: user.id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
 
-    res.status(201).json({ 
-      token, 
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        profileComplete: user.profileComplete
-      }
-    });
-  } catch (error) {
-    console.error('Registration error:', error);
-    res.status(400).json({ error: error.message });
-  }
-};
-
-exports.login = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    
-    if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-
-    const token = generateToken(user);
-
-    res.json({ 
+    res.status(201).json({
       token,
       user: {
-        id: user._id,
-        name: user.name,
+        id: user.id,
+        username: user.username,
         email: user.email,
         role: user.role,
         profileComplete: user.profileComplete
       }
     });
   } catch (error) {
-    console.error('Login error:', error);
-    res.status(400).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-exports.verifyToken = async (req, res) => {
+// @desc    Login user
+// @route   POST /api/auth/login
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const user = await User.findById(req.user.id).select('-password');
+    // Check if user exists
+    const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(400).json({ message: 'Invalid credentials' });
     }
-    
-    res.json({ user });
+
+    // Check password
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid credentials' });
+    }
+
+    // Generate JWT
+    const token = jwt.sign(
+      { userId: user.id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    );
+
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        profileComplete: user.profileComplete
+      }
+    });
   } catch (error) {
-    console.error('Token verification error:', error);
-    res.status(400).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// @desc    Get current user
+// @route   GET /api/auth/me
+exports.getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).select('-password');
+    res.json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
   }
 };

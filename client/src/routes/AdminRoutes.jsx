@@ -5,12 +5,12 @@ import Edittenant from '../pages/admin/Edittenant';
 import OwnerProfile from '../pages/admin/ownerProfile';
 import OwnerForm from '../pages/admin/OwnerForm';
 const adminRoutes = [
-  { path: '/dashboard', element: <Dashboard /> },
-  { path: '/list-tenants', element: <TenantList /> },
-  { path: '/add-tenant', element: <AddTenant /> },
-  { path: '/edit-tenant/:id', element: <Edittenant /> },
-   {path:'/my-profile', element:<OwnerProfile />},
-   {path:"/owner/edit-profile", element: <OwnerForm />},
+  { path: '/owner/dashboard', element: <Dashboard /> },
+  { path: '/owner/list-tenants', element: <TenantList /> },
+  { path: '/owner/add-tenant', element: <AddTenant /> },
+  { path: '/owner/edit-tenant/:id', element: <Edittenant /> },
+  { path: '/owner/my-profile', element: <OwnerProfile /> },
+  { path: '/owner/edit-profile', element: <OwnerForm /> },
 ];
 
 export default adminRoutes;
