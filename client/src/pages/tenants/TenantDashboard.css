@@ -118,3 +118,191 @@
   font-weight: bold;
   text-align: center;
 }
+
+/* src/components/Sidebar.css */
+/* src/components/Sidebar.css */
+.custom-sidebar {
+  background-color: #001529;
+  overflow: auto;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  left: 0;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease-in-out;
+}
+
+.logo-container {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo-img {
+  display: block;
+  height: 36px;
+  margin-right: 8px;
+}
+
+.logo-text {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.sidebar-menu {
+  padding-top: 8px;
+}
+
+.sidebar-menu-item {
+  margin: 4px 0;
+  font-size: 15px;
+  border-radius: 6px !important;
+}
+
+.ant-menu-item-selected {
+  background-color: #1890ff !important;
+  font-weight: bold;
+  color: white !important;
+}
+
+.ant-menu-dark .ant-menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+
+
+/* src/components/Navbar.css */
+.site-header {
+  background: #fff;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 64px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.menu-toggle {
+  font-size: 18px;
+}
+
+.dashboard-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-name {
+  font-weight: 500;
+}
+
+/* history */
+
+.history-page {
+  padding: 20px;
+}
+
+/* Profile  */
+
+.profile-page {
+  padding: 20px;
+}
+
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+/* Property */
+
+.property-page {
+  padding: 20px;
+}
+
+.property-page .form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.property-page .form-row .ant-form-item {
+  flex: 1;
+}
+
+
+.site-header {
+  background: #fff;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  height: 64px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.menu-toggle {
+  font-size: 18px;
+  margin-right: 16px;
+}
+
+.dashboard-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-name {
+  font-weight: 500;
+}
+
+/* payments */
+
+.payments-content {
+  padding: 20px;
+}
