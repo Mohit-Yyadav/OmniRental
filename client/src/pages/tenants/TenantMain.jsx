@@ -55,6 +55,7 @@ const TenantMain = () => {
         collapsed={collapsed}
         setCollapsed={setCollapsed}
         activeMenu={activeMenu}
+        
         handleMenuClick={(e) => setActiveMenu(e.key)}
       />
       <Layout>

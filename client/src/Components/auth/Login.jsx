@@ -270,7 +270,7 @@ useEffect(() => {
                           Don't have an account?{" "}
                         </span>
                         <Link
-                          to="/register"
+                          to="/signup"
                           className="text-decoration-none fw-bold text-primary"
                         >
                           Sign up

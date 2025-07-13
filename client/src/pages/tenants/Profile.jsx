@@ -1,20 +1,26 @@
 // src/pages/tenants/Profile.jsx
 import React, { useState, useEffect } from 'react';
-import { Card, Form, Input, Button, Avatar } from 'antd';
-import { EditOutlined, SaveOutlined } from '@ant-design/icons';
+import { Card, Form, Input, Button, Avatar, Upload, Select, Row, Col } from 'antd';
+import { EditOutlined, SaveOutlined, UploadOutlined } from '@ant-design/icons';
+
+const { Option } = Select;
 
 const Profile = () => {
   const [form] = Form.useForm();
   const [editMode, setEditMode] = useState(false);
 
-  // Mock profile data (replace with props/API if needed)
   const [profileData, setProfileData] = useState({
     name: 'John Doe',
     email: 'john.doe@example.com',
     phone: '+1 234 567 890',
     address: '123 Main St, New York, NY',
     emergencyContact: 'Jane Doe - +1 345 678 901',
-    idProof: 'A1234567',
+    idProofNumber: 'A1234567',
+    occupation: 'Software Engineer',
+    age: 30,
+    gender: 'Male',
+    familyMembers: 'Wife: Jane, Son: Alex',
+    idProofDoc: null,
     profilePic: 'https://randomuser.me/api/portraits/men/1.jpg',
   });
 
@@ -24,17 +30,35 @@ const Profile = () => {
 
   const handleEdit = () => setEditMode(true);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const updated = form.getFieldsValue();
-    setProfileData(updated);
-    setEditMode(false);
-    console.log('Profile Updated:', updated);
+
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('http://localhost:5000/api/user/me', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updated),
+      });
+
+      if (!res.ok) throw new Error('Failed to update');
+
+      const data = await res.json();
+      setProfileData(data.user);
+      setEditMode(false);
+      console.log('Profile Updated:', data);
+    } catch (error) {
+      console.error('Error updating profile:', error.message);
+    }
   };
 
   return (
     <div className="profile-page">
       <Card
-        title="My Profile"
+        title="Tenant Profile"
         extra={
           editMode ? (
             <Button type="primary" icon={<SaveOutlined />} onClick={handleSave}>
@@ -47,38 +71,95 @@ const Profile = () => {
           )
         }
       >
-        <div className="profile-details" style={{ display: 'flex', gap: '40px' }}>
-          <div className="avatar-section" style={{ textAlign: 'center' }}>
+        <Row gutter={32}>
+          <Col span={6} style={{ textAlign: 'center' }}>
             <Avatar size={128} src={profileData.profilePic} />
             <p style={{ marginTop: 10 }}>{profileData.name}</p>
-          </div>
+          </Col>
 
-          <Form
-            form={form}
-            layout="vertical"
-            style={{ flex: 1 }}
-            disabled={!editMode}
-          >
-            <Form.Item label="Full Name" name="name">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Email" name="email">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Phone Number" name="phone">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Address" name="address">
-              <Input />
-            </Form.Item>
-            <Form.Item label="Emergency Contact" name="emergencyContact">
-              <Input />
-            </Form.Item>
-            <Form.Item label="ID Proof Number" name="idProof">
-              <Input />
-            </Form.Item>
-          </Form>
-        </div>
+          <Col span={18}>
+            <Form
+              form={form}
+              layout="vertical"
+              disabled={!editMode}
+              initialValues={profileData}
+            >
+              <Row gutter={16}>
+                <Col span={12}>
+                  <Form.Item label="Full Name" name="name">
+                    <Input />
+                  </Form.Item>
+                </Col>
+
+                <Col span={12}>
+                  <Form.Item label="Email" name="email">
+                    <Input type="email" />
+                  </Form.Item>
+                </Col>
+
+                <Col span={12}>
+                  <Form.Item label="Phone Number" name="phone">
+                    <Input />
+                  </Form.Item>
+                </Col>
+
+                <Col span={12}>
+                  <Form.Item label="Occupation" name="occupation">
+                    <Input />
+                  </Form.Item>
+                </Col>
+
+                <Col span={12}>
+                  <Form.Item label="Age" name="age">
+                    <Input type="number" />
+                  </Form.Item>
+                </Col>
+
+                <Col span={12}>
+                  <Form.Item label="Gender" name="gender">
+                    <Select>
+                      <Option value="Male">Male</Option>
+                      <Option value="Female">Female</Option>
+                      <Option value="Other">Other</Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+
+                <Col span={24}>
+                  <Form.Item label="Address" name="address">
+                    <Input.TextArea rows={2} />
+                  </Form.Item>
+                </Col>
+
+                <Col span={24}>
+                  <Form.Item label="Emergency Contact" name="emergencyContact">
+                    <Input />
+                  </Form.Item>
+                </Col>
+
+                <Col span={12}>
+                  <Form.Item label="ID Proof Number" name="idProofNumber">
+                    <Input />
+                  </Form.Item>
+                </Col>
+
+                <Col span={12}>
+                  <Form.Item label="Upload ID Proof Document" name="idProofDoc">
+                    <Upload maxCount={1} beforeUpload={() => false}>
+                      <Button icon={<UploadOutlined />}>Upload</Button>
+                    </Upload>
+                  </Form.Item>
+                </Col>
+
+                <Col span={24}>
+                  <Form.Item label="Family Members Details" name="familyMembers">
+                    <Input.TextArea rows={2} />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form>
+          </Col>
+        </Row>
       </Card>
     </div>
   );
