@@ -10,6 +10,7 @@ import {
 } from '@ant-design/icons';
 import { Layout, Menu, Tooltip } from 'antd';
 import './TenantDashboard.css';
+import { Link } from 'react-router-dom';
 
 const { Sider } = Layout;
 
@@ -92,14 +93,16 @@ const Sidebar = ({ collapsed, setCollapsed, activeMenu, handleMenuClick }) => {
       className="custom-sidebar"
     >
       <div className="logo-container">
-        <img
-          src="/logo192.png"
-          alt="logo"
-          className="logo-img"
-          style={{ width: collapsed ? 36 : 120, transition: 'width 0.3s' }}
-        />
-        {!collapsed && <h2 className="logo-text">Rental Portal</h2>}
-      </div>
+  <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+    <img
+      src="/logo192.png"
+      alt="logo"
+      className="logo-img"
+      style={{ width: collapsed ? 36 : 120, transition: 'width 0.3s' }}
+    />
+    {!collapsed && <h2 className="logo-text" style={{ marginLeft: 10, color: '' }}>Omni Rental</h2>}
+  </Link>
+</div>
 
       <Menu
         theme="dark"

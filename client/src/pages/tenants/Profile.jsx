@@ -2,31 +2,62 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Form, Input, Button, Avatar, Upload, Select, Row, Col } from 'antd';
 import { EditOutlined, SaveOutlined, UploadOutlined } from '@ant-design/icons';
+ import useAuth from '../../context/useAuth';// ✅
+
 
 const { Option } = Select;
+ // ✅ This gives you logged-in user data
 
 const Profile = () => {
+  const { user } = useAuth();
   const [form] = Form.useForm();
   const [editMode, setEditMode] = useState(false);
 
   const [profileData, setProfileData] = useState({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 234 567 890',
-    address: '123 Main St, New York, NY',
-    emergencyContact: 'Jane Doe - +1 345 678 901',
-    idProofNumber: 'A1234567',
-    occupation: 'Software Engineer',
-    age: 30,
-    gender: 'Male',
-    familyMembers: 'Wife: Jane, Son: Alex',
-    idProofDoc: null,
+    name: user.name || 'John Doe',
+    email: user.email || 'john.doe@example.com',
+    phone: user.phone || '+1 234 567 890',
+    address: user.address || '123 Main St, New York, NY',
+    emergencyContact: user.emergencyContact || 'Jane Doe - +1 345 678 901',
+    idProofNumber: user.idProofNumber || 'A1234567',
+    occupation: user.occupation || 'Software Engineer',
+    age: user.age || 30,
+    gender: user.gender || 'Male',
+    familyMembers: user.familyMembers || 'Wife: Jane, Son: Alex',
+    idProofDoc: user.idProofDoc || null,
     profilePic: 'https://randomuser.me/api/portraits/men/1.jpg',
   });
 
-  useEffect(() => {
-    form.setFieldsValue(profileData);
-  }, [form, profileData]);
+useEffect(() => {
+  const fetchProfile = async () => {
+    const token = localStorage.getItem('token');
+   
+    if (!token) {
+      console.warn("No token found in localStorage");
+      return;
+    }
+
+    try {
+      const res = await fetch('http://localhost:5000/api/user/me', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) throw new Error('Failed to fetch user data');
+
+      const data = await res.json();
+      setProfileData(data.user);
+      form.setFieldsValue(data.user);
+    } catch (error) {
+      console.error('Error fetching user data:', error.message);
+    }
+  };
+
+  fetchProfile();
+}, [form]);
+
+
 
   const handleEdit = () => setEditMode(true);
 
@@ -73,7 +104,8 @@ const Profile = () => {
       >
         <Row gutter={32}>
           <Col span={6} style={{ textAlign: 'center' }}>
-            <Avatar size={128} src={profileData.profilePic} />
+            <Avatar size={128} src={profileData.profilePic || 'https://randomuser.me/api/portraits/men/1.jpg'} />
+
             <p style={{ marginTop: 10 }}>{profileData.name}</p>
           </Col>
 
@@ -144,11 +176,17 @@ const Profile = () => {
                 </Col>
 
                 <Col span={12}>
-                  <Form.Item label="Upload ID Proof Document" name="idProofDoc">
-                    <Upload maxCount={1} beforeUpload={() => false}>
-                      <Button icon={<UploadOutlined />}>Upload</Button>
-                    </Upload>
-                  </Form.Item>
+                 <Form.Item label="Upload ID Proof Document">
+  <Upload
+    fileList={profileData.idProofDoc ? [profileData.idProofDoc] : []}
+    onChange={({ fileList }) => setProfileData(prev => ({ ...prev, idProofDoc: fileList[0] }))}
+    beforeUpload={() => false}
+    maxCount={1}
+  >
+    <Button icon={<UploadOutlined />}>Upload</Button>
+  </Upload>
+</Form.Item>
+
                 </Col>
 
                 <Col span={24}>

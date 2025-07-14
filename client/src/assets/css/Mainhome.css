@@ -414,3 +414,10 @@
     margin-bottom: 1rem;
   }
 }
+
+/* In your main CSS or inside Navbar.module.css */
+.dropdown-menu {
+  z-index: 1055 !important;
+}
+
+

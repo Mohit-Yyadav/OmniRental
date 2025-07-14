@@ -7,7 +7,21 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, enum: ['tenant', 'owner'], default: 'tenant' },
   profileComplete: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
+  // ✅ Additional profile fields
+  name: String,
+  phone: String,
+  age: Number,
+  gender: String,
+  address: String,
+  emergencyContact: String,
+  idProofNumber: String,
+  idProofDoc: {
+    uid: String,
+    name: String,
+    url: String,
+  },
+  familyMembers: String
 });
 
 // Hash password before saving

@@ -8,10 +8,12 @@ import { Dropdown } from "react-bootstrap";
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { currentUser, logout } = useAuth();
+  const { user, logout } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+
 
   // Add scroll effect to navbar
   useEffect(() => {
@@ -149,7 +151,7 @@ const Navbar = () => {
   >
     {/* Dynamic logo handling - falls back to SVG if image not found */}
     <img
-      src={currentUser?.photoURL || '/src/assets/logo.svg'}  // Use your actual logo path
+      src={user?.photoURL || '/src/assets/logo.svg'}  // Use your actual logo path
       alt="OmniRental Logo"
       className="img-fluid"
       style={{ 
@@ -228,7 +230,7 @@ const Navbar = () => {
 
           {/* Right side buttons */}
 <div className="d-flex align-items-center gap-2">
-  {currentUser ? (
+  {user ? (
     <>
       {/* Notifications Button */}
       <button 
@@ -274,9 +276,9 @@ const Navbar = () => {
               transition: 'transform 0.2s ease'
             }}
           >
-            {currentUser.photoURL ? (
+            {user.photoURL ? (
               <img 
-                src={currentUser.photoURL} 
+                src={user.photoURL} 
                 alt="Profile" 
                 style={{ 
                   width: '100%', 
@@ -293,13 +295,15 @@ const Navbar = () => {
             )}
           </div>
           <span className={`d-none d-lg-inline ${scrolled ? 'text-dark' : 'text-white'}`}>
-            {currentUser.displayName?.split(' ')[0] || "My Account"}
-          </span>
+  Hello, {user?.username || "User"}
+</span>
+
         </Dropdown.Toggle>
 
         <Dropdown.Menu 
           className="shadow-lg border-0 mt-2" 
           style={{
+             zIndex: 1060,
             minWidth: '220px',
             boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04)',
             borderRadius: '12px',
@@ -307,11 +311,11 @@ const Navbar = () => {
           }}
           align="end"
         >
-          <Dropdown.Header className="text-muted small d-flex flex-column">
-            <span className="fw-bold">{currentUser.displayName || 'User'}</span>
-            <small>{currentUser.email || ''}</small>
-          </Dropdown.Header>
-          <Dropdown.Divider />
+          {/* <Dropdown.Header className="text-muted small d-flex flex-column">
+            <span className="fw-bold">{user.username || 'User'}</span>
+            <small>{user.email || ''}</small>
+          </Dropdown.Header> */}
+          
           <Dropdown.Item
             as={Link}
             to="/dashboard"
@@ -330,15 +334,7 @@ const Navbar = () => {
           >
             <Settings size={16} /> My Profile
           </Dropdown.Item>
-          <Dropdown.Item
-            as={Link}
-            to="/bookings"
-            className="d-flex align-items-center gap-2 py-2"
-            style={{ transition: 'all 0.2s ease' }}
-            onClick={() => setShowDropdown(false)}
-          >
-            <Bookmark size={16} /> My Bookings
-          </Dropdown.Item>
+          
           <Dropdown.Divider />
           <Dropdown.Item
             onClick={handleLogout}
@@ -400,7 +396,7 @@ const Navbar = () => {
                 </Link>
               </li>
             ))}
-            {currentUser ? (
+            {user ? (
               <>
                 <li className="nav-item mb-2">
                   <Link
@@ -420,15 +416,7 @@ const Navbar = () => {
                     <Settings size={18} /> My Profile
                   </Link>
                 </li>
-                <li className="nav-item mb-2">
-                  <Link
-                    to="/bookings"
-                    className="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded"
-                    style={styles.mobileNavLink(location.pathname === '/bookings')}
-                  >
-                    <Bookmark size={18} /> My Bookings
-                  </Link>
-                </li>
+                
                 <li className="nav-item">
                   <button
                     onClick={handleLogout}

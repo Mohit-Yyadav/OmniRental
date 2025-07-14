@@ -10,7 +10,7 @@ import Payments from './Payments';
 import Requests from './Requests';
 import History from './History';
 import './TenantDashboard.css';
-import useAuth from '../../context/useAuth'; // ✅
+ import useAuth from '../../context/useAuth';// ✅
 
 const { Content } = Layout;
 
