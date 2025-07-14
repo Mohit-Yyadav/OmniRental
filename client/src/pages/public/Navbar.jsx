@@ -65,6 +65,17 @@ const Navbar = () => {
     navigate("/");
     setShowDropdown(false);
   };
+  const handleDashboardRedirect = () => {
+  if (user?.role === 'tenant') {
+    navigate('/tenant/dashboard');
+  } else if (user?.role === 'owner') {
+    navigate('/owner/dashboard');
+  } else {
+    navigate('/'); // fallback
+  }
+  setShowDropdown(false);
+};
+
 
   // Internal CSS styles
   const styles = {
@@ -247,7 +258,7 @@ const Navbar = () => {
       >
         <Bell size={20} />
         <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-          3
+          99+
           <span className="visually-hidden">unread notifications</span>
         </span>
       </button>
@@ -317,14 +328,12 @@ const Navbar = () => {
           </Dropdown.Header> */}
           
           <Dropdown.Item
-            as={Link}
-            to="/dashboard"
-            className="d-flex align-items-center gap-2 py-2"
-            style={{ transition: 'all 0.2s ease' }}
-            onClick={() => setShowDropdown(false)}
-          >
-            <User size={16} /> Dashboard
-          </Dropdown.Item>
+  onClick={handleDashboardRedirect}
+  className="d-flex align-items-center gap-2 py-2"
+>
+  <User size={16} /> Dashboard
+</Dropdown.Item>
+
           <Dropdown.Item
             as={Link}
             to="/profile"
@@ -399,14 +408,14 @@ const Navbar = () => {
             {user ? (
               <>
                 <li className="nav-item mb-2">
-                  <Link
-                    to="/dashboard"
-                    className="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded"
-                    style={styles.mobileNavLink(location.pathname === '/dashboard')}
-                  >
-                    <User size={18} /> Dashboard
-                  </Link>
-                </li>
+  <button
+    onClick={handleDashboardRedirect}
+    className="nav-link d-flex align-items-center gap-3 px-3 py-2 rounded w-100 text-start"
+  >
+    <User size={18} /> Dashboard
+  </button>
+</li>
+
                 <li className="nav-item mb-2">
                   <Link
                     to="/profile"

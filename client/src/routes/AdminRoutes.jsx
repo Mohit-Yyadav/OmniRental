@@ -1,4 +1,4 @@
-import Dashboard from '../pages/admin/Dashboard';
+import Dashboard from '../pages/Owner/OwnerMain';
 import TenantList from '../Pages/admin/TenantList';
 import AddTenant from '../pages/admin/AddTenant';
 import Edittenant from '../pages/admin/Edittenant';

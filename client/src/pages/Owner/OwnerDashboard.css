@@ -1,0 +1,413 @@
+/* Owner Dashboard Specific Styles */
+.dashboard-content {
+  padding: 20px;
+}
+
+.dashboard-content h2 {
+  margin-bottom: 20px;
+  color: #1d39c4; /* Owner-specific primary color */
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.dashboard-card {
+  height: 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+}
+
+.dashboard-card .ant-card-head {
+  background-color: #f0f5ff; /* Light blue header for owner cards */
+  border-radius: 8px 8px 0 0 !important;
+}
+
+.revenue-status {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.revenue-info {
+  flex: 1;
+}
+
+.revenue-info p {
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+
+/* Owner-specific components */
+.owner-content, .properties-content, .financials-content, .tenants-content {
+  padding: 24px;
+}
+
+.owner-header, .properties-header, .financials-header, .tenants-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.property-overview {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 24px;
+}
+
+.property-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.stat-card h3 {
+  color: #1d39c4;
+  margin-bottom: 8px;
+}
+
+.stat-card p {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.form-row {
+  display: flex;
+  gap: 24px;
+}
+
+.form-col {
+  flex: 1;
+}
+
+/* Header modifications for owner */
+.site-header {
+  background: #1d39c4; /* Owner brand color */
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-title {
+  color: white !important;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-name {
+  color: white;
+}
+
+.notifications-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.notification-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.notification-item.unread {
+  font-weight: bold;
+  background-color: #f0f5ff;
+  padding: 12px;
+  border-radius: 4px;
+}
+
+.notification-item small {
+  color: #888;
+}
+
+/* Sidebar modifications for owner */
+.custom-sidebar {
+  background-color: #1d39c4; /* Owner brand color */
+}
+
+.logo-container {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.logo-text {
+  color: white;
+  font-size: 20px;
+}
+
+.ant-menu-dark .ant-menu-item-selected {
+  background-color: #597ef7 !important;
+}
+
+/* Financial charts */
+.financial-chart {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .revenue-status {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Owner-specific status tags */
+.ant-tag {
+  border-radius: 4px;
+}
+
+.ant-tag-success {
+  background: #f6ffed;
+  border-color: #b7eb8f;
+}
+
+.ant-tag-processing {
+  background: #e6f7ff;
+  border-color: #91d5ff;
+}
+
+.ant-tag-warning {
+  background: #fffbe6;
+  border-color: #ffe58f;
+}
+
+/* Owner Navbar Styles */
+.owner-site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  height: 64px;
+  line-height: 64px;
+  z-index: 1;
+}
+
+.owner-site-header .header-left {
+  display: flex;
+  align-items: center;
+}
+
+.owner-site-header .header-brand {
+  display: flex;
+  align-items: center;
+  margin-left: 16px;
+}
+
+.owner-site-header .brand-icon {
+  font-size: 24px;
+  color: #1890ff;
+  margin-right: 12px;
+}
+
+.owner-site-header .dashboard-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.85);
+}
+
+.owner-site-header .header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.owner-site-header .menu-toggle {
+  font-size: 16px;
+  width: 64px;
+  height: 64px;
+}
+
+.owner-site-header .quick-view-btn,
+.owner-site-header .notif-btn {
+  font-size: 18px;
+  width: 42px;
+  height: 42px;
+}
+
+.owner-user-info {
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.owner-user-info:hover {
+  background: rgba(0, 0, 0, 0.025);
+}
+
+.owner-avatar {
+  background-color: #1890ff;
+  margin-right: 12px;
+}
+
+.owner-user-details {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.4;
+}
+
+.owner-user-details .user-name {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.owner-user-details .user-role {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+
+/* Owner Sidebar Styles */
+.owner-sidebar {
+  background: #001529;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  z-index: 100;
+  box-shadow: 2px 0 8px 0 rgba(29, 35, 41, 0.05);
+}
+
+.owner-sidebar .owner-logo-container {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  background: #002140;
+  overflow: hidden;
+}
+
+.owner-sidebar .owner-logo-icon {
+  font-size: 24px;
+  color: #1890ff;
+  margin-right: 8px;
+}
+
+.owner-sidebar .owner-logo-text {
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.owner-sidebar .logo-highlight {
+  color: #1890ff;
+}
+
+.owner-sidebar-menu {
+  padding: 16px 0;
+  border-right: 0;
+}
+
+.owner-sidebar-menu .ant-menu-item {
+  margin: 8px 0;
+  padding-left: 24px !important;
+  height: 40px;
+  line-height: 40px;
+}
+
+.owner-sidebar-menu .ant-menu-item-selected {
+  background-color: #1890ff !important;
+}
+
+.owner-sidebar-menu .ant-menu-item:not(.ant-menu-item-selected):hover {
+  background-color: rgba(24, 144, 255, 0.1);
+}
+
+.owner-sidebar-menu .ant-badge-count {
+  box-shadow: none;
+  font-size: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+  .owner-sidebar {
+    position: fixed;
+    z-index: 1000;
+  }
+  
+  .owner-sidebar.ant-layout-sider-collapsed {
+    position: fixed;
+  }
+}
+
+
+/* Owner Profile Styles */
+.owner-profile-page {
+  padding: 24px;
+}
+
+.owner-profile-page .ant-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+}
+
+.owner-profile-page .ant-card-head {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.owner-profile-page .ant-avatar {
+  border: 2px solid #1890ff;
+}
+
+.owner-stats {
+  text-align: left;
+  padding: 0 16px;
+}
+
+.owner-stats p {
+  margin-bottom: 8px;
+}
+
+.owner-profile-page .ant-tabs-tab {
+  font-weight: 500;
+}
+
+.owner-profile-page .ant-tabs-nav::before {
+  border-bottom: none;
+}
+
+.owner-profile-page .ant-form-item-label label {
+  font-weight: 500;
+}
+
+.owner-profile-page .ant-upload.ant-upload-select {
+  display: block;
+}
