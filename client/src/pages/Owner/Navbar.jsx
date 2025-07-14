@@ -10,9 +10,7 @@ import {
   SettingOutlined 
 } from '@ant-design/icons';
 import { UserOutlined } from '@ant-design/icons';
-
 import { Layout, Avatar, Badge, Button, Tooltip, Dropdown, Menu } from 'antd';
-import './OwnerDashboard.css';
 
 const { Header } = Layout;
 
@@ -20,71 +18,99 @@ const OwnerNavbar = ({
   collapsed,
   setCollapsed,
   notifications = [],
-  user = {},
-  onLogout = () => {}
+   user = {},
+  onLogout = () => {},
+  setActiveMenu = () => {}
+
 }) => {
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const menu = (
-    <Menu>
-      <Menu.Item key="profile" icon={<UserOutlined />}>
-        My Profile
-      </Menu.Item>
-      <Menu.Item key="settings" icon={<SettingOutlined />}>
-        Account Settings
-      </Menu.Item>
+    <Menu className="owner-navbar__dropdown-menu">
+      <Menu.Item 
+  key="profile" 
+  icon={<UserOutlined />} 
+  onClick={() => setActiveMenu("profile")}
+>
+  My Profile
+</Menu.Item>
+
+      <Menu.Item 
+  key="settings" 
+  icon={<SettingOutlined />} 
+  onClick={() => setActiveMenu("settings")}
+>
+  Account Settings
+</Menu.Item>
+
       <Menu.Divider />
-      <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={onLogout}>
+      <Menu.Item 
+        key="logout" 
+        icon={<LogoutOutlined />} 
+        onClick={onLogout}
+        className="owner-navbar__logout-item"
+      >
         Logout
       </Menu.Item>
     </Menu>
   );
 
   return (
-    <Header className="owner-site-header">
-      <div className="header-left">
+    <Header className="owner-navbar">
+      <div className="owner-navbar__left">
         <Button
           type="text"
           icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           onClick={() => setCollapsed(!collapsed)}
-          className="menu-toggle"
+          className="owner-navbar__toggle-btn"
         />
-        <div className="header-brand">
-          <PropertySafetyOutlined className="brand-icon" />
-          <h1 className="dashboard-title">Property Owner Portal</h1>
+        <div className="owner-navbar__brand">
+          <PropertySafetyOutlined className="owner-navbar__brand-icon" />
+          <h1 className="owner-navbar__title">Property Owner Portal</h1>
         </div>
       </div>
 
-      <div className="header-right">
+      <div className="owner-navbar__right">
         <Tooltip title="Quick View">
           <Button 
             type="text" 
             icon={<DashboardOutlined />} 
-            className="quick-view-btn"
+            className="owner-navbar__quick-view"
           />
         </Tooltip>
 
         <Tooltip title="Notifications">
-          <Badge count={unreadCount} offset={[-5, 5]}>
+          <Badge 
+            count={unreadCount} 
+            offset={[-5, 5]}
+            className="owner-navbar__badge"
+          >
             <Button 
               type="text" 
               icon={<BellOutlined />} 
               size="large" 
-              className="notif-btn"
+              className="owner-navbar__notifications-btn"
             />
           </Badge>
         </Tooltip>
 
-        <Dropdown overlay={menu} trigger={['click']}>
-          <div className="owner-user-info">
+        <Dropdown 
+          overlay={menu} 
+          trigger={['click']}
+          overlayClassName="owner-navbar__dropdown"
+        >
+          <div className="owner-navbar__user">
             <Avatar 
               src={user?.profilePic} 
-              className="owner-avatar"
+              className="owner-navbar__avatar"
               size="large"
+              icon={!user?.profilePic ? <UserOutlined /> : null}
             />
-            <div className="owner-user-details">
-              <span className="user-name">{user?.username || 'Owner'}</span>
-              <span className="user-role">Property Owner</span>
+            <div className="owner-navbar__user-info">
+              <span className="owner-navbar__username">
+                {user?.username || 'Owner'}
+              </span>
+              <span className="owner-navbar__role">Property Owner</span>
             </div>
           </div>
         </Dropdown>

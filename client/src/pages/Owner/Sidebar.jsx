@@ -12,7 +12,6 @@ import {
   PieChartOutlined
 } from '@ant-design/icons';
 import { Layout, Menu, Tooltip, Badge } from 'antd';
-import './OwnerDashboard.css';
 import { Link } from 'react-router-dom';
 
 const { Sider } = Layout;
@@ -27,10 +26,10 @@ const OwnerSidebar = ({
   const menuItems = [
     {
       key: 'dashboard',
-      icon: <DashboardOutlined />,
+      icon: <DashboardOutlined className="owner-sidebar__menu-icon" />,
       label: collapsed ? (
         <Tooltip title="Dashboard Overview" placement="right">
-          <DashboardOutlined />
+          <DashboardOutlined className="owner-sidebar__menu-icon" />
         </Tooltip>
       ) : (
         'Dashboard'
@@ -38,10 +37,10 @@ const OwnerSidebar = ({
     },
     {
       key: 'properties',
-      icon: <PropertySafetyOutlined />,
+      icon: <PropertySafetyOutlined className="owner-sidebar__menu-icon" />,
       label: collapsed ? (
         <Tooltip title="My Properties" placement="right">
-          <PropertySafetyOutlined />
+          <PropertySafetyOutlined className="owner-sidebar__menu-icon" />
         </Tooltip>
       ) : (
         'My Properties'
@@ -49,10 +48,10 @@ const OwnerSidebar = ({
     },
     {
       key: 'tenants',
-      icon: <TeamOutlined />,
+      icon: <TeamOutlined className="owner-sidebar__menu-icon" />,
       label: collapsed ? (
         <Tooltip title="Tenant Management" placement="right">
-          <TeamOutlined />
+          <TeamOutlined className="owner-sidebar__menu-icon" />
         </Tooltip>
       ) : (
         'Tenants'
@@ -60,10 +59,10 @@ const OwnerSidebar = ({
     },
     {
       key: 'financials',
-      icon: <WalletOutlined />,
+      icon: <WalletOutlined className="owner-sidebar__menu-icon" />,
       label: collapsed ? (
         <Tooltip title="Financial Reports" placement="right">
-          <WalletOutlined />
+          <WalletOutlined className="owner-sidebar__menu-icon" />
         </Tooltip>
       ) : (
         'Financials'
@@ -73,23 +72,23 @@ const OwnerSidebar = ({
       key: 'requests',
       icon: (
         <Badge count={pendingRequestsCount} size="small" offset={[-5, 5]}>
-          <ToolOutlined />
+          <ToolOutlined className="owner-sidebar__menu-icon" />
         </Badge>
       ),
       label: collapsed ? (
         <Tooltip title="Maintenance Requests" placement="right">
           <Badge count={pendingRequestsCount} size="small" offset={[-5, 5]}>
-            <ToolOutlined />
+            <ToolOutlined className="owner-sidebar__menu-icon" />
           </Badge>
         </Tooltip>
       ) : (
-        <span>
+        <span className="owner-sidebar__menu-label">
           Maintenance
           {pendingRequestsCount > 0 && (
             <Badge 
               count={pendingRequestsCount} 
               size="small" 
-              style={{ marginLeft: 8 }} 
+              className="owner-sidebar__badge"
             />
           )}
         </span>
@@ -97,10 +96,10 @@ const OwnerSidebar = ({
     },
     {
       key: 'reports',
-      icon: <PieChartOutlined />,
+      icon: <PieChartOutlined className="owner-sidebar__menu-icon" />,
       label: collapsed ? (
         <Tooltip title="Analytics & Reports" placement="right">
-          <PieChartOutlined />
+          <PieChartOutlined className="owner-sidebar__menu-icon" />
         </Tooltip>
       ) : (
         'Reports'
@@ -108,10 +107,10 @@ const OwnerSidebar = ({
     },
     {
       key: 'documents',
-      icon: <FileTextOutlined />,
+      icon: <FileTextOutlined className="owner-sidebar__menu-icon" />,
       label: collapsed ? (
         <Tooltip title="Lease Documents" placement="right">
-          <FileTextOutlined />
+          <FileTextOutlined className="owner-sidebar__menu-icon" />
         </Tooltip>
       ) : (
         'Documents'
@@ -119,10 +118,10 @@ const OwnerSidebar = ({
     },
     {
       key: 'settings',
-      icon: <SettingOutlined />,
+      icon: <SettingOutlined className="owner-sidebar__menu-icon" />,
       label: collapsed ? (
         <Tooltip title="Account Settings" placement="right">
-          <SettingOutlined />
+          <SettingOutlined className="owner-sidebar__menu-icon" />
         </Tooltip>
       ) : (
         'Settings'
@@ -138,13 +137,14 @@ const OwnerSidebar = ({
       width={240}
       className="owner-sidebar"
       breakpoint="lg"
+      collapsedWidth={80}
     >
-      <div className="owner-logo-container">
-        <Link to="/owner" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-          <PropertySafetyOutlined className="owner-logo-icon" />
+      <div className="owner-sidebar__logo">
+        <Link to="/owner" className="owner-sidebar__logo-link">
+          <PropertySafetyOutlined className="owner-sidebar__logo-icon" />
           {!collapsed && (
-            <h2 className="owner-logo-text">
-              Omni<span className="logo-highlight">Owner</span>
+            <h2 className="owner-sidebar__logo-text">
+              Omni<span className="owner-sidebar__logo-highlight">Owner</span>
             </h2>
           )}
         </Link>
@@ -155,7 +155,7 @@ const OwnerSidebar = ({
         mode="inline"
         selectedKeys={[activeMenu]}
         onClick={handleMenuClick}
-        className="owner-sidebar-menu"
+        className="owner-sidebar__menu"
         items={menuItems}
       />
     </Sider>

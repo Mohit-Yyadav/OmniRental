@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, Button, Progress, Table, Tag } from 'antd';
 
-const Dashboard = () => {
+const OwnerDashboard = () => {
   const propertyDetails = {
     propertyName: 'Sunshine Apartments',
     totalUnits: 24,
@@ -73,48 +73,66 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="dashboard-content">
-      <h2>Owner Dashboard</h2>
+    <div className="owner-dashboard">
+      <h2 className="owner-dashboard__title">Owner Dashboard</h2>
 
-      <div className="dashboard-cards">
-        <Card title="Revenue Status" className="dashboard-card">
-          <div className="revenue-status">
-            <Progress type="circle" percent={75} format={() => `${18}/${24}`} />
-            <div className="revenue-info">
+      <div className="owner-dashboard__grid">
+        <Card title="Revenue Status" className="owner-dashboard__card">
+          <div className="owner-dashboard__revenue-status">
+            <Progress 
+              type="circle" 
+              percent={75} 
+              format={() => `${18}/${24}`} 
+              className="owner-dashboard__progress"
+            />
+            <div className="owner-dashboard__revenue-info">
               <p>Occupancy Rate: <strong>75%</strong></p>
-              <p>Monthly Revenue: <strong>${propertyDetails.monthlyRevenue}</strong></p>
-              <Button type="primary">View Financials</Button>
+              <p>Monthly Revenue: <strong>${propertyDetails.monthlyRevenue.toLocaleString()}</strong></p>
+              <Button type="primary" className="owner-dashboard__button">
+                View Financials
+              </Button>
             </div>
           </div>
         </Card>
 
-        <Card title="Property Summary" className="dashboard-card">
-          <p><strong>Property:</strong> {propertyDetails.propertyName}</p>
-          <p><strong>Total Units:</strong> {propertyDetails.totalUnits}</p>
-          <p><strong>Occupied Units:</strong> {propertyDetails.occupiedUnits}</p>
-          <p><strong>Address:</strong> {propertyDetails.address}</p>
+        <Card title="Property Summary" className="owner-dashboard__card">
+          <div className="owner-dashboard__property-info">
+            <p><strong>Property:</strong> {propertyDetails.propertyName}</p>
+            <p><strong>Total Units:</strong> {propertyDetails.totalUnits}</p>
+            <p><strong>Occupied Units:</strong> {propertyDetails.occupiedUnits}</p>
+            <p><strong>Address:</strong> {propertyDetails.address}</p>
+          </div>
         </Card>
 
-        <Card title="Tenant Requests" className="dashboard-card">
+        <Card title="Tenant Requests" className="owner-dashboard__card">
           <Table
             dataSource={tenantRequests}
             columns={requestColumns}
             rowKey="id"
             size="small"
             pagination={false}
+            className="owner-dashboard__table"
           />
         </Card>
 
-        <Card title="Notifications" className="dashboard-card">
-          <div className="notifications-list">
+        <Card title="Notifications" className="owner-dashboard__card">
+          <div className="owner-dashboard__notifications">
             {notifications.map((notification) => (
               <div
                 key={notification.id}
-                className={`notification-item ${!notification.read ? 'unread' : ''}`}
+                className={`owner-dashboard__notification ${
+                  !notification.read ? 'owner-dashboard__notification--unread' : ''
+                }`}
               >
-                <h4>{notification.title}</h4>
-                <p>{notification.message}</p>
-                <small>{notification.date}</small>
+                <h4 className="owner-dashboard__notification-title">
+                  {notification.title}
+                </h4>
+                <p className="owner-dashboard__notification-message">
+                  {notification.message}
+                </p>
+                <small className="owner-dashboard__notification-date">
+                  {notification.date}
+                </small>
               </div>
             ))}
           </div>
@@ -124,4 +142,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default OwnerDashboard;

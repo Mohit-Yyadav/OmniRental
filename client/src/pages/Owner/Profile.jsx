@@ -6,72 +6,65 @@ import {
   Input, 
   Button, 
   Avatar, 
-  Upload, 
   Select, 
   Row, 
   Col,
   Divider,
-  Tabs,
+  message,
+  Spin,
   Tag
 } from 'antd';
 import { 
   EditOutlined, 
-  SaveOutlined, 
-  UploadOutlined,
-  BankOutlined,
-  IdcardOutlined,
+  SaveOutlined,
   SafetyCertificateOutlined
 } from '@ant-design/icons';
 import useAuth from '../../context/useAuth';
-import './OwnerDashboard.css';
 
 const { Option } = Select;
-const { TabPane } = Tabs;
 
 const OwnerProfile = () => {
   const { user } = useAuth();
   const [form] = Form.useForm();
   const [editMode, setEditMode] = useState(false);
-  const [activeTab, setActiveTab] = useState('personal');
-
+  const [loading, setLoading] = useState(false);
   const [profileData, setProfileData] = useState({
-    name: user.name || 'Property Owner',
-    email: user.email || 'owner@example.com',
-    phone: user.phone || '+1 234 567 890',
-    address: user.address || '456 Business Ave, New York, NY',
-    companyName: user.companyName || 'Omni Properties LLC',
-    taxId: user.taxId || '12-3456789',
-    licenseNumber: user.licenseNumber || 'RE123456',
-    insurancePolicy: user.insurancePolicy || 'POL987654',
-    bankDetails: user.bankDetails || 'Chase •••• 6789',
-    portfolioSize: user.portfolioSize || '15 properties',
-    yearsExperience: user.yearsExperience || '8 years',
-    profilePic: user.profilePic || 'https://randomuser.me/api/portraits/men/10.jpg',
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    idProofNumber: '',
+    emergencyContact: ''
   });
 
   useEffect(() => {
     const fetchProfile = async () => {
+      setLoading(true);
       const token = localStorage.getItem('token');
      
       if (!token) {
         console.warn("No token found in localStorage");
+        setLoading(false);
         return;
       }
 
       try {
-        const res = await fetch('http://localhost:5000/api/owner/me', {
+        const res = await fetch('http://localhost:5000/api/users/me', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (!res.ok) throw new Error('Failed to fetch owner data');
+        if (!res.ok) throw new Error('Failed to fetch user data');
 
         const data = await res.json();
-        setProfileData(data.owner);
-        form.setFieldsValue(data.owner);
+        setProfileData(data.user);
+        form.setFieldsValue(data.user);
       } catch (error) {
-        console.error('Error fetching owner data:', error.message);
+        console.error('Error fetching user data:', error.message);
+        message.error('Failed to load profile data');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -81,27 +74,31 @@ const OwnerProfile = () => {
   const handleEdit = () => setEditMode(true);
 
   const handleSave = async () => {
-    const updated = form.getFieldsValue();
-
     try {
+      setLoading(true);
+      const values = await form.validateFields();
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/owner/me', {
+      
+      const res = await fetch('http://localhost:5000/api/users/me', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(updated),
+        body: JSON.stringify(values),
       });
 
       if (!res.ok) throw new Error('Failed to update');
 
       const data = await res.json();
-      setProfileData(data.owner);
+      setProfileData(data.user);
       setEditMode(false);
-      console.log('Profile Updated:', data);
+      message.success('Profile updated successfully');
     } catch (error) {
       console.error('Error updating profile:', error.message);
+      message.error(error.message || 'Failed to update profile');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -111,108 +108,109 @@ const OwnerProfile = () => {
     </Tag>
   );
 
+  if (loading && !profileData.name) {
+    return <div style={{ textAlign: 'center', marginTop: '50px' }}><Spin size="large" /></div>;
+  }
+
   return (
-    <div className="owner-profile-page">
+    <div style={{ padding: '24px' }}>
       <Card
         title="Owner Profile"
         extra={
           editMode ? (
-            <Button type="primary" icon={<SaveOutlined />} onClick={handleSave}>
+            <Button 
+              type="primary" 
+              icon={<SaveOutlined />} 
+              onClick={handleSave}
+              loading={loading}
+            >
               Save Changes
             </Button>
           ) : (
-            <Button icon={<EditOutlined />} onClick={handleEdit}>
+            <Button 
+              icon={<EditOutlined />} 
+              onClick={handleEdit}
+            >
               Edit Profile
             </Button>
           )
         }
       >
         <Row gutter={32}>
-          <Col span={6} style={{ textAlign: 'center' }}>
-            <Avatar size={128} src={profileData.profilePic} />
-            <h3 style={{ marginTop: 16 }}>{profileData.name}</h3>
-            <p>{profileData.companyName}</p>
-            {renderVerificationBadge()}
-            <Divider />
-            <div className="owner-stats">
-              <p><strong>Portfolio:</strong> {profileData.portfolioSize}</p>
-              <p><strong>Experience:</strong> {profileData.yearsExperience}</p>
+          <Col xs={24} md={6}>
+            <div style={{ textAlign: 'center' }}>
+              <Avatar 
+                size={128} 
+                src="https://randomuser.me/api/portraits/men/10.jpg" 
+                style={{ marginBottom: '16px' }}
+              />
+              <h3>{profileData.name || 'Property Owner'}</h3>
+              {renderVerificationBadge()}
             </div>
           </Col>
 
-          <Col span={18}>
-            <Tabs activeKey={activeTab} onChange={setActiveTab}>
-              <TabPane tab="Personal Info" key="personal">
-                <Form form={form} layout="vertical" disabled={!editMode}>
-                  <Row gutter={16}>
-                    <Col span={12}>
-                      <Form.Item label="Full Name" name="name">
-                        <Input />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item label="Email" name="email">
-                        <Input type="email" />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item label="Phone Number" name="phone">
-                        <Input />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item label="Company Name" name="companyName">
-                        <Input prefix={<BankOutlined />} />
-                      </Form.Item>
-                    </Col>
-                    <Col span={24}>
-                      <Form.Item label="Business Address" name="address">
-                        <Input.TextArea rows={2} />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                </Form>
-              </TabPane>
-
-              <TabPane tab="Business Details" key="business">
-                <Form form={form} layout="vertical" disabled={!editMode}>
-                  <Row gutter={16}>
-                    <Col span={12}>
-                      <Form.Item label="Tax ID (EIN)" name="taxId">
-                        <Input />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item label="Real Estate License" name="licenseNumber">
-                        <Input prefix={<IdcardOutlined />} />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item label="Insurance Policy" name="insurancePolicy">
-                        <Input />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item label="Bank Details" name="bankDetails">
-                        <Input />
-                      </Form.Item>
-                    </Col>
-                    <Col span={24}>
-                      <Form.Item label="Upload License Document">
-                        <Upload
-                          fileList={profileData.licenseDoc ? [profileData.licenseDoc] : []}
-                          onChange={({ fileList }) => setProfileData(prev => ({ ...prev, licenseDoc: fileList[0] }))}
-                          beforeUpload={() => false}
-                          maxCount={1}
-                        >
-                          <Button icon={<UploadOutlined />}>Upload License</Button>
-                        </Upload>
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                </Form>
-              </TabPane>
-            </Tabs>
+          <Col xs={24} md={18}>
+            <Form form={form} layout="vertical" disabled={!editMode}>
+              <Row gutter={16}>
+                <Col xs={24} md={12}>
+                  <Form.Item 
+                    label="Full Name" 
+                    name="name"
+                    rules={[{ required: true, message: 'Please input your name' }]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} md={12}>
+                  <Form.Item 
+                    label="Email" 
+                    name="email"
+                    rules={[
+                      { required: true, message: 'Please input your email' },
+                      { type: 'email', message: 'Please enter a valid email' }
+                    ]}
+                  >
+                    <Input type="email" disabled />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} md={12}>
+                  <Form.Item 
+                    label="Phone Number" 
+                    name="phone"
+                    rules={[{ required: true, message: 'Please input your phone number' }]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} md={12}>
+                  <Form.Item 
+                    label="ID Proof Number" 
+                    name="idProofNumber"
+                    rules={[{ required: true, message: 'Please input your ID number' }]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Col>
+                <Col span={24}>
+                  <Form.Item 
+                    label="Address" 
+                    name="address"
+                    rules={[{ required: true, message: 'Please input your address' }]}
+                  >
+                    <Input.TextArea rows={2} />
+                  </Form.Item>
+                </Col>
+                <Col span={24}>
+                  <Form.Item 
+                    label="Emergency Contact" 
+                    name="emergencyContact"
+                    rules={[{ required: true, message: 'Please input emergency contact' }]}
+                  >
+                    <Input />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Form>
           </Col>
         </Row>
       </Card>
