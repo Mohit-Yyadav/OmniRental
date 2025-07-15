@@ -3,7 +3,7 @@ import Home from '../pages/public/Home';
 import Properties from '../pages/public/Properties';
 import AboutUs from '../pages/public/AboutUs';
 import Contact from '../pages/public/Contact';
-import PropertyDetail from '../pages/PropertyDetail';
+import PropertyDetail from '../pages/public/PropertyDetail';
 import Login from '../Components/auth/Login';
 import Register from '../Components/auth/Register';
 import Mainhome from '../pages/public/Mainhome';

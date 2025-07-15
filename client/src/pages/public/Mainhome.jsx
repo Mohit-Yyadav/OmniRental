@@ -54,6 +54,9 @@ const featuredRentals = [
   
 ];
 
+
+
+
  const categories = [
     { name: "Vacation Homes", icon: "🏠", count: 1245 },
     { name: "Cars & Vehicles", icon: "🚗", count: 892 },

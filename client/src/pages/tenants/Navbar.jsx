@@ -35,8 +35,17 @@ const Navbar = ({
         </Tooltip>
 
         <div className="user-info">
-  <Avatar src={user?.profilePic} />
-  <span className="user-name">{user?.username}</span> {/* ✅ Fixed */}
+ <Avatar
+  src={
+    user?.profilePic?.startsWith('http')
+      ? user.profilePic
+      : user?.profilePic
+      ? `http://localhost:5000${user.profilePic}`
+      : 'https://randomuser.me/api/portraits/men/1.jpg'
+  }
+/>
+<span className="user-name">{user?.name || user?.username}</span>
+ {/* ✅ Fixed */}
 </div>
 
 

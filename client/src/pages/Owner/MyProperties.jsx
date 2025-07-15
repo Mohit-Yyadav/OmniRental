@@ -1,34 +1,38 @@
 // src/components/owner/MyProperties.jsx
-import React, { useState, useEffect } from 'react';
-import { 
-  Button, 
-  Card, 
-  Col, 
-  Row, 
-  Table, 
-  Tag, 
-  Modal, 
-  Form, 
-  Input, 
-  Select, 
+import React, { useState, useEffect } from "react";
+import { Avatar } from 'antd';
+import { EyeOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Card,
+  Col,
+  Row,
+  Table,
+  Tag,
+  Modal,
+  Form,
+  Input,
+  Select,
   DatePicker,
   Space,
   Divider,
   Empty,
   Spin,
-  message
-} from 'antd';
-import { 
-  PlusOutlined, 
-  EditOutlined, 
-  DeleteOutlined, 
+  message,
+  Upload,
+} from "antd";
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
   SearchOutlined,
   HomeOutlined,
   DollarOutlined,
-  AreaChartOutlined
-} from '@ant-design/icons';
-import { Link } from 'react-router-dom';
-``
+  AreaChartOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -42,35 +46,19 @@ const MyProperties = () => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    // Simulate API call
     const fetchProperties = async () => {
       try {
-        // Replace with actual API call
-        const mockProperties = [
-          {
-            id: '1',
-            name: 'Sunshine Villa',
-            address: '123 Main St, San Francisco, CA',
-            type: 'Apartment',
-            status: 'Occupied',
-            units: 5,
-            rent: 3500,
-            purchasedDate: '2020-05-15'
+        const token = localStorage.getItem("token");
+        const res = await axios.get("http://localhost:5000/api/properties", {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-          {
-            id: '2',
-            name: 'Ocean View Condo',
-            address: '456 Beach Blvd, Miami, FL',
-            type: 'Condo',
-            status: 'Vacant',
-            units: 1,
-            rent: 2800,
-            purchasedDate: '2021-01-20'
-          }
-        ];
-        setProperties(mockProperties);
+        });
+
+        setProperties(res.data);
       } catch (error) {
-        message.error('Failed to fetch properties');
+        console.error("❌ Error fetching properties:", error);
+        message.error("Failed to fetch properties");
       } finally {
         setLoading(false);
       }
@@ -81,105 +69,196 @@ const MyProperties = () => {
 
   const handleAddProperty = () => {
     setEditingProperty(null);
+    form.resetFields();
     setIsModalVisible(true);
   };
 
-  const handleEditProperty = (property) => {
-    setEditingProperty(property);
-    setIsModalVisible(true);
-  };
+const handleEditProperty = (property) => {
+  setEditingProperty(property);
+  form.setFieldsValue({
+  ...property,
+  roomNo: property.roomNo || "",
+  images: (property.images || []).map((filename, index) => ({
+    uid: index.toString(),
+    name: filename,
+    status: 'done',
+    url: `http://localhost:5000/uploads/${filename}`, // ✅ Full URL
+  })),
+});
 
-  const handleDeleteProperty = (id) => {
-    Modal.confirm({
-      title: 'Are you sure you want to delete this property?',
-      content: 'This action cannot be undone.',
-      okText: 'Delete',
-      okType: 'danger',
-      cancelText: 'Cancel',
-      onOk: () => {
-        // Replace with actual API call
-        setProperties(properties.filter(prop => prop.id !== id));
-        message.success('Property deleted successfully');
+  setIsModalVisible(true);
+};
+
+
+const handleDeleteProperty = async (id) => {
+  Modal.confirm({
+    title: "Are you sure you want to delete this property?",
+    content: "This action cannot be undone.",
+    okText: "Delete",
+    okType: "danger",
+    cancelText: "Cancel",
+    async onOk() {
+      try {
+        const token = localStorage.getItem("token");
+        
+        // 1. Make the API call
+        const response = await axios.delete(
+          `http://localhost:5000/api/properties/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // 2. Check if deletion was successful
+        if (response.status === 200 || response.status === 204) {
+          // 3. Update the state
+          setProperties(prevProperties => 
+            prevProperties.filter(property => property._id !== id)
+          );
+          message.success("Property deleted successfully");
+        } else {
+          throw new Error("Failed to delete property");
+        }
+      } catch (error) {
+        console.error("Delete error:", error);
+        message.error(
+          error.response?.data?.message || "Failed to delete property"
+        );
       }
-    });
-  };
+    },
+    onCancel() {
+      console.log("Delete cancelled");
+    },
+  });
+};
+
 
   const handleSearch = (values) => {
     setSearchParams(values);
     // Implement search functionality here
   };
 
+  const normFile = (e) => {
+  console.log('Upload event:', e);
+  if (Array.isArray(e)) return e;
+  return e && e.fileList ? e.fileList : [];
+};
+
+
   const columns = [
     {
-      title: 'Property Name',
-      dataIndex: 'name',
-      key: 'name',
-      render: (text, record) => (
-        <Link to={`/owner/properties/${record.id}`} className="owner-properties__property-link">
-          <HomeOutlined className="owner-properties__property-icon" /> {text}
-        </Link>
-      )
+      title: "Room No",
+      dataIndex: "roomNo",
+      key: "roomNo",
+    },
+    // {
+    //   title: "Property Name",
+    //   dataIndex: "name",
+    //   key: "name",
+    //   render: (text, record) => (
+    //     <Link
+    //       to={`/owner/properties/${record.id}`}
+    //       className="owner-properties__property-link"
+    //     >
+    //       <HomeOutlined className="owner-properties__property-icon" /> {text}
+    //     </Link>
+    //   ),
+    // },
+      {
+  title: "Property",
+  dataIndex: "name",
+  key: "name",
+  render: (text, record) => (
+    <Link to={`/owner/properties/${record._id}`} className="property-link">
+      <div className="d-flex align-items-center">
+        <Avatar
+          src={
+            record.images?.[0]
+              ? `http://localhost:5000/uploads/${record.images[0]}`
+              : null
+          }
+          icon={<HomeOutlined />}
+          className="me-3"
+        />
+        <div>
+          <div className="font-weight-bold">{text}</div>
+          <div className="text-muted small">{record.type}</div>
+        </div>
+      </div>
+    </Link>
+  ),
+},
+
+
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address'
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
     },
     {
-      title: 'Type',
-      dataIndex: 'type',
-      key: 'type'
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
       render: (status) => (
-        <Tag color={status === 'Occupied' ? 'green' : 'orange'}>
-          {status}
-        </Tag>
-      )
+        <Tag color={status === "Occupied" ? "green" : "orange"}>{status}</Tag>
+      ),
     },
     {
-      title: 'Monthly Rent',
-      dataIndex: 'rent',
-      key: 'rent',
+      title: "Monthly Rent",
+      dataIndex: "rent",
+      key: "rent",
       render: (rent) => (
         <span className="owner-properties__rent-value">
           <DollarOutlined /> {rent.toLocaleString()}
         </span>
-      )
+      ),
     },
-    {
-      title: 'Actions',
-      key: 'actions',
-      render: (_, record) => (
-        <Space size="middle">
-          <Button 
-            type="text" 
-            icon={<EditOutlined className="owner-properties__action-icon" />} 
-            onClick={() => handleEditProperty(record)}
-            className="owner-properties__edit-btn"
-          />
-          <Button 
-            type="text" 
-            danger 
-            icon={<DeleteOutlined className="owner-properties__action-icon" />} 
-            onClick={() => handleDeleteProperty(record.id)}
-            className="owner-properties__delete-btn"
-          />
-        </Space>
-      )
-    }
+   {
+  title: "Actions",
+  key: "actions",
+  render: (_, record) => (
+    <Space size="middle">
+      <Button
+        type="text"
+        icon={<EyeOutlined />}
+        onClick={() => window.open(`/property/${record._id}`, '_blank')}
+        title="View"
+      />
+      <Button
+        type="text"
+        icon={<EditOutlined className="owner-properties__action-icon" />}
+        onClick={() => handleEditProperty(record)}
+        className="owner-properties__edit-btn"
+        title="Edit"
+      />
+     <Button
+  type="text"
+  danger
+  icon={<DeleteOutlined />}
+  onClick={() => handleDeleteProperty(record._id)}
+  title="Delete"
+/>
+
+    </Space>
+  ),
+}
+
   ];
 
   return (
     <div className="owner-properties__container">
       <div className="owner-properties__header">
         <h2 className="owner-properties__title">My Properties</h2>
-        <Button 
-          type="primary" 
-          icon={<PlusOutlined />} 
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
           onClick={handleAddProperty}
           className="owner-properties__add-btn"
         >
@@ -192,9 +271,11 @@ const MyProperties = () => {
           <Row gutter={16}>
             <Col xs={24} sm={12} md={8} lg={6}>
               <Form.Item name="search" label="Search">
-                <Input 
-                  placeholder="Property name or address" 
-                  prefix={<SearchOutlined className="owner-properties__search-icon" />}
+                <Input
+                  placeholder="Property name or address"
+                  prefix={
+                    <SearchOutlined className="owner-properties__search-icon" />
+                  }
                 />
               </Form.Item>
             </Col>
@@ -226,7 +307,7 @@ const MyProperties = () => {
             <Button type="primary" htmlType="submit">
               Search
             </Button>
-            <Button 
+            <Button
               onClick={() => {
                 form.resetFields();
                 setSearchParams({});
@@ -246,8 +327,12 @@ const MyProperties = () => {
               <div className="owner-properties__stat-content">
                 <AreaChartOutlined className="owner-properties__stat-icon" />
                 <div>
-                  <p className="owner-properties__stat-label">Total Properties</p>
-                  <h3 className="owner-properties__stat-value">{properties.length}</h3>
+                  <p className="owner-properties__stat-label">
+                    Total Properties
+                  </p>
+                  <h3 className="owner-properties__stat-value">
+                    {properties.length}
+                  </h3>
                 </div>
               </div>
             </Card>
@@ -259,7 +344,7 @@ const MyProperties = () => {
                 <div>
                   <p className="owner-properties__stat-label">Occupied Units</p>
                   <h3 className="owner-properties__stat-value">
-                    {properties.filter(p => p.status === 'Occupied').length}
+                    {properties.filter((p) => p.status === "Occupied").length}
                   </h3>
                 </div>
               </div>
@@ -272,7 +357,7 @@ const MyProperties = () => {
                 <div>
                   <p className="owner-properties__stat-label">Vacant Units</p>
                   <h3 className="owner-properties__stat-value">
-                    {properties.filter(p => p.status === 'Vacant').length}
+                    {properties.filter((p) => p.status === "Vacant").length}
                   </h3>
                 </div>
               </div>
@@ -285,7 +370,14 @@ const MyProperties = () => {
                 <div>
                   <p className="owner-properties__stat-label">Monthly Income</p>
                   <h3 className="owner-properties__stat-value">
-                    ${properties.reduce((sum, p) => sum + (p.status === 'Occupied' ? p.rent : 0), 0).toLocaleString()}
+                    $
+                    {properties
+                      .reduce(
+                        (sum, p) =>
+                          sum + (p.status === "Occupied" ? p.rent : 0),
+                        0
+                      )
+                      .toLocaleString()}
                   </h3>
                 </div>
               </div>
@@ -300,15 +392,15 @@ const MyProperties = () => {
             <Spin size="large" />
           </div>
         ) : properties.length > 0 ? (
-          <Table 
-            columns={columns} 
-            dataSource={properties} 
-            rowKey="id"
+          <Table
+            columns={columns}
+            dataSource={properties}
+            rowKey="_id"
             className="owner-properties__table"
             pagination={{
               pageSize: 5,
               showSizeChanger: true,
-              pageSizeOptions: ['5', '10', '20', '50']
+              pageSizeOptions: ["5", "10", "20", "50"],
             }}
           />
         ) : (
@@ -324,7 +416,7 @@ const MyProperties = () => {
       </Card>
 
       <Modal
-        title={editingProperty ? 'Edit Property' : 'Add New Property'}
+        title={editingProperty ? "Edit Property" : "Add New Property"}
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
@@ -332,7 +424,258 @@ const MyProperties = () => {
         className="owner-properties__modal"
         destroyOnClose
       >
-        
+        <Form
+          form={form}
+          layout="vertical"
+          initialValues={editingProperty || {}}
+onFinish={async (values) => {
+  try {
+    const token = localStorage.getItem("token");
+    const formData = new FormData();
+
+    // ✅ Append non-image fields
+    for (const key in values) {
+      if (key !== "images") {
+        formData.append(key, values[key]);
+      }
+    }
+
+    // ✅ Append image files
+    (values.images || []).forEach((file) => {
+      if (file.originFileObj) {
+        formData.append("images", file.originFileObj);
+      }
+    });
+
+    let response;
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        // ❌ REMOVE Content-Type to let Axios handle it
+      },
+    };
+
+    if (editingProperty) {
+      response = await axios.put(
+        `http://localhost:5000/api/properties/${editingProperty._id}`,
+        formData,
+        config
+      );
+
+      setProperties((prev) =>
+        prev.map((property) =>
+          property._id === editingProperty._id ? response.data : property
+        )
+      );
+      message.success("Property updated successfully");
+    } else {
+      response = await axios.post(
+        "http://localhost:5000/api/properties",
+        formData,
+        config
+      );
+
+      setProperties([...properties, response.data]);
+      message.success("Property added successfully");
+    }
+
+    setIsModalVisible(false);
+    form.resetFields();
+  } catch (error) {
+    console.error("❌ Error saving property:", error);
+    message.error("Failed to save property");
+  }
+}}
+
+
+        >
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="roomNo"
+                label="Room No"
+                rules={[
+                  { required: true, message: "Please enter room number" },
+                ]}
+              >
+                <Input placeholder="Enter room number (e.g., 101, A-1)" />
+              </Form.Item>
+            </Col>
+
+            <Col span={12}>
+              <Form.Item
+                name="name"
+                label="Property Name"
+                rules={[
+                  { required: true, message: "Please enter property name" },
+                ]}
+              >
+                <Input placeholder="Enter property name" />
+              </Form.Item>
+            </Col>
+
+            <Col span={24}>
+              <Form.Item
+                name="address"
+                label="Address / Location"
+                rules={[{ required: true, message: "Please enter address" }]}
+              >
+                <Input.TextArea rows={3} placeholder="Enter full address" />
+              </Form.Item>
+            </Col>
+
+            <Col span={12}>
+              <Form.Item
+                name="rent"
+                label="Rent (₹)"
+                rules={[
+                  { required: true, message: "Please enter rent amount" },
+                ]}
+              >
+                <Input type="number" placeholder="Enter monthly rent" />
+              </Form.Item>
+            </Col>
+
+            <Col span={12}>
+              <Form.Item
+                name="type"
+                label="Room Type"
+                rules={[{ required: true, message: "Please select room type" }]}
+              >
+                <Select placeholder="Select room type">
+                  <Option value="Flate">Flat</Option>
+                  <Option value="House">House</Option>
+                  <Option value="Room">Room</Option>
+                  <Option value="1RK">1RK</Option>
+                  <Option value="1BHK">1BHK</Option>
+                  <Option value="2BHK">2BHK</Option>
+                  <Option value="Commercial">3BHK</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+
+            <Col span={12}>
+              <Form.Item
+                name="furnished"
+                label="Furnished Status"
+                rules={[
+                  { required: true, message: "Please select furnished status" },
+                ]}
+              >
+                <Select placeholder="Select furnished status">
+                  <Option value="Fully Furnished">Fully Furnished</Option>
+                  <Option value="Semi Furnished">Semi Furnished</Option>
+                  <Option value="Unfurnished">Unfurnished</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+
+            <Col span={12}>
+              <Form.Item
+                name="sharing"
+                label="Sharing"
+                rules={[
+                  { required: true, message: "Please select sharing type" },
+                ]}
+              >
+                <Select placeholder="Select sharing type">
+                  <Option value="Single">Single</Option>
+                  <Option value="Shared">Shared</Option>
+                  <Option value="Whole Unit">Whole Unit</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+
+            <Col span={24}>
+              <Form.Item name="description" label="Description">
+                <Input.TextArea
+                  rows={4}
+                  placeholder="Enter property description"
+                />
+              </Form.Item>
+            </Col>
+
+            <Col span={24}>
+              <Form.Item name="amenities" label="Amenities">
+                <Select
+                  mode="multiple"
+                  placeholder="Select amenities"
+                  optionLabelProp="label"
+                >
+                  <Option value="wifi" label="WiFi">
+                    WiFi
+                  </Option>
+                  <Option value="ac" label="AC">
+                    Air Conditioning
+                  </Option>
+                  <Option value="parking" label="Parking">
+                    Parking
+                  </Option>
+                  <Option value="laundry" label="Laundry">
+                    Laundry
+                  </Option>
+                  <Option value="gym" label="Gym">
+                    Gym
+                  </Option>
+                  <Option value="pool" label="Pool">
+                    Swimming Pool
+                  </Option>
+                  <Option value="security" label="Security">
+                    24/7 Security
+                  </Option>
+                   <Option value="pool" label="Pool">
+                    Water Coller
+                  </Option>
+                   <Option value="pool" label="Pool">
+                    Library
+                  </Option>
+                   <Option value="pool" label="Pool">
+                    Mesh
+                  </Option>
+                </Select>
+              </Form.Item>
+            </Col>
+
+            <Col span={24}>
+              <Form.Item
+  name="images"
+  label="Images"
+  valuePropName="fileList"
+  getValueFromEvent={normFile}
+>
+  <Upload
+    listType="picture-card"
+    beforeUpload={() => false}
+    multiple
+  >
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  </Upload>
+</Form.Item>
+
+            </Col>
+
+            <Col span={24}>
+              <Form.Item name="location" label="Google Location">
+                <Input placeholder="Enter Google Maps link or coordinates" />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Divider />
+
+          <Form.Item style={{ textAlign: "right" }}>
+            <Space>
+              <Button onClick={() => setIsModalVisible(false)}>Cancel</Button>
+              <Button type="primary" htmlType="submit">
+                {editingProperty ? "Update Property" : "Add Property"}
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
       </Modal>
     </div>
   );

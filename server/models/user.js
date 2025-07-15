@@ -9,20 +9,32 @@ const userSchema = new mongoose.Schema({
   profileComplete: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
   // ✅ Additional profile fields
+  
   name: String,
   phone: String,
   age: Number,
   gender: String,
   address: String,
   emergencyContact: String,
+familyMembers: String,
+
+  // 🪪 ID Proof
   idProofNumber: String,
   idProofDoc: {
     uid: String,
     name: String,
-    url: String,
+    url: String, // e.g., "/uploads/id_123456.jpg"
   },
-  familyMembers: String
+
+  // 🖼️ Profile Picture
+  profilePic: {
+    type: String, // e.g., "/uploads/profile_abc.jpg"
+    default: '',
+  },
 });
+
+
+
 
 // Hash password before saving
 userSchema.pre('save', async function(next) {

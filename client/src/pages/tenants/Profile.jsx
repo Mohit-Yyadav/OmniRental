@@ -1,17 +1,18 @@
 // src/pages/tenants/Profile.jsx
 import React, { useState, useEffect } from 'react';
-import { Card, Form, Input, Button, Avatar, Upload, Select, Row, Col } from 'antd';
-import { EditOutlined, SaveOutlined, UploadOutlined } from '@ant-design/icons';
- import useAuth from '../../context/useAuth';// ✅
-
+import { Card, Form, Input, Button, Avatar, Upload, Select, Row, Col, message } from 'antd';
+import { EditOutlined, SaveOutlined, UploadOutlined, CameraOutlined } from '@ant-design/icons';
+import useAuth from '../../context/useAuth';
 
 const { Option } = Select;
- // ✅ This gives you logged-in user data
 
 const Profile = () => {
   const { user } = useAuth();
   const [form] = Form.useForm();
   const [editMode, setEditMode] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [idProofFile, setIdProofFile] = useState(null);
 
   const [profileData, setProfileData] = useState({
     name: user.name || 'John Doe',
@@ -25,13 +26,13 @@ const Profile = () => {
     gender: user.gender || 'Male',
     familyMembers: user.familyMembers || 'Wife: Jane, Son: Alex',
     idProofDoc: user.idProofDoc || null,
-    profilePic: 'https://randomuser.me/api/portraits/men/1.jpg',
+    profilePic: user.profilePic || 'https://randomuser.me/api/portraits/men/1.jpg',
   });
 
-useEffect(() => {
+  useEffect(() => {
   const fetchProfile = async () => {
     const token = localStorage.getItem('token');
-   
+
     if (!token) {
       console.warn("No token found in localStorage");
       return;
@@ -47,10 +48,15 @@ useEffect(() => {
       if (!res.ok) throw new Error('Failed to fetch user data');
 
       const data = await res.json();
+
+
+      if (!data?.user) throw new Error("User not found in response");
+
       setProfileData(data.user);
       form.setFieldsValue(data.user);
     } catch (error) {
       console.error('Error fetching user data:', error.message);
+      message.error('Could not load profile');
     }
   };
 
@@ -58,33 +64,92 @@ useEffect(() => {
 }, [form]);
 
 
-
   const handleEdit = () => setEditMode(true);
 
   const handleSave = async () => {
-    const updated = form.getFieldsValue();
-
+    setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/user/me', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updated),
+      const values = await form.validateFields();
+      const formData = new FormData();
+
+      // Append all text fields
+      Object.keys(values).forEach(key => {
+        if (values[key] !== undefined) {
+          formData.append(key, values[key]);
+        }
       });
 
-      if (!res.ok) throw new Error('Failed to update');
+      // Append avatar if changed
+      if (avatarFile) {
+        formData.append('profilePic', avatarFile);
+      }
+
+      // Append ID proof if changed
+      if (idProofFile) {
+        formData.append('idProofDoc', idProofFile);
+      }
+
+      const token = localStorage.getItem('token');
+
+      const res = await fetch('http://localhost:5000/api/user/me/upload', {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error('Failed to update profile');
 
       const data = await res.json();
       setProfileData(data.user);
       setEditMode(false);
-      console.log('Profile Updated:', data);
+      setAvatarFile(null);
+      setIdProofFile(null);
+      message.success('Profile updated successfully');
     } catch (error) {
-      console.error('Error updating profile:', error.message);
+      console.error('Upload error:', error.message);
+      message.error(error.message || 'Failed to update profile');
+    } finally {
+      setLoading(false);
     }
   };
+
+const handleAvatarChange = (info) => {
+  const file = info?.fileList?.[0]?.originFileObj;
+
+  if (!(file instanceof Blob)) {
+    console.warn('❌ Not a valid file:', file);
+    return;
+  }
+
+  setAvatarFile(file);
+  setProfileData((prev) => ({
+    ...prev,
+    profilePic: URL.createObjectURL(file),
+  }));
+};
+
+
+
+
+  const handleIdProofChange = (info) => {
+    if (info.file) {
+      setIdProofFile(info.file.originFileObj);
+    }
+  };
+
+const getAvatarSrc = () => {
+  if (avatarFile instanceof File) {
+    return URL.createObjectURL(avatarFile);
+  }
+  return profileData?.profilePic
+    ? profileData.profilePic.startsWith("http")
+      ? profileData.profilePic
+      : `http://localhost:5000${profileData.profilePic}`
+    : null;
+};
+
 
   return (
     <div className="profile-page">
@@ -92,7 +157,12 @@ useEffect(() => {
         title="Tenant Profile"
         extra={
           editMode ? (
-            <Button type="primary" icon={<SaveOutlined />} onClick={handleSave}>
+            <Button 
+              type="primary" 
+              icon={<SaveOutlined />} 
+              onClick={handleSave}
+              loading={loading}
+            >
               Save
             </Button>
           ) : (
@@ -104,8 +174,28 @@ useEffect(() => {
       >
         <Row gutter={32}>
           <Col span={6} style={{ textAlign: 'center' }}>
-            <Avatar size={128} src={profileData.profilePic || 'https://randomuser.me/api/portraits/men/1.jpg'} />
+            <div style={{ position: 'relative' }}>
+              <Avatar 
+                size={128} 
+                src={getAvatarSrc()} 
+              />
+              {editMode && (
+             <Upload
+  accept="image/*"
+  showUploadList={false}
+  beforeUpload={() => false} // prevent auto upload
+  onChange={handleAvatarChange}
+>
+  <Button
+    type="link"
+    icon={<CameraOutlined />}
+    style={{ position: 'absolute', bottom: 0, right: 40 }}
+  />
+</Upload>
 
+
+              )}
+            </div>
             <p style={{ marginTop: 10 }}>{profileData.name}</p>
           </Col>
 
@@ -118,14 +208,14 @@ useEffect(() => {
             >
               <Row gutter={16}>
                 <Col span={12}>
-                  <Form.Item label="Full Name" name="name">
+                  <Form.Item label="Full Name" name="name" rules={[{ required: true }]}>
                     <Input />
                   </Form.Item>
                 </Col>
 
                 <Col span={12}>
-                  <Form.Item label="Email" name="email">
-                    <Input type="email" />
+                  <Form.Item label="Email" name="email" rules={[{ type: 'email' }]}>
+                    <Input disabled/>
                   </Form.Item>
                 </Col>
 
@@ -176,17 +266,20 @@ useEffect(() => {
                 </Col>
 
                 <Col span={12}>
-                 <Form.Item label="Upload ID Proof Document">
-  <Upload
-    fileList={profileData.idProofDoc ? [profileData.idProofDoc] : []}
-    onChange={({ fileList }) => setProfileData(prev => ({ ...prev, idProofDoc: fileList[0] }))}
-    beforeUpload={() => false}
-    maxCount={1}
-  >
-    <Button icon={<UploadOutlined />}>Upload</Button>
-  </Upload>
-</Form.Item>
-
+                  <Form.Item label="Upload ID Proof Document">
+                    <Upload
+                      fileList={idProofFile ? [{
+                        uid: '1',
+                        name: idProofFile.name,
+                        status: 'done',
+                      }] : []}
+                      onChange={handleIdProofChange}
+                      beforeUpload={() => false}
+                      maxCount={1}
+                    >
+                      <Button icon={<UploadOutlined />}>Upload</Button>
+                    </Upload>
+                  </Form.Item>
                 </Col>
 
                 <Col span={24}>
