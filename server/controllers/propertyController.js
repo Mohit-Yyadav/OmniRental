@@ -7,8 +7,21 @@ const addProperty = async (req, res) => {
   try {
     const {
       name, address, rent, type, furnished,
-      sharing, description, amenities, location, roomNo
+      sharing, description, amenities: rawAmenities, location, roomNo
     } = req.body;
+
+    let amenities;
+if (Array.isArray(rawAmenities)) {
+  if (rawAmenities.length === 1 && typeof rawAmenities[0] === 'string' && rawAmenities[0].includes(',')) {
+    amenities = rawAmenities[0].split(',').map(item => item.trim());
+  } else {
+    amenities = rawAmenities;
+  }
+} else if (typeof rawAmenities === 'string') {
+  amenities = rawAmenities.split(',').map(item => item.trim());
+} else {
+  amenities = [];
+}
 
     if (!req.user || !req.user._id) {
       return res.status(401).json({ message: 'User not authenticated' });
@@ -99,9 +112,23 @@ const updateProperty = async (req, res) => {
       furnished,
       sharing,
       description,
-      amenities,
+      amenities: rawAmenities,
       location,
     } = req.body;
+
+    // ✅ Normalize amenities into array
+let parsedAmenities;
+if (Array.isArray(rawAmenities)) {
+  if (rawAmenities.length === 1 && typeof rawAmenities[0] === 'string' && rawAmenities[0].includes(',')) {
+    parsedAmenities = rawAmenities[0].split(',').map(item => item.trim());
+  } else {
+    parsedAmenities = rawAmenities;
+  }
+} else if (typeof rawAmenities === 'string') {
+  parsedAmenities = rawAmenities.split(',').map(item => item.trim());
+} else {
+  parsedAmenities = [];
+}
 
     // ✅ Add new uploaded files if any
     const newImages = req.files?.map((file) => file.filename) || [];
@@ -115,7 +142,9 @@ const updateProperty = async (req, res) => {
     property.furnished = furnished || property.furnished;
     property.sharing = sharing || property.sharing;
     property.description = description || property.description;
-    property.amenities = amenities || property.amenities;
+property.amenities = parsedAmenities;
+
+
     property.location = location || property.location;
 
     if (newImages.length > 0) {

@@ -253,9 +253,9 @@ const baseImageUrl = "http://localhost:5000/uploads/";
                     {[
                       { icon: <Home size={20} />, label: 'Property Type', value: property.type },
                       { icon: <Layers size={20} />, label: 'Room Number', value: property.roomNo },
-                      { icon: <Bed size={20} />, label: 'Bedrooms', value: property.beds || 'N/A' },
-                      { icon: <Bath size={20} />, label: 'Bathrooms', value: property.baths || 'N/A' },
-                      { icon: <Ruler size={20} />, label: 'Area', value: property.area ? `${property.area} sq.ft` : 'N/A' },
+                      // { icon: <Bed size={20} />, label: 'Bedrooms', value: property.beds || 'N/A' },
+                      // { icon: <Bath size={20} />, label: 'Bathrooms', value: property.baths || 'N/A' },
+                      // { icon: <Ruler size={20} />, label: 'Area', value: property.area ? `${property.area} sq.ft` : 'N/A' },
                       { icon: <CheckCircle size={20} />, label: 'Furnishing', value: property.furnished || 'Not specified' }
                     ].map((feature, index) => (
                       <div key={index} className="col-md-6">

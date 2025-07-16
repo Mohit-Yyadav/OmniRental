@@ -78,6 +78,9 @@ const handleEditProperty = (property) => {
   form.setFieldsValue({
   ...property,
   roomNo: property.roomNo || "",
+  amenities: Array.isArray(property.amenities)
+      ? property.amenities
+      : (property.amenities || "").split(","),
   images: (property.images || []).map((filename, index) => ({
     uid: index.toString(),
     name: filename,
@@ -435,10 +438,13 @@ onFinish={async (values) => {
 
     // ✅ Append non-image fields
     for (const key in values) {
-      if (key !== "images") {
-        formData.append(key, values[key]);
-      }
-    }
+  if (key === "amenities" && Array.isArray(values[key])) {
+    formData.append(key, values[key].join(',')); // ✅ convert to comma-separated string
+  } else if (key !== "images") {
+    formData.append(key, values[key]);
+  }
+}
+
 
     // ✅ Append image files
     (values.images || []).forEach((file) => {
@@ -624,13 +630,13 @@ onFinish={async (values) => {
                   <Option value="security" label="Security">
                     24/7 Security
                   </Option>
-                   <Option value="pool" label="Pool">
+                   <Option value="water Coller" label="Water Coller">
                     Water Coller
                   </Option>
-                   <Option value="pool" label="Pool">
+                   <Option value="library" label="Library">
                     Library
                   </Option>
-                   <Option value="pool" label="Pool">
+                   <Option value="mesh" label="Mesh">
                     Mesh
                   </Option>
                 </Select>
