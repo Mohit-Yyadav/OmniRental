@@ -2,22 +2,23 @@ const express = require('express');
 const router = express.Router();
 const {
   createBookingRequest,
-  getOwnerBookings,
-  getTenantBookings,
+  getRequestsForOwner,
+  getRequestsForTenant,
   updateBookingStatus
-} = require('../controllers/bookingController');
+} = require('../controllers/bookingRequestController');
+
 const { protect } = require('../middleware/authMiddleware');
 
-// Tenant sends booking request
+// ✅ Tenant sends booking request
 router.post('/', protect, createBookingRequest);
 
-// Owner fetches requests for their properties
-router.get('/owner', protect, getOwnerBookings);
+// ✅ Tenant fetches their own requests
+router.get('/tenant', protect, getRequestsForTenant);
 
-// Tenant fetches their own requests
-router.get('/tenant', protect, getTenantBookings);
+// ✅ Owner fetches requests for their properties
+router.get('/owner', protect, getRequestsForOwner);
 
-// Owner accepts or rejects booking request
+// ✅ Owner accepts or rejects booking request
 router.put('/:id/status', protect, updateBookingStatus);
 
 module.exports = router;

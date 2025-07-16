@@ -1,5 +1,7 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const generateToken = require('../utils/generateToken');
+
 const { validationResult } = require('express-validator');
 
 // @desc    Register a new user
@@ -78,7 +80,8 @@ exports.login = async (req, res) => {
         username: user.username,
         email: user.email,
         role: user.role,
-        profileComplete: user.profileComplete
+        profileComplete: user.profileComplete,
+         token: generateToken(user._id),
       }
     });
   } catch (error) {

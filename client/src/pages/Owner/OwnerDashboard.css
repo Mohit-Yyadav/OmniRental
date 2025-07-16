@@ -6,7 +6,7 @@
 
 .owner-main__content-layout {
   transition: all 0.2s;
-  margin-left: 200px; /* Default sidebar width */
+   /* Default sidebar width */
 }
 
 .owner-main__content-layout.collapsed {

@@ -13,6 +13,7 @@ import MyProperties from "./MyProperties";
 import Financials from "./Financials";
 import Maintenance from "./Maintenance";
 import Reports from "./Reports";
+import BookingRequests from "./BookingRequests";
 import "./OwnerDashboard.css"; // Changed from OwnerDashboard.css to OwnerMain.css
 import useAuth from "../../context/useAuth";
 
@@ -39,8 +40,8 @@ const OwnerMain = () => {
     switch (activeMenu) {
       case "dashboard":
         return <OwnerDashboard />;
-      
-
+      case "booking-requests":
+        return <BookingRequests />;
       case "tenants":
         return <TenantManagement />;
 

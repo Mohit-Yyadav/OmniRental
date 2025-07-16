@@ -46,6 +46,18 @@ const OwnerSidebar = ({
         'My Properties'
       ),
     },
+     {
+      key: 'booking-requests',
+      icon: <PropertySafetyOutlined className="owner-sidebar__menu-icon" />,
+      label: collapsed ? (
+        <Tooltip title="Booking Requests" placement="right">
+          <PropertySafetyOutlined className="owner-sidebar__menu-icon" />
+        </Tooltip>
+      ) : (
+        'Booking Requests'
+      ),
+      
+    },
     {
       key: 'tenants',
       icon: <TeamOutlined className="owner-sidebar__menu-icon" />,

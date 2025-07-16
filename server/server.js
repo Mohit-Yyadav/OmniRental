@@ -7,6 +7,9 @@ const path = require('path'); // ✅ import path module
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/userRoutes');
 const propertyRoutes = require('./routes/propertyRoutes');
+const bookingRoutes = require('./routes/bookingRoutes');
+
+
 
 dotenv.config();
 
@@ -26,6 +29,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/properties', propertyRoutes);
+app.use('/api/booking-requests', bookingRoutes);
+
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {
