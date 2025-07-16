@@ -5,20 +5,22 @@ import axios from 'axios';
 const BookingRequests = () => {
   const [requests, setRequests] = useState([]);
   const user = JSON.parse(localStorage.getItem('user'));
-console.log("User in localStorage:", user);
+  const token = localStorage.getItem('token'); // ✅ Correct token access
+
+ 
+
   const fetchRequests = () => {
-    axios
-      .get(`http://localhost:5000/api/booking-requests/owner`, {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      })
-      .then((res) => setRequests(res.data))
-      .catch((err) => console.error(err));
+    axios.get("http://localhost:5000/api/booking-requests/owner", {
+      headers: {
+        Authorization: `Bearer ${token}`, // ✅ Use this instead of user.token
+      },
+    })
+    .then(res => setRequests(res.data))
+    .catch(err => console.error(err));
   };
 
   useEffect(() => {
-    if (user) fetchRequests();
+    if (token) fetchRequests(); // ✅ Ensure token exists
   }, []);
 
   const handleStatusChange = (id, status) => {
@@ -28,7 +30,7 @@ console.log("User in localStorage:", user);
         { status },
         {
           headers: {
-            Authorization: `Bearer ${user.token}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       )

@@ -26,11 +26,7 @@ exports.register = async (req, res) => {
     await user.save();
 
     // Generate JWT
-    const token = jwt.sign(
-      { userId: user.id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '1d' }
-    );
+   const token = generateToken(user._id); 
 
     res.status(201).json({
       token,
@@ -39,7 +35,8 @@ exports.register = async (req, res) => {
         username: user.username,
         email: user.email,
         role: user.role,
-        profileComplete: user.profileComplete
+        profileComplete: user.profileComplete,
+        accessToken: token, // Include token in user object
       }
     });
   } catch (error) {
@@ -66,13 +63,10 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // Generate JWT
-    const token = jwt.sign(
-      { userId: user.id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '1d' }
-    );
+    // ✅ Generate token using helper
+    const token = generateToken(user._id);
 
+    // ✅ Return token at root, not inside user object
     res.json({
       token,
       user: {
@@ -81,7 +75,7 @@ exports.login = async (req, res) => {
         email: user.email,
         role: user.role,
         profileComplete: user.profileComplete,
-         token: generateToken(user._id),
+        accessToken: token,
       }
     });
   } catch (error) {
@@ -89,6 +83,7 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
 
 // @desc    Get current user
 // @route   GET /api/auth/me

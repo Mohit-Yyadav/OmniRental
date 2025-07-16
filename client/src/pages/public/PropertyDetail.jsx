@@ -76,7 +76,8 @@ const PropertyDetail = () => {
     }
   };
 
-  
+  console.log("👤 User Role:", user?.role);
+
   // Set user data from localStorage
 useEffect(() => {
   if (user) {
@@ -132,7 +133,7 @@ useEffect(() => {
 
  
 
-  if (!user || !user.token) {
+  if (!user) {
     alert("You must be logged in to send a booking request.");
     return;
   }
@@ -143,23 +144,22 @@ useEffect(() => {
   }
 
   try {
-    const response = await axios.post(
-      "http://localhost:5000/api/booking-requests",
-      {
-        propertyId: property._id,
-        moveInDate: bookingFormData.moveInDate,
-        duration: bookingFormData.duration,
-        occupation: bookingFormData.occupation,
-        additionalInfo: bookingFormData.additionalInfo,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
+   const response = await axios.post(
+  "http://localhost:5000/api/booking-requests",
+  {
+    propertyId: property._id,
+    moveInDate: bookingFormData.moveInDate,
+    duration: bookingFormData.duration,
+    occupation: bookingFormData.occupation,
+    additionalInfo: bookingFormData.additionalInfo,
+  },
+  {
+    headers: {
+     Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  }
+);
 
-          "Content-Type": "application/json",
-        },
-      }
-    );
 
     console.log("✅ Booking request submitted:", response.data);
     setBookingFormData({

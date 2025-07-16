@@ -39,16 +39,15 @@ const Profile = () => {
     }
 
     try {
-      const res = await fetch('http://localhost:5000/api/user/me', {
+      const response = await fetch('http://localhost:5000/api/user/me', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      if (!res.ok) throw new Error('Failed to fetch user data');
+      if (!response.ok) throw new Error('Failed to fetch user data');
 
-      const data = await res.json();
-
+      const data = await response.json();
 
       if (!data?.user) throw new Error("User not found in response");
 
@@ -62,6 +61,7 @@ const Profile = () => {
 
   fetchProfile();
 }, [form]);
+
 
 
   const handleEdit = () => setEditMode(true);
