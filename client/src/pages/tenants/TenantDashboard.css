@@ -309,3 +309,34 @@
 .payments-content {
   padding: 20px;
 }
+
+
+/* src/pages/tenants/Requests.css */
+.requests-page {
+  padding: 20px;
+}
+
+.requests-page .ant-card {
+  border-radius: 8px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+}
+
+.requests-page .ant-card-head {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.requests-page .ant-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.requests-page .ant-table-thead > tr > th {
+  background-color: #fafafa;
+  font-weight: 500;
+}
+
+.requests-page .ant-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
