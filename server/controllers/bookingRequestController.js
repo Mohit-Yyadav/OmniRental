@@ -44,16 +44,21 @@ exports.createBookingRequest = async (req, res) => {
 // ✅ Tenant fetches their requests
 exports.getRequestsForTenant = async (req, res) => {
   try {
-    const bookings = await BookingRequest.find({ tenantId: req.user._id })
-      .populate("propertyId", "name address rent")
+    const tenantId = req.user._id;
+    const requests = await BookingRequest.find({ tenantId })
+      .populate('propertyId', 'title location') // Optional: Add more fields
       .sort({ createdAt: -1 });
 
-    res.json(bookings);
-  } catch (error) {
-    console.error("❌ Error fetching tenant requests:", error);
-    res.status(500).json({ message: "Failed to fetch booking requests" });
+    res.status(200).json(requests);
+  } catch (err) {
+    console.error('Error fetching tenant requests:', err);
+    res.status(500).json({ message: 'Failed to fetch booking requests.' });
   }
 };
+
+
+
+
 
 // ✅ Owner fetches requests for their properties
 exports.getRequestsForOwner = async (req, res) => {

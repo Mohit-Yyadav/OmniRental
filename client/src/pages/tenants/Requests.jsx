@@ -1,84 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Button, Card, Tag, message } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const Requests = () => {
+const MyRequests = () => {
   const [requests, setRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
-
-  const user = JSON.parse(localStorage.getItem('user'));
 
   useEffect(() => {
-    if (user?._id) {
-      axios
-        .get(`http://localhost:5000/api/requests/tenant/${user._id}`)
-        .then((res) => {
-          setRequests(res.data);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error(err);
-          message.error('Failed to load requests.');
-          setLoading(false);
-        });
-    }
-  }, [user]);
+    const fetchRequests = async () => {
+      try {
+        const token = localStorage.getItem('token');
+       const res = await axios.get('http://localhost:5000/api/booking-requests/tenant', {
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+});
 
-  const getStatusColor = (status) => {
-    const statusColors = {
-      pending: 'orange',
-      processing: 'blue',
-      approved: 'green',
-      rejected: 'red',
+
+        setRequests(res.data);
+      } catch (error) {
+        console.error('❌ Error fetching requests:', error);
+      }
     };
-    return statusColors[status] || 'default';
-  };
 
-  const columns = [
-    { title: 'Type', dataIndex: 'type', key: 'type' },
-    {
-      title: 'Date',
-      dataIndex: 'date',
-      key: 'date',
-      render: (date) =>
-        new Intl.DateTimeFormat('en-IN', {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric',
-        }).format(new Date(date)),
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status) => (
-        <Tag color={getStatusColor(status)}>{status.toUpperCase()}</Tag>
-      ),
-    },
-    { title: 'Description', dataIndex: 'description', key: 'description' },
-  ];
+    fetchRequests();
+  }, []);
 
   return (
-    <div className="container mt-4">
-      <Card
-        title="My Requests"
-        extra={
-          <Button type="primary" onClick={() => navigate('/tenant/new-request')}>
-            New Request
-          </Button>
-        }
-      >
-        <Table
-          dataSource={requests}
-          columns={columns}
-          rowKey="_id"
-          loading={loading}
-        />
-      </Card>
+    <div className="p-4">
+      <h2 className="text-2xl font-semibold mb-4">My Booking Requests</h2>
+      {requests.length === 0 ? (
+        <p>No requests made yet.</p>
+      ) : (
+        <ul className="space-y-4">
+          {requests.map((req) => (
+            <li key={req._id} className="p-4 border rounded shadow">
+              <p><strong>Property:</strong> {req.propertyId?.title || 'N/A'}</p>
+              <p><strong>Status:</strong> {req.status}</p>
+              <p><strong>Move-In:</strong> {new Date(req.moveInDate).toLocaleDateString()}</p>
+              <p><strong>Duration:</strong> {req.duration} months</p>
+              <p><strong>Status:</strong> {req.status} </p>
+              <p><strong>Occupation:</strong> {req.occupation}</p>
+              <p><strong>Additional Info:</strong> {req.additionalInfo || '—'}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
 
-export default Requests;
+export default MyRequests;
