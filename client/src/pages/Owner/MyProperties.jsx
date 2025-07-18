@@ -217,11 +217,15 @@ const handleDeleteProperty = async (id) => {
       title: "Monthly Rent",
       dataIndex: "rent",
       key: "rent",
-      render: (rent) => (
-        <span className="owner-properties__rent-value">
-          <DollarOutlined /> {rent.toLocaleString()}
-        </span>
-      ),
+      render: (rent, record) => {
+  const baseRent = record.rent || record.personRents?.[0]?.rent || 0;
+  return (
+    <span className="owner-properties__rent-value">
+      <DollarOutlined /> {baseRent.toLocaleString()}
+    </span>
+  );
+}
+
     },
    {
   title: "Actions",
@@ -375,12 +379,13 @@ const handleDeleteProperty = async (id) => {
                   <h3 className="owner-properties__stat-value">
                     $
                     {properties
-                      .reduce(
-                        (sum, p) =>
-                          sum + (p.status === "Occupied" ? p.rent : 0),
-                        0
-                      )
-                      .toLocaleString()}
+  .reduce(
+    (sum, p) =>
+      sum + (p.status === "Occupied" && typeof p.rent === "number" ? p.rent : 0),
+    0
+  )
+  .toLocaleString()}
+
                   </h3>
                 </div>
               </div>
@@ -435,15 +440,23 @@ onFinish={async (values) => {
   try {
     const token = localStorage.getItem("token");
     const formData = new FormData();
+console.log("🛂 Token before request:", token);
+console.log("📦 FormData preview:");
+for (let pair of formData.entries()) {
+  console.log(pair[0] + ":", pair[1]);
+}
 
     // ✅ Append non-image fields
     for (const key in values) {
   if (key === "amenities" && Array.isArray(values[key])) {
-    formData.append(key, values[key].join(',')); // ✅ convert to comma-separated string
+    formData.append("amenities", values[key].join(','));
+  } else if (key === "personRents") {
+    formData.append("personRents", JSON.stringify(values.personRents));
   } else if (key !== "images") {
     formData.append(key, values[key]);
   }
 }
+
 
 
     // ✅ Append image files
@@ -532,15 +545,54 @@ onFinish={async (values) => {
             </Col>
 
             <Col span={12}>
-              <Form.Item
-                name="rent"
-                label="Rent (₹)"
-                rules={[
-                  { required: true, message: "Please enter rent amount" },
-                ]}
-              >
-                <Input type="number" placeholder="Enter monthly rent" />
-              </Form.Item>
+              <Form.List name="personRents">
+  {(fields, { add, remove }) => (
+    <>
+      <label style={{ fontWeight: 600 }}>Rent Per Number of Persons</label>
+      {fields.map(({ key, name, ...restField }) => (
+        <Row gutter={16} key={key} style={{ marginBottom: 12 }}>
+          <Col span={12}>
+            <Form.Item
+              {...restField}
+              name={[name, 'persons']}
+              rules={[{ required: true, message: 'Enter number of persons' }]}
+            >
+              <Input type="number" min={1} placeholder="e.g. 1, 2, 3" />
+            </Form.Item>
+          </Col>
+          <Col span={10}>
+            <Form.Item
+              {...restField}
+              name={[name, 'rent']}
+              rules={[{ required: true, message: 'Enter rent amount' }]}
+            >
+              <Input type="number" placeholder="e.g. 5000" />
+            </Form.Item>
+          </Col>
+          <Col span={2}>
+            <Button
+              type="text"
+              danger
+              onClick={() => remove(name)}
+              icon={<DeleteOutlined />}
+            />
+          </Col>
+        </Row>
+      ))}
+      <Form.Item>
+        <Button
+          type="dashed"
+          onClick={() => add()}
+          block
+          icon={<PlusOutlined />}
+        >
+          Add Rent Slab
+        </Button>
+      </Form.Item>
+    </>
+  )}
+</Form.List>
+
             </Col>
 
             <Col span={12}>

@@ -59,6 +59,10 @@ const PropertyDetail = () => {
     duration: "",
     occupation: "",
     additionalInfo: "",
+     numPersons: "",
+     rent: "",
+     roomNo: property?.roomNo || "",
+     address: property?.address || "",
   });
   const baseImageUrl = "http://localhost:5000/uploads/";
 
@@ -152,6 +156,8 @@ useEffect(() => {
     duration: bookingFormData.duration,
     occupation: bookingFormData.occupation,
     additionalInfo: bookingFormData.additionalInfo,
+    numPersons: bookingFormData.numPersons,
+  rent: bookingFormData.rent,
   },
   {
     headers: {
@@ -313,9 +319,11 @@ useEffect(() => {
             <div className="card-body p-4">
               <div className="d-flex align-items-center justify-content-between mb-3">
                 <h2 className="mb-0">
-                  ₹{property.rent.toLocaleString()}
-                  <span className="text-muted fs-6 fw-normal">/month</span>
-                </h2>
+  ₹
+  {property?.personRents?.find(r => r.persons === 1)?.rent?.toLocaleString() || 'N/A'}
+  <span className="text-muted fs-6 fw-normal"> /month</span>
+</h2>
+
                 {property.rating && (
                   <Badge
                     bg="light"
@@ -470,7 +478,47 @@ useEffect(() => {
                 </Form.Group>
               </div>
             </div>
+<div className="row">
+<div className="col-md-6">
+  <Form.Group className="mb-3">
+    <Form.Label>
+      Number of Persons <span className="text-danger">*</span>
+    </Form.Label>
+    <Form.Control
+      type="number"
+      name="numPersons"
+      min={1}
+      max={10}
+      value={bookingFormData.numPersons || ""}
+      onChange={(e) => {
+        handleBookingFormChange(e);
+        const persons = parseInt(e.target.value);
+        const matchingSlab = property.personRents?.find(r => r.persons === persons);
+        setBookingFormData(prev => ({
+          ...prev,
+          rent: matchingSlab?.rent || "N/A"
+        }));
+      }}
+      required
+    />
+  </Form.Group>
+</div>
+<div className="col-md-6">
+<Form.Group className="mb-3">
+  <Form.Label>Rent</Form.Label>
+  <Form.Control
+    type="text"
+    value={
+      bookingFormData.rent
+        ? `₹${bookingFormData.rent.toLocaleString()} / month`
+        : "N/A"
+    }
+    readOnly
+  />
+</Form.Group>
 
+</div>
+</div>
             <div className="row">
               <div className="col-md-6">
                 <Form.Group className="mb-3">

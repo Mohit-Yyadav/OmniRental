@@ -6,7 +6,7 @@ const Property = require('../models/Property');
 const addProperty = async (req, res) => {
   try {
     const {
-      name, address, rent, type, furnished,
+      name, address, personRents, type, furnished,
       sharing, description, amenities: rawAmenities, location, roomNo
     } = req.body;
 
@@ -23,6 +23,20 @@ if (Array.isArray(rawAmenities)) {
   amenities = [];
 }
 
+let parsedPersonRents = [];
+
+try {
+  parsedPersonRents = typeof personRents === 'string'
+    ? JSON.parse(personRents)
+    : Array.isArray(personRents)
+    ? personRents
+    : [];
+} catch (err) {
+  console.warn("⚠️ Invalid personRents format");
+}
+
+
+
     if (!req.user || !req.user._id) {
       return res.status(401).json({ message: 'User not authenticated' });
     }
@@ -35,14 +49,14 @@ if (Array.isArray(rawAmenities)) {
       roomNo,
       name,
       address,
-      rent,
       type,
       furnished,
       sharing,
       description,
       amenities,
       location,
-      images: imagePaths, // ✅ Save filenames to DB
+      images: imagePaths,
+      personRents: parsedPersonRents // ✅ Save filenames to DB
     });
 
     const savedProperty = await newProperty.save();
@@ -107,7 +121,7 @@ const updateProperty = async (req, res) => {
       roomNo,
       name,
       address,
-      rent,
+      personRents,
       type,
       furnished,
       sharing,
@@ -115,6 +129,19 @@ const updateProperty = async (req, res) => {
       amenities: rawAmenities,
       location,
     } = req.body;
+
+    let parsedPersonRents = [];
+
+try {
+  parsedPersonRents = typeof personRents === 'string'
+    ? JSON.parse(personRents)
+    : Array.isArray(personRents)
+    ? personRents
+    : [];
+} catch (err) {
+  console.warn("⚠️ Invalid personRents format");
+}
+
 
     // ✅ Normalize amenities into array
 let parsedAmenities;
@@ -137,7 +164,8 @@ if (Array.isArray(rawAmenities)) {
     property.roomNo = roomNo || property.roomNo;
     property.name = name || property.name;
     property.address = address || property.address;
-    property.rent = rent || property.rent;
+    property.personRents = parsedPersonRents.length > 0 ? parsedPersonRents : property.personRents;
+
     property.type = type || property.type;
     property.furnished = furnished || property.furnished;
     property.sharing = sharing || property.sharing;

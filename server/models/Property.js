@@ -12,7 +12,14 @@ const propertySchema = new mongoose.Schema({
   },
   name: String,
   address: String,
-  rent: Number,
+  // rent: Number,
+ personRents: [
+  {
+    persons: { type: Number, required: true },
+    rent: { type: Number, required: true }
+  }
+],
+
   type: String,
   furnished: String,
   sharing: String,

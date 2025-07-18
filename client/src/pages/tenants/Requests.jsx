@@ -1,26 +1,25 @@
-// src/pages/tenants/Requests.jsx
 import React, { useEffect, useState } from 'react';
-import { 
-  Card, 
-  Table, 
-  Tag, 
-  Button, 
-  Space, 
-  Popconfirm, 
-  message, 
-  Divider,
+import {
+  Table,
+  Tag,
+  Button,
   Badge,
-  Tooltip
+  Popconfirm,
+  message,
+  Tooltip,
+  Typography
 } from 'antd';
-import { 
-  SyncOutlined, 
-  CheckCircleOutlined, 
+import {
+  SyncOutlined,
+  CheckCircleOutlined,
   CloseCircleOutlined,
   ExclamationCircleOutlined,
   InfoCircleOutlined
 } from '@ant-design/icons';
 import axios from 'axios';
 import dayjs from 'dayjs';
+
+const { Text } = Typography;
 
 const Requests = () => {
   const [requests, setRequests] = useState([]);
@@ -41,18 +40,31 @@ const Requests = () => {
   };
 
   const fetchRequests = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const token = localStorage.getItem('token');
       const res = await axios.get('http://localhost:5000/api/booking-requests/tenant', {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` }
       });
       setRequests(res.data);
-    } catch (error) {
-      console.error('❌ Error fetching requests:', error);
-      message.error('Failed to fetch requests');
+    } catch (err) {
+      console.error(err);
+      message.error('Failed to load requests');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCancel = async (id) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.patch(`http://localhost:5000/api/booking-requests/${id}/cancel`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      message.success('Request cancelled');
+      fetchRequests();
+    } catch (err) {
+      message.error('Cancel failed');
     }
   };
 
@@ -60,138 +72,110 @@ const Requests = () => {
     fetchRequests();
   }, []);
 
-  const handleCancelRequest = async (requestId) => {
-    try {
-      const token = localStorage.getItem('token');
-      await axios.patch(
-        `http://localhost:5000/api/booking-requests/${requestId}/cancel`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      message.success('Request cancelled successfully');
-      fetchRequests();
-    } catch (error) {
-      console.error('❌ Error cancelling request:', error);
-      message.error('Failed to cancel request');
-    }
-  };
-
   const columns = [
     {
       title: 'Property',
-      dataIndex: ['propertyId', 'title'],
+      dataIndex: 'propertyId',
       key: 'property',
-      render: (title, record) => (
+      render: (prop) => (
         <div>
-          <div style={{ fontWeight: 500 }}>{title || 'Unknown Property'}</div>
-          <div style={{ fontSize: 12, color: '#666' }}>
-            {record?.propertyId?.address || 'Address not available'}
-          </div>
+          <Text strong>{prop?.title || 'Untitled'}</Text>
+          <br />
+          <Text type="secondary" style={{ fontSize: 12 }}>{prop?.address || '-'}</Text>
         </div>
-      ),
+      )
     },
     {
-      title: 'Move-In Date',
+      title: 'Move-In',
       dataIndex: 'moveInDate',
       key: 'moveInDate',
-      render: (date) => dayjs(date).format('DD MMM YYYY'),
+      render: (date) => dayjs(date).format('DD MMM YYYY')
     },
     {
       title: 'Duration',
       dataIndex: 'duration',
       key: 'duration',
-      render: (duration) => `${duration} months`,
+      render: (d) => `${d} months`
+    },
+    {
+      title: 'Persons',
+      dataIndex: 'numPersons',
+      key: 'numPersons'
+    },
+    {
+      title: 'Rent (₹)',
+      dataIndex: 'rent',
+      key: 'rent',
+      render: (r) => r?.toLocaleString()
+    },
+    {
+      title: 'Occupation',
+      dataIndex: 'occupation',
+      key: 'occupation'
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
       render: (status) => (
-        <Tag 
-          icon={statusIcons[status]} 
-          color={statusColors[status]}
-          style={{ display: 'flex', alignItems: 'center', gap: 4 }}
-        >
+        <Tag icon={statusIcons[status]} color={statusColors[status]}>
           {status.toUpperCase()}
         </Tag>
-      ),
+      )
     },
     {
       title: 'Owner Response',
       dataIndex: 'ownerResponse',
       key: 'ownerResponse',
-      render: (response, record) => (
+      render: (response) =>
         response ? (
           <Tooltip title={response}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
-              <InfoCircleOutlined /> Response
-            </span>
+            <Tag icon={<InfoCircleOutlined />} color="blue">Response</Tag>
           </Tooltip>
         ) : (
-          <span style={{ color: '#999' }}>No response yet</span>
+          <Text type="secondary">—</Text>
         )
-      ),
     },
     {
-      title: 'Actions',
-      key: 'actions',
+      title: 'Action',
+      key: 'action',
       render: (_, record) => (
-        <Space size="small">
-          {record.status === 'pending' && (
-            <Popconfirm
-              title="Are you sure you want to cancel this request?"
-              icon={<ExclamationCircleOutlined style={{ color: 'red' }} />}
-              onConfirm={() => handleCancelRequest(record._id)}
-              okText="Yes"
-              cancelText="No"
-            >
-              <Button size="small" danger>Cancel</Button>
-            </Popconfirm>
-          )}
-          {record.status === 'approved' && (
-            <Button type="primary" size="small">
-              Proceed to Payment
-            </Button>
-          )}
-        </Space>
-      ),
-    },
+        record.status === 'pending' ? (
+          <Popconfirm
+            title="Cancel this request?"
+            onConfirm={() => handleCancel(record._id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button danger size="small">Cancel</Button>
+          </Popconfirm>
+        ) : record.status === 'approved' ? (
+          <Button type="primary" size="small">Proceed to Payment</Button>
+        ) : null
+      )
+    }
   ];
 
   return (
-    <div className="requests-page">
-      <Card
-        title="My Booking Requests"
-        extra={
-          <Button 
-            icon={<SyncOutlined />} 
-            onClick={fetchRequests}
-            loading={loading}
-          >
-            Refresh
-          </Button>
-        }
-      >
-        <div style={{ marginBottom: 16 }}>
-          <Space>
-            <Badge color={statusColors.pending} text="Pending" />
-            <Badge color={statusColors.approved} text="Approved" />
-            <Badge color={statusColors.rejected} text="Rejected" />
-            <Badge color={statusColors.cancelled} text="Cancelled" />
-          </Space>
-        </div>
+    <div style={{ padding: 24 }}>
+      <Typography.Title level={3}>📋 My Booking Requests</Typography.Title>
 
-        <Divider style={{ margin: '16px 0' }} />
+      <div style={{ marginBottom: 16 }}>
+        <Badge color={statusColors.pending} text="Pending" style={{ marginRight: 8 }} />
+        <Badge color={statusColors.approved} text="Approved" style={{ marginRight: 8 }} />
+        <Badge color={statusColors.rejected} text="Rejected" style={{ marginRight: 8 }} />
+        <Badge color={statusColors.cancelled} text="Cancelled" />
+      </div>
 
-        <Table
-          dataSource={requests}
-          columns={columns}
-          rowKey="_id"
-          loading={loading}
-          pagination={{ pageSize: 5 }}
-          scroll={{ x: true }}
-        />
-      </Card>
+      <Table
+        dataSource={requests}
+        columns={columns}
+        rowKey="_id"
+        loading={loading}
+        pagination={{ pageSize: 5 }}
+        scroll={{ x: true }}
+        bordered
+      />
     </div>
   );
 };

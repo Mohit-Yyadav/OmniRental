@@ -1,23 +1,28 @@
-const BookingRequest = require('../models/BookingRequest');
-const Property = require('../models/Property');
-const User = require('../models/User');
+const BookingRequest = require("../models/BookingRequest");
+const Property = require("../models/Property");
+const User = require("../models/User");
 
 exports.createBookingRequest = async (req, res) => {
   try {
-    console.log('📥 Incoming request body:', req.body);
-    console.log('🔐 Logged-in user:', req.user);
+    console.log("📥 Incoming request body:", req.body);
+    console.log("🔐 Logged-in user:", req.user);
 
-    const { propertyId, moveInDate, duration, occupation, additionalInfo } = req.body;
+    const { propertyId, moveInDate, duration, occupation, additionalInfo ,
+  numPersons,
+  rent, } =
+      req.body;
 
     const property = await Property.findById(propertyId);
     if (!property) {
-      console.log('❌ Property not found');
-      return res.status(404).json({ message: 'Property not found' });
+      console.log("❌ Property not found");
+      return res.status(404).json({ message: "Property not found" });
     }
 
-    if (!req.user || req.user.role !== 'tenant') {
-      console.log('❌ Unauthorized: Only tenants can book');
-      return res.status(403).json({ message: 'Only tenants can send booking requests' });
+    if (!req.user || req.user.role !== "tenant") {
+      console.log("❌ Unauthorized: Only tenants can book");
+      return res
+        .status(403)
+        .json({ message: "Only tenants can send booking requests" });
     }
 
     const booking = new BookingRequest({
@@ -28,44 +33,42 @@ exports.createBookingRequest = async (req, res) => {
       duration,
       occupation,
       additionalInfo,
+      numPersons,
+      rent,
     });
 
     await booking.save();
 
-    console.log('✅ Booking request saved successfully:', booking);
+    console.log("✅ Booking request saved successfully:", booking);
     res.status(201).json(booking);
   } catch (error) {
-    console.error('❌ Error in createBookingRequest:', error);
-    res.status(500).json({ message: 'Failed to create booking request' });
+    console.error("❌ Error in createBookingRequest:", error);
+    res.status(500).json({ message: "Failed to create booking request" });
   }
 };
-
 
 // ✅ Tenant fetches their requests
 exports.getRequestsForTenant = async (req, res) => {
   try {
     const tenantId = req.user._id;
     const requests = await BookingRequest.find({ tenantId })
-      .populate('propertyId', 'title location') // Optional: Add more fields
+      .populate("propertyId", "title location") // Optional: Add more fields
       .sort({ createdAt: -1 });
 
     res.status(200).json(requests);
   } catch (err) {
-    console.error('Error fetching tenant requests:', err);
-    res.status(500).json({ message: 'Failed to fetch booking requests.' });
+    console.error("Error fetching tenant requests:", err);
+    res.status(500).json({ message: "Failed to fetch booking requests." });
   }
 };
-
-
-
-
 
 // ✅ Owner fetches requests for their properties
 exports.getRequestsForOwner = async (req, res) => {
   try {
     const bookings = await BookingRequest.find({ ownerId: req.user._id })
       .populate("propertyId", "name address rent")
-      .populate("tenantId", "username email phone")
+      .populate("tenantId", "-password -__v") // exclude sensitive fields only
+
       .sort({ createdAt: -1 });
 
     res.json(bookings);
@@ -87,7 +90,9 @@ exports.updateBookingStatus = async (req, res) => {
     }
 
     if (booking.ownerId.toString() !== req.user._id.toString()) {
-      return res.status(403).json({ message: "Not authorized to update this request" });
+      return res
+        .status(403)
+        .json({ message: "Not authorized to update this request" });
     }
 
     booking.status = status;

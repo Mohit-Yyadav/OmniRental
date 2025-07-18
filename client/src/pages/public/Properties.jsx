@@ -208,7 +208,14 @@ const Property = () => {
                 <div className="card-body">
                   <div className="d-flex justify-content-between align-items-start mb-2">
                     <h5 className="card-title mb-0">{property.name}</h5>
-                    <div className="text-primary fw-bold">₹{property.rent.toLocaleString()}</div>
+                    <div className="text-primary fw-bold">
+  ₹{(() => {
+    const onePersonRent = property.personRents?.find(p => p.persons === 1)?.rent;
+    return typeof onePersonRent === 'number' ? onePersonRent.toLocaleString() : 'N/A';
+  })()}
+  {/* <small className="text-muted"> / person</small> */}
+</div>
+
                   </div>
                   <p className="card-text text-muted d-flex align-items-center gap-1 mb-2">
                     <MapPin size={16} className="text-primary" />

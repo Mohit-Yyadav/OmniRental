@@ -31,6 +31,14 @@ const bookingRequestSchema = new mongoose.Schema({
   additionalInfo: {
     type: String,
   },
+  numPersons: {
+  type: Number,
+  required: true
+},
+rent: {
+  type: Number,
+  required: true
+},
   status: {
     type: String,
     enum: ['pending', 'approved', 'rejected'],
