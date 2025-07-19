@@ -1,4 +1,4 @@
-import User from '../models/user.js';
+import User from '../models/User';
 import fs from 'fs';
 import path from 'path';
 
