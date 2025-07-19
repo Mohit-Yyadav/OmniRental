@@ -1,6 +1,7 @@
 // src/pages/TenantMain.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout } from 'antd';
+import { useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import Dashboard from './TenantDashboard';
@@ -10,7 +11,7 @@ import Payments from './Payments';
 import Requests from './Requests';
 import History from './History';
 import './TenantDashboard.css';
- import useAuth from '../../context/useAuth';// ✅
+import useAuth from '../../context/useAuth'; // ✅
 
 const { Content } = Layout;
 
@@ -18,8 +19,22 @@ const TenantMain = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [activeMenu, setActiveMenu] = useState('dashboard');
 
-  // ✅ Get user and logout function from context
+  const location = useLocation();
   const { user, logout } = useAuth();
+
+  // ✅ Redirect to Payments if ?payment=true is in URL
+  useEffect(() => {
+  const handleSwitchToPayments = () => {
+    setActiveMenu('payments');
+  };
+
+  window.addEventListener('switchToPayments', handleSwitchToPayments);
+
+  return () => {
+    window.removeEventListener('switchToPayments', handleSwitchToPayments);
+  };
+}, []);
+
 
   const notifications = [
     { id: 1, title: 'Payment Reminder', read: false },
@@ -27,25 +42,18 @@ const TenantMain = () => {
   ];
 
   const handleLogout = () => {
-    logout(); // ✅ Call logout from context
+    logout();
   };
 
   const renderPageContent = () => {
     switch (activeMenu) {
-      case 'dashboard':
-        return <Dashboard />;
-      case 'profile':
-        return <Profile />;
-      case 'property':
-        return <Property />;
-      case 'payments':
-        return <Payments />;
-      case 'requests':
-        return <Requests />;
-      case 'history':
-        return <History />;
-      default:
-        return <h2>404 - Page Not Found</h2>;
+      case 'dashboard': return <Dashboard />;
+      case 'profile': return <Profile />;
+      case 'property': return <Property />;
+      case 'payments': return <Payments />;
+      case 'requests': return <Requests />;
+      case 'history': return <History />;
+      default: return <h2>404 - Page Not Found</h2>;
     }
   };
 
@@ -55,14 +63,13 @@ const TenantMain = () => {
         collapsed={collapsed}
         setCollapsed={setCollapsed}
         activeMenu={activeMenu}
-        
         handleMenuClick={(e) => setActiveMenu(e.key)}
       />
       <Layout>
         <Navbar
           collapsed={collapsed}
           setCollapsed={setCollapsed}
-          user={user} // ✅ Pass actual logged-in user data
+          user={user}
           notifications={notifications}
           onLogout={handleLogout}
         />

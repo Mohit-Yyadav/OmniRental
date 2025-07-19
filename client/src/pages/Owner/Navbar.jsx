@@ -100,12 +100,23 @@ const OwnerNavbar = ({
           overlayClassName="owner-navbar__dropdown"
         >
           <div className="owner-navbar__user">
-            <Avatar 
-              src={user?.profilePic} 
-              className="owner-navbar__avatar"
-              size="large"
-              icon={!user?.profilePic ? <UserOutlined /> : null}
-            />
+    <Avatar
+  src={
+    user?.profilePic
+      ? user.profilePic.startsWith('http')
+        ? user.profilePic
+        : `http://localhost:5000${user.profilePic}`
+      : null
+  }
+  size="large"
+  className="owner-navbar__avatar"
+  icon={!user?.profilePic ? <UserOutlined /> : null}
+/>
+
+
+
+
+
             <div className="owner-navbar__user-info">
               <span className="owner-navbar__username">
                 {user?.username || 'Owner'}

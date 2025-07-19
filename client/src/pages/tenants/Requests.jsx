@@ -39,6 +39,19 @@ const Requests = () => {
     cancelled: <ExclamationCircleOutlined />
   };
 
+const handleProceedToPayment = (record) => {
+  const bookingId = record._id;
+  const depositAmount = record.rent;
+
+  localStorage.setItem("paymentBookingId", bookingId);
+  localStorage.setItem("paymentAmount", depositAmount);
+
+  // Use custom event to inform TenantMain to switch tab
+  window.dispatchEvent(new CustomEvent('switchToPayments'));
+};
+
+
+
   const fetchRequests = async () => {
     setLoading(true);
     try {
@@ -152,7 +165,14 @@ const Requests = () => {
             <Button danger size="small">Cancel</Button>
           </Popconfirm>
         ) : record.status === 'approved' ? (
-          <Button type="primary" size="small">Proceed to Payment</Button>
+          <Button 
+  type="primary" 
+  size="small" 
+  onClick={() => handleProceedToPayment(record)}
+>
+  Proceed to Payment
+</Button>
+
         ) : null
       )
     }

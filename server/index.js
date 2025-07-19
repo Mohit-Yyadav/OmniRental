@@ -9,7 +9,7 @@ const userRoutes = require('./routes/userRoutes');
 const propertyRoutes = require('./routes/propertyRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 
-
+const paymentRoutes = require('./routes/paymentRoutes');
 
 dotenv.config();
 
@@ -24,7 +24,7 @@ app.use(express.json());
 
 // ✅ Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
+app.use('/api/payments', paymentRoutes);
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);

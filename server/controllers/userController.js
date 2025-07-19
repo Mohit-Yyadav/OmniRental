@@ -22,8 +22,8 @@ export const updateProfile = async (req, res) => {
 
 
 
-// ✅ Get tenant profile
-export const getTenantProfile = async (req, res) => {
+// ✅ Get user profile
+export const getUserProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 

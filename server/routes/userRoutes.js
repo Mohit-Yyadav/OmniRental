@@ -1,12 +1,12 @@
 const express = require('express');
-const { updateProfile, getTenantProfile, updateProfileWithFiles } = require('../controllers/userController');
+const { updateProfile, getUserProfile, updateProfileWithFiles } = require('../controllers/userController');
 const auth = require('../middleware/auth');
 const upload = require('../middleware/upload'); // ✅ Multer middleware
 
 const router = express.Router();
 
 // Existing routes
-router.get('/me', auth, getTenantProfile);
+router.get('/me', auth, getUserProfile);
 router.put('/me', auth, updateProfile);
 
 // ✅ New route for file upload

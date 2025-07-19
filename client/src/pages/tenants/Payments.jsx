@@ -1,82 +1,91 @@
-// src/pages/tenants/Payments.jsx
-import React from 'react';
-import { Table, Button, Card, Tag } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Card, Typography, Input, Button, message, Descriptions } from 'antd';
+import axios from 'axios';
+
+const { Title } = Typography;
 
 const Payments = () => {
-  const paymentHistory = [
-    {
-      id: 1,
-      date: '2024-06-01',
-      amount: 1200,
-      method: 'Credit Card',
-      status: 'completed',
-      invoice: 'INV-2024-06-001',
-    },
-    {
-      id: 2,
-      date: '2024-05-01',
-      amount: 1200,
-      method: 'Bank Transfer',
-      status: 'completed',
-      invoice: 'INV-2024-05-001',
-    },
-    {
-      id: 3,
-      date: '2024-04-01',
-      amount: 1200,
-      method: 'UPI',
-      status: 'pending',
-      invoice: 'INV-2024-04-001',
-    },
-  ];
+  const [bookingId, setBookingId] = useState('');
+  const [amount, setAmount] = useState('');
+  const [upiRef, setUpiRef] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const columns = [
-    {
-      title: 'Date',
-      dataIndex: 'date',
-      key: 'date',
-    },
-    {
-      title: 'Amount',
-      dataIndex: 'amount',
-      key: 'amount',
-      render: (amount) => `$${amount}`,
-    },
-    {
-      title: 'Method',
-      dataIndex: 'method',
-      key: 'method',
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status) => (
-        <Tag color={status === 'completed' ? 'green' : 'orange'}>
-          {status.toUpperCase()}
-        </Tag>
-      ),
-    },
-    {
-      title: 'Invoice',
-      dataIndex: 'invoice',
-      key: 'invoice',
-      render: (text) => <a href="#">{text}</a>,
-    },
-  ];
+  useEffect(() => {
+    const id = localStorage.getItem('paymentBookingId');
+    const amt = localStorage.getItem('paymentAmount');
+    setBookingId(id);
+    setAmount(amt);
+  }, []);
+
+  const handlePaymentSubmit = async () => {
+    if (!upiRef.trim()) {
+      return message.warning('Please enter your UPI transaction reference ID');
+    }
+
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+
+      await axios.post(
+        'http://localhost:5000/api/payments',
+        {
+          bookingId,
+          amount,
+          method: 'UPI',
+          status: 'paid',
+          upiReference: upiRef,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      message.success('✅ Payment recorded successfully!');
+      localStorage.removeItem('paymentBookingId');
+      localStorage.removeItem('paymentAmount');
+      setUpiRef('');
+    } catch (err) {
+      console.error(err);
+      message.error('❌ Payment submission failed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="payments-content">
-      <Card
-        title="Payment History"
-        extra={<Button type="primary">Make Payment</Button>}
-      >
-        <Table
-          dataSource={paymentHistory}
-          columns={columns}
-          rowKey="id"
-          pagination={{ pageSize: 5 }}
+    <div style={{ padding: 24 }}>
+      <Card>
+        <Title level={3}>💳 UPI Payment</Title>
+
+        <Descriptions bordered column={1} style={{ marginBottom: 16 }}>
+          <Descriptions.Item label="Booking ID">{bookingId}</Descriptions.Item>
+          <Descriptions.Item label="Amount to Pay (₹)">
+            ₹{parseInt(amount || 0).toLocaleString()}
+          </Descriptions.Item>
+          <Descriptions.Item label="UPI ID to Pay To">
+            <strong>omnirental@upi</strong>
+          </Descriptions.Item>
+        </Descriptions>
+
+        <p>
+          📲 Please make the payment using any UPI app (PhonePe, GPay, Paytm) to <strong>omnirental@upi</strong>.
+        </p>
+
+        <Input
+          placeholder="Enter your UPI transaction reference ID"
+          value={upiRef}
+          onChange={(e) => setUpiRef(e.target.value)}
+          style={{ marginBottom: 16 }}
         />
+
+        <Button
+          type="primary"
+          onClick={handlePaymentSubmit}
+          loading={loading}
+          disabled={!upiRef}
+        >
+          Submit Payment
+        </Button>
       </Card>
     </div>
   );

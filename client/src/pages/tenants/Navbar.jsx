@@ -16,6 +16,7 @@ const Navbar = ({
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
+    
     <Header className="site-header">
       <div className="header-left">
         <Button
@@ -35,7 +36,8 @@ const Navbar = ({
         </Tooltip>
 
         <div className="user-info">
- <Avatar
+<Avatar
+  size={40}
   src={
     user?.profilePic?.startsWith('http')
       ? user.profilePic
@@ -44,6 +46,9 @@ const Navbar = ({
       : 'https://randomuser.me/api/portraits/men/1.jpg'
   }
 />
+
+
+
 <span className="user-name">{user?.name || user?.username}</span>
  {/* ✅ Fixed */}
 </div>
