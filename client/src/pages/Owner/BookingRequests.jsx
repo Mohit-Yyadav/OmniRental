@@ -64,14 +64,15 @@ const BookingRequests = () => {
       title: 'Property',
       dataIndex: 'propertyId',
       key: 'property',
-      render: (prop) => (
-        <div>
-          <strong>{prop?.name || 'N/A'}</strong><br />
-          <Text type="secondary" style={{ fontSize: 12 }}>
-            Room: {prop?.roomNo || '—'} | ₹{prop?.rent?.toLocaleString()}
-          </Text>
-        </div>
-      )
+     render: (prop, record) => (
+  <div>
+    <strong>{prop?.name || 'N/A'}</strong><br />
+    <Text type="secondary" style={{ fontSize: 12 }}>
+      Room: {prop?.roomNo?.toString().trim() || '—'} | ₹{(record?.rent || 0).toLocaleString()}
+    </Text>
+  </div>
+)
+
     },
     {
       title: 'Tenant',

@@ -349,14 +349,14 @@ useEffect(() => {
                   <Layers size={16} />
                   <span>{property.roomNo}</span>
                 </div>
-                <div className="d-flex align-items-center gap-1 text-muted">
+                {/* <div className="d-flex align-items-center gap-1 text-muted">
                   <Bed size={16} />
                   <span>{property.beds || "N/A"} Beds</span>
                 </div>
                 <div className="d-flex align-items-center gap-1 text-muted">
                   <Bath size={16} />
                   <span>{property.baths || "N/A"} Baths</span>
-                </div>
+                </div> */}
               </div>
 
               <div className="d-flex flex-wrap gap-2 mb-4">

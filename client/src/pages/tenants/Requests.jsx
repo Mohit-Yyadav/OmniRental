@@ -73,18 +73,20 @@ const Requests = () => {
   }, []);
 
   const columns = [
-    {
-      title: 'Property',
-      dataIndex: 'propertyId',
-      key: 'property',
-      render: (prop) => (
-        <div>
-          <Text strong>{prop?.title || 'Untitled'}</Text>
-          <br />
-          <Text type="secondary" style={{ fontSize: 12 }}>{prop?.address || '-'}</Text>
-        </div>
-      )
-    },
+   {
+  title: 'Property',
+  dataIndex: 'propertyId',
+  key: 'property',
+  render: (prop) => (
+    <div>
+      <Text strong>{prop?.name || 'Untitled'}</Text><br />
+      <Text type="secondary" style={{ fontSize: 12 }}>
+        Room No: {prop?.roomNo || '—'} | {prop?.address || '—'}
+      </Text>
+    </div>
+  )
+}
+,
     {
       title: 'Move-In',
       dataIndex: 'moveInDate',

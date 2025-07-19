@@ -52,7 +52,7 @@ exports.getRequestsForTenant = async (req, res) => {
   try {
     const tenantId = req.user._id;
     const requests = await BookingRequest.find({ tenantId })
-      .populate("propertyId", "title location") // Optional: Add more fields
+.populate("propertyId", "name address roomNo")
       .sort({ createdAt: -1 });
 
     res.status(200).json(requests);
@@ -66,9 +66,9 @@ exports.getRequestsForTenant = async (req, res) => {
 exports.getRequestsForOwner = async (req, res) => {
   try {
     const bookings = await BookingRequest.find({ ownerId: req.user._id })
-      .populate("propertyId", "name address rent")
+.populate("propertyId", "name address roomNo ")
       .populate("tenantId", "-password -__v") // exclude sensitive fields only
-
+    
       .sort({ createdAt: -1 });
 
     res.json(bookings);
