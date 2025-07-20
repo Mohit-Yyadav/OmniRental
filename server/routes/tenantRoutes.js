@@ -1,9 +1,23 @@
 const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/authMiddleware');
-const { getAllTenants } = require('../controllers/tenantController');
+const {
+  getAllTenants,
+  addTenant,
+  getMonthlyRecords,
+  generateInvoice,
+} = require('../controllers/tenantController');
 
-// ✅ GET /api/tenants
-router.get('/', protect, getAllTenants);
+// All tenant listings for owner
+router.get('/add-tenant', protect, getAllTenants);
+
+// Add tenant after deposit
+router.post('/add-tenant', protect, addTenant);
+
+// Monthly records
+router.get('/:tenantId/records', protect, getMonthlyRecords);
+
+// ✅ Generate invoice
+router.post('/generate-invoice', protect, generateInvoice);
 
 module.exports = router;

@@ -1,32 +1,19 @@
 const mongoose = require('mongoose');
 
 const tenantSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  phone: String,
-  depositAmount: Number,
-  property: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Property'
-  },
-  status: {
-    type: String,
-    enum: ['pending', 'active', 'inactive'],
-    default: 'pending'
-  },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  }
-}, {
-  timestamps: true
+  tenantId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  property: { type: mongoose.Schema.Types.ObjectId, ref: 'Property', required: true },
+  roomNo: { type: String, required: true },
+  members: { type: Number, required: true },
+  rent: { type: Number, required: true },
+  startDate: { type: Date, required: true },
+  endDate: { type: Date, required: true },
+  meterNumber: { type: Number },
+  pricePerUnit: { type: Number, required: true },
+  status: { type: String, enum: ['active', 'inactive'], default: 'active' },
 });
+
+
 
 module.exports = mongoose.model('Tenant', tenantSchema);

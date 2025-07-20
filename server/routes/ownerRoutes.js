@@ -1,9 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/authMiddleware');
-const { addTenantToProperty } = require('../controllers/ownerController');
+const {
+  addTenantToProperty,
+  getDepositedTenants
+} = require('../controllers/ownerController');
 
-// ✅ Route to add a tenant to a property
+// ✅ Add tenant to property
 router.post('/add-tenant', protect, addTenantToProperty);
+
+// ✅ Get deposited tenants list
+router.get('/deposits', protect, getDepositedTenants);
 
 module.exports = router;

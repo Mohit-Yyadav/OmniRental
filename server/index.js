@@ -24,19 +24,26 @@ const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/userRoutes');
 const propertyRoutes = require('./routes/propertyRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
-const tenantRoutes = require('./routes/tenantRoutes');
+
 const paymentRoutes = require('./routes/paymentRoutes');
 const ownerRoutes = require('./routes/ownerRoutes');
+
+const tenantRoutes = require('./routes/tenantRoutes');// 🔥 FIXED: Make sure this file exists
+
+
 
 // ✅ Mount API Routes
 app.use('/api/auth', authRoutes);                 // Signup, login, etc.
 app.use('/api/user', userRoutes);                 // Profile, etc.
 app.use('/api/properties', propertyRoutes);       // Property CRUD
 app.use('/api/booking-requests', bookingRoutes);  // Booking logic
-app.use('/api/tenants', tenantRoutes);            // All tenants route (GET /api/tenants)
-app.use('/api/payments', paymentRoutes);   
-app.use('/api', paymentRoutes);       // Payments: /my, /order, /verify, etc.
+          // All tenants route (GET /api/tenants)
+app.use('/api/payments', paymentRoutes);
+     // Payments: /my, /order, /verify, etc.
 app.use('/api/owner', ownerRoutes);               // Owner-specific actions like add-tenant
+
+
+app.use('/api/tenants', tenantRoutes);
 
 // ✅ MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
