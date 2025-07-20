@@ -38,12 +38,12 @@ const Navbar = ({
         <div className="user-info">
 <Avatar
   size={40}
-  src={
-    user?.profilePic?.startsWith('http')
-      ? user.profilePic
-      : user?.profilePic
-      ? `http://localhost:5000${user.profilePic}`
-      : 'https://randomuser.me/api/portraits/men/1.jpg'
+ src={
+    user?.profilePic
+      ? user.profilePic.startsWith('http')
+        ? user.profilePic
+        : `http://localhost:5000${user.profilePic}`
+      : null
   }
 />
 

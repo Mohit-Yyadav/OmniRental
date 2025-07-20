@@ -224,7 +224,11 @@ const deleteProperty = async (req, res) => {
 // @access Public
 const getPublicProperties = async (req, res) => {
   try {
-    const properties = await Property.find({ status: 'Vacant' }).sort({ createdAt: -1 });
+    const properties = await Property.find({
+  status: 'Vacant',
+  isBooked: false
+}).sort({ createdAt: -1 });
+;
     res.json(properties);
   } catch (error) {
     console.error('❌ Public Get Error:', error.message);

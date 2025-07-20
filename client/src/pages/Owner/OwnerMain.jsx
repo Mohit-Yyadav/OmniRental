@@ -13,6 +13,7 @@ import MyProperties from "./MyProperties";
 import Financials from "./Financials";
 import Maintenance from "./Maintenance";
 import Reports from "./Reports";
+import Payments from "./Payments";
 import BookingRequests from "./BookingRequests";
 import "./OwnerDashboard.css"; // Changed from OwnerDashboard.css to OwnerMain.css
 import useAuth from "../../context/useAuth";
@@ -60,7 +61,8 @@ const OwnerMain = () => {
         return <Reports />;
       case "profile":
         return <Profile />;
-
+      case "payments":
+        return <Payments />;
       default:
         return <h2 className="owner-main__not-found">404 - Page Not Found</h2>;
     }

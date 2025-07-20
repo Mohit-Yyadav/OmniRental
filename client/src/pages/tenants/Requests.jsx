@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+
+
 import {
   Table,
   Tag,
@@ -42,13 +44,23 @@ const Requests = () => {
 const handleProceedToPayment = (record) => {
   const bookingId = record._id;
   const depositAmount = record.rent;
+  const propertyId = record.propertyId?._id;
+ const ownerId = record.propertyId?.owner?._id;
+
+
+  if (!propertyId || !ownerId) {
+    return message.error("Missing property or owner info");
+  }
 
   localStorage.setItem("paymentBookingId", bookingId);
   localStorage.setItem("paymentAmount", depositAmount);
+  localStorage.setItem("paymentPropertyId", propertyId);
+  localStorage.setItem("paymentOwnerId", ownerId);
 
-  // Use custom event to inform TenantMain to switch tab
-  window.dispatchEvent(new CustomEvent('switchToPayments'));
+  // 🔔 Inform tenant layout to switch tab
+  window.dispatchEvent(new CustomEvent("switchToPayments"));
 };
+
 
 
 
@@ -76,7 +88,7 @@ const handleProceedToPayment = (record) => {
       });
       message.success('Request cancelled');
       fetchRequests();
-    } catch (err) {
+    } catch {
       message.error('Cancel failed');
     }
   };
@@ -172,6 +184,9 @@ const handleProceedToPayment = (record) => {
 >
   Proceed to Payment
 </Button>
+
+
+
 
         ) : null
       )

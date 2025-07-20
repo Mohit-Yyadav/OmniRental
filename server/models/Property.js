@@ -6,20 +6,18 @@ const propertySchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
-   roomNo: {
+  roomNo: {
     type: String,
     required: true,
   },
   name: String,
   address: String,
-  // rent: Number,
- personRents: [
-  {
-    persons: { type: Number, required: true },
-    rent: { type: Number, required: true }
-  }
-],
-
+  personRents: [
+    {
+      persons: { type: Number, required: true },
+      rent: { type: Number, required: true }
+    }
+  ],
   type: String,
   furnished: String,
   sharing: String,
@@ -27,10 +25,24 @@ const propertySchema = new mongoose.Schema({
   amenities: [String],
   images: [String], // URLs of uploaded images
   location: String,
+
   status: {
     type: String,
     default: 'Vacant',
   },
+
+  // ✅ Add this
+  isBooked: {
+    type: Boolean,
+    default: false,
+  },
+
+  // ✅ Add this
+  tenants: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }],
+
 }, { timestamps: true });
 
 module.exports = mongoose.model('Property', propertySchema);

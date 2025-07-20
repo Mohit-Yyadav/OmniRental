@@ -70,6 +70,17 @@ const OwnerSidebar = ({
       ),
     },
     {
+      key: 'payments',
+      icon: <WalletOutlined className="owner-sidebar__menu-icon" />,
+      label: collapsed ? (
+        <Tooltip title="Payments" placement="right">
+          <WalletOutlined className="owner-sidebar__menu-icon" />
+        </Tooltip>
+      ) : (
+        'Payments'
+      ),
+    },
+    {
       key: 'financials',
       icon: <WalletOutlined className="owner-sidebar__menu-icon" />,
       label: collapsed ? (

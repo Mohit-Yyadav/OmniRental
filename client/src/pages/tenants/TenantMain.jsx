@@ -1,7 +1,7 @@
 // src/pages/TenantMain.jsx
 import React, { useState, useEffect } from 'react';
 import { Layout } from 'antd';
-import { useLocation } from 'react-router-dom';
+//import { useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import Dashboard from './TenantDashboard';
@@ -19,7 +19,7 @@ const TenantMain = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [activeMenu, setActiveMenu] = useState('dashboard');
 
-  const location = useLocation();
+  // const location = useLocation();
   const { user, logout } = useAuth();
 
   // ✅ Redirect to Payments if ?payment=true is in URL

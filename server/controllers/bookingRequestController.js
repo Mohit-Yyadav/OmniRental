@@ -51,16 +51,27 @@ exports.createBookingRequest = async (req, res) => {
 exports.getRequestsForTenant = async (req, res) => {
   try {
     const tenantId = req.user._id;
+
     const requests = await BookingRequest.find({ tenantId })
-.populate("propertyId", "name address roomNo")
+      .populate({
+        path: "propertyId",
+        select: "name address roomNo owner",
+        populate: {
+          path: "owner",
+          model: "User",
+          select: "name"
+        }
+      })
       .sort({ createdAt: -1 });
 
     res.status(200).json(requests);
   } catch (err) {
-    console.error("Error fetching tenant requests:", err);
+    console.error("❌ Error in getRequestsForTenant:", err);
     res.status(500).json({ message: "Failed to fetch booking requests." });
   }
 };
+
+
 
 // ✅ Owner fetches requests for their properties
 exports.getRequestsForOwner = async (req, res) => {
