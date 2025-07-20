@@ -65,7 +65,8 @@ exports.getDepositedTenants = async (req, res) => {
     const deposits = await Payment.find({
       ownerId,
       paymentType: 'deposit',
-      status: 'paid'
+      status: 'completed'
+
     })
       .populate('tenantId')
       .populate({

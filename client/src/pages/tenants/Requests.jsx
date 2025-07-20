@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-
-
 import {
   Table,
   Tag,
@@ -20,12 +18,14 @@ import {
 } from '@ant-design/icons';
 import axios from 'axios';
 import dayjs from 'dayjs';
+import { useNavigate } from 'react-router-dom'; // ✅ Import useNavigate
 
 const { Text } = Typography;
 
 const Requests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // ✅ Init navigate
 
   const statusColors = {
     pending: 'orange',
@@ -42,25 +42,29 @@ const Requests = () => {
   };
 
 const handleProceedToPayment = (record) => {
+  console.log("🔍 Booking Record:", record);
+
   const bookingId = record._id;
   const depositAmount = record.rent;
   const propertyId = record.propertyId?._id;
- const ownerId = record.propertyId?.owner?._id;
+  const ownerId = record.propertyId?.owner?._id || record.ownerId; // fallback
+  const tenantId = record.tenantId; // ✅ fix here
 
-
-  if (!propertyId || !ownerId) {
-    return message.error("Missing property or owner info");
+  if (!propertyId || !ownerId || !tenantId) {
+    console.error("propertyId:", propertyId);
+    console.error("ownerId:", ownerId);
+    console.error("tenantId:", tenantId);
+    return message.error("Missing property, owner, or tenant info");
   }
 
   localStorage.setItem("paymentBookingId", bookingId);
   localStorage.setItem("paymentAmount", depositAmount);
   localStorage.setItem("paymentPropertyId", propertyId);
   localStorage.setItem("paymentOwnerId", ownerId);
+  localStorage.setItem("paymentTenantId", tenantId); // ✅ string ID now
 
-  // 🔔 Inform tenant layout to switch tab
-  window.dispatchEvent(new CustomEvent("switchToPayments"));
+  window.dispatchEvent(new CustomEvent("switchToRazorpay"));
 };
-
 
 
 
@@ -93,25 +97,26 @@ const handleProceedToPayment = (record) => {
     }
   };
 
+
+  
   useEffect(() => {
     fetchRequests();
   }, []);
 
   const columns = [
-   {
-  title: 'Property',
-  dataIndex: 'propertyId',
-  key: 'property',
-  render: (prop) => (
-    <div>
-      <Text strong>{prop?.name || 'Untitled'}</Text><br />
-      <Text type="secondary" style={{ fontSize: 12 }}>
-        Room No: {prop?.roomNo || '—'} | {prop?.address || '—'}
-      </Text>
-    </div>
-  )
-}
-,
+    {
+      title: 'Property',
+      dataIndex: 'propertyId',
+      key: 'property',
+      render: (prop) => (
+        <div>
+          <Text strong>{prop?.name || 'Untitled'}</Text><br />
+          <Text type="secondary" style={{ fontSize: 12 }}>
+            Room No: {prop?.roomNo || '—'} | {prop?.address || '—'}
+          </Text>
+        </div>
+      )
+    },
     {
       title: 'Move-In',
       dataIndex: 'moveInDate',
@@ -164,33 +169,30 @@ const handleProceedToPayment = (record) => {
         )
     },
     {
-      title: 'Action',
-      key: 'action',
-      render: (_, record) => (
-        record.status === 'pending' ? (
-          <Popconfirm
-            title="Cancel this request?"
-            onConfirm={() => handleCancel(record._id)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button danger size="small">Cancel</Button>
-          </Popconfirm>
-        ) : record.status === 'approved' ? (
-          <Button 
-  type="primary" 
-  size="small" 
-  onClick={() => handleProceedToPayment(record)}
->
-  Proceed to Payment
-</Button>
+  title: 'Action',
+  key: 'action',
+  render: (_, record) => (
+    record.status === 'pending' ? (
+      <Popconfirm
+        title="Cancel this request?"
+        onConfirm={() => handleCancel(record._id)}
+        okText="Yes"
+        cancelText="No"
+      >
+        <Button danger size="small">Cancel</Button>
+      </Popconfirm>
+    ) : record.status === 'approved' ? (
+      <Button 
+        type="primary" 
+        size="small" 
+        onClick={() => handleProceedToPayment(record)} // ✅ Use central handler
+      >
+        Proceed to Payment
+      </Button>
+    ) : null
+  )
+}
 
-
-
-
-        ) : null
-      )
-    }
   ];
 
   return (

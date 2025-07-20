@@ -116,25 +116,31 @@ exports.verifyPayment = async (req, res) => {
     paymentType,
     month,
     note,
+    tenantId, // ✅ From frontend
   } = req.body;
 
   try {
-    const sign = razorpay_order_id + "|" + razorpay_payment_id;
+    // 🔒 Verify Razorpay signature
+    const sign = `${razorpay_order_id}|${razorpay_payment_id}`;
     const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
       .update(sign)
-      .digest("hex");
+      .digest('hex');
 
     if (expectedSignature !== razorpay_signature) {
-      return res.status(400).json({ success: false, message: "Invalid signature" });
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid Razorpay signature',
+      });
     }
 
+    // ✅ Save payment with tenantId
     const payment = new Payment({
-      tenantId: req.user._id,
+      tenantId,
       ownerId,
       propertyId,
       amount,
-      method: method || "razorpay",
+      method: method || 'razorpay',
       status: 'completed',
       paymentType,
       month,
@@ -146,18 +152,22 @@ exports.verifyPayment = async (req, res) => {
     });
 
     await payment.save();
+
+    // 🏠 Auto-add tenant to property if it's a deposit
     if (paymentType === 'deposit') {
-  await Property.findByIdAndUpdate(propertyId, {
-    $addToSet: { tenants: req.user._id },
-    isBooked: true
-  });
-}
+      await Property.findByIdAndUpdate(propertyId, {
+        $addToSet: { tenants: tenantId },
+        isBooked: true,
+      });
+    }
 
-    res.status(201).json({ success: true, payment });
-
-  } catch (err) {
-    console.error("❌ Razorpay verification failed:", err);
-    res.status(500).json({ success: false, message: "Verification failed" });
+    return res.status(201).json({ success: true, payment });
+  } catch (error) {
+    console.error('❌ Razorpay verification failed:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Payment verification failed',
+    });
   }
 };
 

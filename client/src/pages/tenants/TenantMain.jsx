@@ -12,6 +12,7 @@ import Requests from './Requests';
 import History from './History';
 import './TenantDashboard.css';
 import useAuth from '../../context/useAuth'; // ✅
+import RazorpayCheckout from './RazorpayCheckout';
 
 const { Content } = Layout;
 
@@ -23,17 +24,20 @@ const TenantMain = () => {
   const { user, logout } = useAuth();
 
   // ✅ Redirect to Payments if ?payment=true is in URL
-  useEffect(() => {
-  const handleSwitchToPayments = () => {
-    setActiveMenu('payments');
-  };
+useEffect(() => {
+  const switchToPayments = () => setActiveMenu('payments');
+  const switchToRazorpay = () => setActiveMenu('razorpay');
 
-  window.addEventListener('switchToPayments', handleSwitchToPayments);
+  window.addEventListener('switchToPayments', switchToPayments);
+  window.addEventListener('switchToRazorpay', switchToRazorpay);
 
   return () => {
-    window.removeEventListener('switchToPayments', handleSwitchToPayments);
+    window.removeEventListener('switchToPayments', switchToPayments);
+    window.removeEventListener('switchToRazorpay', switchToRazorpay);
   };
 }, []);
+
+
 
 
   const notifications = [
@@ -53,6 +57,8 @@ const TenantMain = () => {
       case 'payments': return <Payments />;
       case 'requests': return <Requests />;
       case 'history': return <History />;
+      case 'razorpay': return <RazorpayCheckout />;
+
       default: return <h2>404 - Page Not Found</h2>;
     }
   };

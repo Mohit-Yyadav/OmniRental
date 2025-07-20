@@ -21,6 +21,8 @@ const Payments = () => {
   const [amount, setAmount] = useState("");
   const [upiRef, setUpiRef] = useState("");
   const [paymentType, setPaymentType] = useState("");
+  const [tenantId, setTenantId] = useState('');
+
   const [month, setMonth] = useState("");
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,14 +37,17 @@ useEffect(() => {
   const amt = localStorage.getItem("paymentAmount");
   const propId = localStorage.getItem("paymentPropertyId");
   const ownId = localStorage.getItem("paymentOwnerId");
+  const tenId = localStorage.getItem("paymentTenantId"); // ✅ Add this
 
   setBookingId(id);
   setAmount(amt);
   setPropertyId(propId);
   setOwnerId(ownId);
+  setTenantId(tenId); // ✅ Add this
 
   fetchMyPayments();
 }, []);
+
 
 
   const fetchMyPayments = async () => {
