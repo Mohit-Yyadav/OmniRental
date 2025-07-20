@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   Button,
   TextField,
@@ -75,7 +75,7 @@ const TenantManagement = () => {
 
   // Form state
   const [formData, setFormData] = useState({
-   roomNo: "",
+    roomNo: "",
     members: 1,
     rent: "",
     startDate: dayjs().format("YYYY-MM-DD"),
@@ -178,93 +178,93 @@ const TenantManagement = () => {
     }));
   };
 
+  // 👇 Inside handleSubmit, DO NOT re-declare
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
+    try {
+      setLoading(true);
 
+      if (!token) {
+        message.error("⚠️ User not authenticated");
+        return;
+      }
 
-// 👇 Inside handleSubmit, DO NOT re-declare
-const handleSubmit = async (e) => {
-  e.preventDefault();
+      const payload = {
+        tenantId: selectedTenant.tenantId || selectedTenant.id,
 
-  try {
-    setLoading(true);
+        propertyId: selectedTenant.property._id,
+        roomNo: formData.roomNo,
+        members: Number(formData.members),
+        rent: Number(formData.rent),
+        startDate: formData.startDate,
+        endDate: formData.endDate,
+        meterNumber: Number(formData.meterNumber || 0),
+        pricePerUnit: Number(formData.pricePerUnit),
+      };
 
-    if (!token) {
-      message.error("⚠️ User not authenticated");
-      return;
+      console.log("📦 Sending tenant payload:", payload);
+
+      const response = await axios.post("/api/tenants/add-tenant", payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      message.success("✅ Tenant added successfully");
+      setOpenAddDialog(false);
+      resetForm();
+      fetchAllTenants();
+    } catch (error) {
+      console.error("❌ Error adding tenant:", error);
+      message.error(error.response?.data?.error || "Failed to add tenant");
+    } finally {
+      setLoading(false);
     }
+  };
 
-   const payload = {
-  tenantId: selectedTenant.tenantId || selectedTenant.id,
+  const currentMonth = dayjs().format("YYYY-MM");
 
-  propertyId: selectedTenant.property._id,
-  roomNo: formData.roomNo,
-  members: Number(formData.members),
-  rent: Number(formData.rent),
-  startDate: formData.startDate,
-  endDate: formData.endDate,
-  meterNumber: Number(formData.meterNumber || 0),
-  pricePerUnit: Number(formData.pricePerUnit),
-};
+  // Generate monthly invoice
+  // Ensure you use this if you set Vite proxy!
+  const handleGenerateInvoice = async () => {
+    try {
+      const payload = {
+        tenantId: selectedTenant.tenantId || selectedTenant.id,
+        month: currentMonth,
+        newMeterReading: parseInt(newMeterReading),
+        extraCharges: parseInt(extraCharges) || 0,
+      };
 
-
-    console.log("📦 Sending tenant payload:", payload);
-
-    const response = await axios.post("/api/tenants/add-tenant", payload, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    message.success("✅ Tenant added successfully");
-    setOpenAddDialog(false);
-    resetForm();
-    fetchAllTenants();
-  } catch (error) {
-    console.error("❌ Error adding tenant:", error);
-    message.error(error.response?.data?.error || "Failed to add tenant");
-  } finally {
-    setLoading(false);
-  }
-};
+      const res = await axios.post("/api/tenants/generate-invoice", payload, {
+  headers: { Authorization: `Bearer ${token}` },
+});
 
 
-const currentMonth = dayjs().format("YYYY-MM");
+      setMonthlyRecords((prev) => [
+        ...prev,
+        {
+          _id: res.data.id,
+          tenant: selectedTenant.tenantId || selectedTenant.id,
+          property: selectedTenant.property,
+          month: currentMonth,
+          rent: res.data.rentAmount,
+          previousReading: res.data.previousReading,
+          newMeterReading: res.data.newMeterReading,
+          pricePerUnit: res.data.pricePerUnit,
+          extraCharges: res.data.extraCharges,
+          totalAmount: res.data.totalAmount,
+          status: res.data.status,
+        },
+      ]);
 
-  
- // Generate monthly invoice
-// Ensure you use this if you set Vite proxy!
-const handleGenerateInvoice = async () => {
-  try {
-    const payload = {
-       tenantId: selectedTenant.tenantId || selectedTenant.id,
-      month: currentMonth,
-      newMeterReading: parseInt(newMeterReading),
-      extraCharges: parseInt(extraCharges) || 0,
-    };
-
-    const res = await axios.post('/api/tenants/generate-invoice', payload);
-
-    setMonthlyRecords((prev) => [...prev, {
-      _id: res.data.id,
-      tenant: selectedTenant.tenantId || selectedTenant.id,
-      property: selectedTenant.property,
-      month: currentMonth,
-      rent: res.data.rentAmount,
-      previousReading: res.data.previousReading,
-      newMeterReading: res.data.newMeterReading,
-      pricePerUnit: res.data.pricePerUnit,
-      extraCharges: res.data.extraCharges,
-      totalAmount: res.data.totalAmount,
-      status: res.data.status,
-    }]);
-
-    toast.success("Invoice generated!");
-    setNewMeterReading('');
-    setExtraCharges('');
-  } catch (err) {
-    toast.error(err.response?.data?.error || "Invoice failed.");
-  }
-};
+      toast.success("Invoice generated!");
+      setNewMeterReading("");
+      setExtraCharges("");
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Invoice failed.");
+    }
+  };
 
   // Handle payment via Razorpay
   const handlePayment = async () => {
@@ -369,22 +369,21 @@ const handleGenerateInvoice = async () => {
 
   // Columns for all tenants table
   const tenantColumns = [
-   {
-  field: "name",
-  headerName: "Tenant Name",
-  width: 200,
-  renderCell: (params) => (
-    <div>
-      <Typography fontWeight="medium">
-        {params.row.name || "N/A"}
-      </Typography>
-      <Typography variant="body2" color="text.secondary">
-        {params.row.email || "No email"}
-      </Typography>
-    </div>
-  ),
-}
-,
+    {
+      field: "name",
+      headerName: "Tenant Name",
+      width: 200,
+      renderCell: (params) => (
+        <div>
+          <Typography fontWeight="medium">
+            {params.row.name || "N/A"}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {params.row.email || "No email"}
+          </Typography>
+        </div>
+      ),
+    },
     {
       field: "property",
       headerName: "Property",
@@ -458,14 +457,13 @@ const handleGenerateInvoice = async () => {
     },
   ];
 
-// ⚡️ Calculate units before rendering
-const previousRecord = monthlyRecords
-  .filter((r) => r.month !== dayjs().format("YYYY-MM"))
-  .sort((a, b) => dayjs(b.month).diff(dayjs(a.month)))[0];
+  // ⚡️ Calculate units before rendering
+  const previousRecord = monthlyRecords
+    .filter((r) => r.month !== dayjs().format("YYYY-MM"))
+    .sort((a, b) => dayjs(b.month).diff(dayjs(a.month)))[0];
 
-const prevMeterReading = previousRecord?.newMeterReading || 0;
-const units = newMeterReading - prevMeterReading;
-
+  const prevMeterReading = previousRecord?.newMeterReading || 0;
+  const units = newMeterReading - prevMeterReading;
 
   return (
     <div style={{ padding: "24px" }}>
@@ -561,29 +559,28 @@ const units = newMeterReading - prevMeterReading;
                   <form onSubmit={handleSubmit}>
                     <Grid container spacing={3}>
                       <Grid item xs={12} md={6}>
-                       <FormControl fullWidth sx={{ mb: 3 }}>
-  <InputLabel>Room Number</InputLabel>
-  <Select
-    name="roomNo"
-    value={formData.roomNo || ''} // ✅ fallback to ''
-    onChange={handleInputChange}
-    label="Room Number"
-    required
-    disabled={loading}
-  >
-    {Array.isArray(selectedTenant?.property?.roomNo) &&
-    selectedTenant.property.roomNo.length > 0 ? (
-      selectedTenant.property.roomNo.map((room) => (
-        <MenuItem key={room} value={room}>
-          {room}
-        </MenuItem>
-      ))
-    ) : (
-      <MenuItem disabled>No rooms available</MenuItem>
-    )}
-  </Select>
-</FormControl>
-
+                        <FormControl fullWidth sx={{ mb: 3 }}>
+                          <InputLabel>Room Number</InputLabel>
+                          <Select
+                            name="roomNo"
+                            value={formData.roomNo || ""} // ✅ fallback to ''
+                            onChange={handleInputChange}
+                            label="Room Number"
+                            required
+                            disabled={loading}
+                          >
+                            {Array.isArray(selectedTenant?.property?.roomNo) &&
+                            selectedTenant.property.roomNo.length > 0 ? (
+                              selectedTenant.property.roomNo.map((room) => (
+                                <MenuItem key={room} value={room}>
+                                  {room}
+                                </MenuItem>
+                              ))
+                            ) : (
+                              <MenuItem disabled>No rooms available</MenuItem>
+                            )}
+                          </Select>
+                        </FormControl>
 
                         <TextField
                           fullWidth
@@ -691,14 +688,13 @@ const units = newMeterReading - prevMeterReading;
                         Cancel
                       </Button>
                       <Button
-  variant="contained"
-  color="primary"
-  onClick={handleSubmit} // ✅ Must be connected
-  disabled={loading}
->
-  Save Tenant
-</Button>
-
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSubmit} // ✅ Must be connected
+                        disabled={loading}
+                      >
+                        Save Tenant
+                      </Button>
                     </div>
                   </form>
                 </>
@@ -867,38 +863,50 @@ const units = newMeterReading - prevMeterReading;
         </>
       ) : (
         <>
-{selectedTenant && (
-  <Card sx={{ mb: 3 }}>
-    <CardContent>
-      <Box display="flex" alignItems="center" mb={2}>
-        <AccountIcon sx={{ mr: 1 }} />
-        <Typography variant="h6">
-          {selectedTenant.name} - {selectedTenant.property?.name}
-        </Typography>
-      </Box>
+          {selectedTenant && (
+            <Card sx={{ mb: 3 }}>
+              <CardContent>
+                <Box display="flex" alignItems="center" mb={2}>
+                  <AccountIcon sx={{ mr: 1 }} />
+                  <Typography variant="h6">
+                    {selectedTenant.name} - {selectedTenant.property?.name}
+                  </Typography>
+                </Box>
 
-      <Typography variant="body2" color="text.secondary" gutterBottom>
-        📍 Address: {selectedTenant.property?.address}
-      </Typography>
+                <Typography variant="body2" color="text.secondary" gutterBottom>
+                  📍 Address: {selectedTenant.property?.address}
+                </Typography>
 
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
-          <Typography variant="body2">Email: {selectedTenant.email}</Typography>
-          <Typography variant="body2">Phone: {selectedTenant.phone}</Typography>
-          <Typography variant="body2">👥 Members: {selectedTenant.members}</Typography>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Typography variant="body2">Room No: {selectedTenant.roomNo}</Typography>
-          <Typography variant="body2">Rent: ₹{selectedTenant.rent}/month</Typography>
-          <Typography variant="body2">Meter No: {selectedTenant.meterNumber}</Typography>
-          <Typography variant="body2">Price/Unit: ₹{selectedTenant.pricePerUnit}</Typography>
-        </Grid>
-      </Grid>
-    </CardContent>
-  </Card>
-)}
-
-
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={6}>
+                    <Typography variant="body2">
+                      Email: {selectedTenant.email}
+                    </Typography>
+                    <Typography variant="body2">
+                      Phone: {selectedTenant.phone}
+                    </Typography>
+                    <Typography variant="body2">
+                      👥 Members: {selectedTenant.members}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Typography variant="body2">
+                      Room No: {selectedTenant.roomNo}
+                    </Typography>
+                    <Typography variant="body2">
+                      Rent: ₹{selectedTenant.rent}/month
+                    </Typography>
+                    <Typography variant="body2">
+                      Meter No: {selectedTenant.meterNumber}
+                    </Typography>
+                    <Typography variant="body2">
+                      Price/Unit: ₹{selectedTenant.pricePerUnit}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          )}
 
           <Box
             display="flex"
@@ -942,12 +950,10 @@ const units = newMeterReading - prevMeterReading;
                         </Grid>
                         <Grid item xs={4}>
                           <Typography variant="body2">Electricity:</Typography>
-                        <Typography>
-  {units} units (
-  ₹{units * selectedTenant?.pricePerUnit || 0})
-</Typography>
-
-
+                          <Typography>
+                            {units} units ( ₹
+                            {units * selectedTenant?.pricePerUnit || 0})
+                          </Typography>
                         </Grid>
                         <Grid item xs={4}>
                           <Typography variant="body2">
@@ -1041,7 +1047,7 @@ const units = newMeterReading - prevMeterReading;
                               </TableCell>
                               <TableCell align="right">{prevReading}</TableCell>
                               <TableCell align="right">{newReading}</TableCell>
-                              <TableCell align="right">{units}</TableCell> 
+                              <TableCell align="right">{units}</TableCell>
 
                               <TableCell align="right">₹{rate}</TableCell>
                               <TableCell align="right">
@@ -1123,8 +1129,7 @@ const units = newMeterReading - prevMeterReading;
           <Button
             onClick={handleGenerateInvoice}
             variant="contained"
-           disabled={loading || units <= 0}
-
+            disabled={loading || units <= 0}
           >
             {loading ? <CircularProgress size={24} /> : "Generate"}
           </Button>

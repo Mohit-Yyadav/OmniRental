@@ -104,8 +104,6 @@ exports.getMonthlyRecords = async (req, res) => {
 // ✅ Generate invoice for current month
 exports.generateInvoice = async (req, res) => {
   try {
-    console.log("📥 Invoice Request Body:", req.body);
-
     const { tenantId, month, newMeterReading, extraCharges = 0 } = req.body;
 
     const tenant = await Tenant.findById(tenantId);
@@ -113,57 +111,51 @@ exports.generateInvoice = async (req, res) => {
 
     const existing = await MonthlyRecord.findOne({ tenant: tenantId, month });
     if (existing) {
-      console.log("⚠️ Invoice already exists:", existing);
       return res.status(400).json({ error: "Invoice already exists for this month" });
     }
 
     const lastRecord = await MonthlyRecord.findOne({ tenant: tenantId }).sort({ month: -1 });
 
     const previousReading = lastRecord
-      ? lastRecord.newMeterReading
-      : parseInt(tenant.meterNumber);
+      ? Number(lastRecord.newMeterReading)
+      : Number(tenant.meterNumber) || 0;
 
-    const unitsConsumed = newMeterReading - previousReading;
+    const newReading = Number(newMeterReading);
+    const extras = Number(extraCharges);
+    const unitRate = Number(tenant.pricePerUnit);
+    const rent = Number(tenant.rent);
 
-    console.log("📊 Readings:", {
-      previousReading,
-      newMeterReading,
-      unitsConsumed,
-    });
+    const unitsConsumed = Math.max(0, newReading - previousReading); // Always positive
+    const electricityCharge = unitsConsumed * unitRate;
 
-    if (unitsConsumed < 0) {
-      return res.status(400).json({ error: "New meter reading cannot be less than previous reading" });
-    }
-
-    const electricityCharge = unitsConsumed * tenant.pricePerUnit;
-    const totalAmount = tenant.rent + electricityCharge + extraCharges;
+    const totalAmount = rent + electricityCharge + extras;
 
     const newRecord = new MonthlyRecord({
       tenant: tenantId,
       property: tenant.property,
       month,
-      rent: tenant.rent,
+      rent,
       previousReading,
-      newMeterReading,
+      newMeterReading: newReading,
       meterUnits: unitsConsumed,
-      pricePerUnit: tenant.pricePerUnit,
-      extraCharges,
+      pricePerUnit: unitRate,
+      extraCharges: extras,
       totalAmount,
       isPaid: false,
     });
 
     await newRecord.save();
 
-    res.status(200).json({
+    res.status(201).json({
       id: newRecord._id,
       month,
-      rentAmount: tenant.rent,
+      rentAmount: rent,
       previousReading,
-      newMeterReading,
+      newMeterReading: newReading,
       unitsConsumed,
-      pricePerUnit: tenant.pricePerUnit,
+      pricePerUnit: unitRate,
       electricityCharge,
-      extraCharges,
+      extraCharges: extras,
       totalAmount,
       status: "pending",
     });
@@ -172,5 +164,7 @@ exports.generateInvoice = async (req, res) => {
     res.status(500).json({ error: "Failed to generate invoice" });
   }
 };
+
+
 
 

@@ -11,7 +11,7 @@ const monthlyRecordSchema = new mongoose.Schema({
   newMeterReading: { type: Number, required: true }, // 👈 NEW
   pricePerUnit: { type: Number, required: true },
 
-  meterUnits: { type: Number, default: 0 }, // calculated
+  meterUnits: { type: Number }, // calculated
   electricityCharge: { type: Number, default: 0 }, // optional if you want
   
   extraCharges: { type: Number, default: 0 },
