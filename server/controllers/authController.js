@@ -1,4 +1,5 @@
-const User = require('../../server/models/User');
+const User = require('../models/User'); // ✅ Correct relative path
+
 const jwt = require('jsonwebtoken');
 const generateToken = require('../utils/generateToken');
 
