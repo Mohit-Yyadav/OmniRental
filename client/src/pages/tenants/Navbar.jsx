@@ -3,6 +3,7 @@ import React from 'react';
 import { BellOutlined, LogoutOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { Layout, Avatar, Badge, Button, Tooltip } from 'antd';
 import './TenantDashboard.css'; // Optional, style provided below
+const BACKEND_URI = import.meta.env.VITE_BACKEND_URL;
 
 const { Header } = Layout;
 
@@ -42,7 +43,7 @@ const Navbar = ({
     user?.profilePic
       ? user.profilePic.startsWith('http')
         ? user.profilePic
-        : `http://localhost:5000${user.profilePic}`
+        : `${BACKEND_URI}${user.profilePic}`
       : null
   }
 />

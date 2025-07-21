@@ -17,6 +17,7 @@ import {
   CameraOutlined
 } from '@ant-design/icons';
 import useAuth from '../../context/useAuth';
+const BACKEND_URI = import.meta.env.VITE_BACKEND_URL;
 
 const Profile = () => {
   const { user } = useAuth();
@@ -42,7 +43,7 @@ const Profile = () => {
     if (!token) return;
 
     try {
-     const res = await fetch('http://localhost:5000/api/user/me', {
+     const res = await fetch(`${BACKEND_URI}/api/user/me`, {
 
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -80,7 +81,7 @@ const Profile = () => {
       if (idProofFile) formData.append('idProofDoc', idProofFile);
 
       const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:5000/api/user/me/upload', {
+      const res = await fetch(`${BACKEND_URI}/api/user/me/upload`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -127,7 +128,7 @@ const Profile = () => {
     return profileData?.profilePic
       ? profileData.profilePic.startsWith("http")
         ? profileData.profilePic
-        : `http://localhost:5000${profileData.profilePic}`
+        : `${BACKEND_URI}${profileData.profilePic}`
       : 'https://randomuser.me/api/portraits/men/10.jpg';
   };
 
@@ -247,7 +248,7 @@ const Profile = () => {
   <Button
     type="link"
     target="_blank"
-    href={`http://localhost:5000${profileData.idProofDoc.url}`}
+    href={`${BACKEND_URI}${profileData.idProofDoc.url}`}
     icon={<UploadOutlined />}
   >
     See Uploaded

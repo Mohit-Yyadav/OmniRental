@@ -9,6 +9,7 @@ import {
 import axios from 'axios';
 import dayjs from 'dayjs';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const { Title, Text } = Typography;
 
 const BookingRequests = () => {
@@ -31,7 +32,7 @@ const BookingRequests = () => {
   const fetchRequests = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/api/booking-requests/owner", {
+      const res = await axios.get(`${BACKEND_URL}/api/booking-requests/owner`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRequests(res.data);
@@ -45,7 +46,7 @@ const BookingRequests = () => {
 
   const handleStatusChange = async (id, status) => {
     try {
-      await axios.put(`http://localhost:5000/api/booking-requests/${id}/status`, { status }, {
+      await axios.put(`${BACKEND_URL}/api/booking-requests/${id}/status`, { status }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       message.success(`Request ${status}`);

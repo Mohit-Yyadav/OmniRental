@@ -3,6 +3,8 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { MapPin, Home, Heart, Star } from 'lucide-react';
 
+const BACKEND_URI = import.meta.env.VITE_BACKEND_URL;
+
 const Property = () => {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +19,7 @@ const Property = () => {
 
   const fetchProperties = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/properties/public');
+      const res = await axios.get(`${BACKEND_URI}/api/properties/publiC`);
       setProperties(res.data);
       setLoading(false);
     } catch (error) {
@@ -180,7 +182,7 @@ const Property = () => {
                 <div className="position-relative">
                   {property.images && property.images.length > 0 ? (
   <img
-    src={`http://localhost:5000/uploads/${property.images[0]}`}
+    src={`${BACKEND_URI}/uploads/${property.images[0]}`}
     alt={property.name}
     className="img-fluid w-100"
     style={{ height: '200px', objectFit: 'cover' }}

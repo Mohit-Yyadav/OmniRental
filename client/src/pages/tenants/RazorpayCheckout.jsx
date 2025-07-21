@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Button, message, Typography, Card } from 'antd';
 import axios from 'axios';
 
+
+const BACKEND_URI = import.meta.env.VITE_BACKEND_URL;
+
 const { Title } = Typography;
 
 const RazorpayCheckout = () => {
@@ -51,7 +54,7 @@ const RazorpayCheckout = () => {
       setLoading(true);
       const token = localStorage.getItem('token');
       const { data } = await axios.post(
-        'http://localhost:5000/api/payments/order',
+        `${BACKEND_URI}/api/payments/order`,
         { amount },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -72,7 +75,7 @@ const RazorpayCheckout = () => {
             const month = localStorage.getItem('paymentMonth') || '';
 
             const verifyRes = await axios.post(
-              'http://localhost:5000/api/payments/verify',
+              `${BACKEND_URI}/api/payments/verify`,
               {
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_order_id: response.razorpay_order_id,

@@ -20,6 +20,9 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom'; // ✅ Import useNavigate
 
+
+const BACKEND_URI = import.meta.env.VITE_BACKEND_URL;
+
 const { Text } = Typography;
 
 const Requests = () => {
@@ -72,7 +75,7 @@ const handleProceedToPayment = (record) => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:5000/api/booking-requests/tenant', {
+      const res = await axios.get(`${BACKEND_URI}/api/booking-requests/tenant`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setRequests(res.data);
@@ -87,7 +90,7 @@ const handleProceedToPayment = (record) => {
   const handleCancel = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.patch(`http://localhost:5000/api/booking-requests/${id}/cancel`, {}, {
+      await axios.patch(`${BACKEND_URI}/api/booking-requests/${id}/cancel`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       message.success('Request cancelled');

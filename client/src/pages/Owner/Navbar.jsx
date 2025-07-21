@@ -12,6 +12,7 @@ import {
 import { UserOutlined } from '@ant-design/icons';
 import { Layout, Avatar, Badge, Button, Tooltip, Dropdown, Menu } from 'antd';
 
+const BACKEND_URI = import.meta.env.VITE_BACKEND_URL;
 const { Header } = Layout;
 
 const OwnerNavbar = ({
@@ -105,7 +106,7 @@ const OwnerNavbar = ({
     user?.profilePic
       ? user.profilePic.startsWith('http')
         ? user.profilePic
-        : `http://localhost:5000${user.profilePic}`
+        : `${BACKEND_URI}${user.profilePic}`
       : null
   }
   size="large"

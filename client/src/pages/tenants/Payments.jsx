@@ -21,6 +21,9 @@ import {
   DollarOutlined
 } from '@ant-design/icons';
 
+
+const BACKEND_URI = import.meta.env.VITE_BACKEND_URL;
+
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -44,7 +47,7 @@ const Payments = () => {
     try {
       setTableLoading(true);
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/payments/my", {
+      const res = await axios.get(`${BACKEND_URI}/api/payments/my`, {
         headers: { Authorization: `Bearer ${token}` },
         params
       });

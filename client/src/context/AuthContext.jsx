@@ -2,7 +2,7 @@ import { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
 export const AuthContext = createContext();
-
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      axios.get('http://localhost:5000/api/auth/me', {
+      axios.get(`${BACKEND_URL}/api/auth/me`, {
         headers: { Authorization: `Bearer ${token}` },
       })
         .then((res) => {
@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
 
 const login = async (email, password) => {
   try {
-    const res = await axios.post('http://localhost:5000/api/auth/login', {
+    const res = await axios.post(`${BACKEND_URL}/api/auth/login`, {
       email,
       password,
     });

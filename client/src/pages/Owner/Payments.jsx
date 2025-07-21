@@ -23,6 +23,7 @@ import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 
 dayjs.extend(isBetween);
+const BACKEND_URI = import.meta.env.VITE_BACKEND_URL;
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -46,7 +47,7 @@ const Payments = () => {
       try {
         setDepositedLoading(true);
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/payments/owner/deposits", {
+        const res = await axios.get(`${BACKEND_URI}/api/payments/owner/deposits`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setDepositedTenants(res.data);
@@ -65,8 +66,8 @@ const Payments = () => {
   useEffect(() => {
     const fetchOwnerProperties = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/properties", {
+        const token = localStorage.getItem("token")
+        const res = await axios.get(`${BACKEND_URI}/api/properties`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setOwnerProperties(res.data);
@@ -90,7 +91,7 @@ const Payments = () => {
     try {
       setPaymentsLoading(true);
       const token = localStorage.getItem("token");
-      let url = `http://localhost:5000/api/payments/property/${propertyId}`;
+      let url = `${BACKEND_URI}/api/payments/property/${propertyId}`;
       
       // Add date range to URL if specified
       if (dateRange && dateRange.length === 2) {

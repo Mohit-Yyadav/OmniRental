@@ -6,6 +6,8 @@ import { MdEmail } from "react-icons/md";
 import '../../assets/css/Auth.css';
 import rent from '../../assets/images/rent.jpg';
 
+const BACKEND_URI = import.meta.env.VITE_BACKEND_URL;
+
 const Register = () => {
   const navigate = useNavigate();
   const allowedRoles = ['tenant', 'owner'];
@@ -50,7 +52,7 @@ const submitHandler = async (e) => {
   }
 
   try {
-    const res = await fetch("http://localhost:5000/api/auth/register", {
+    const res = await fetch(`${BACKEND_URI}/api/auth/register`, {
       method: "POST",
       headers: { 
         "Content-Type": "application/json",

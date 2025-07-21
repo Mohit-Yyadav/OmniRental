@@ -34,6 +34,9 @@ import {
   Modal,
 } from "react-bootstrap";
 import useAuth from '../../context/useAuth'; // adjust path if needed
+
+const BACKEND_URI = import.meta.env.VITE_BACKEND_URL;
+
 const PropertyDetail = () => {
   const { user } = useAuth();
 
@@ -64,12 +67,12 @@ const PropertyDetail = () => {
      roomNo: property?.roomNo || "",
      address: property?.address || "",
   });
-  const baseImageUrl = "http://localhost:5000/uploads/";
+  const baseImageUrl = `${BACKEND_URI}/uploads/`;
 
   const fetchProperty = async () => {
     try {
      const res = await axios.get(
-  `http://localhost:5000/api/properties/public/${id}`
+  `${BACKEND_URI}/api/properties/public/${id}`
 );
 
       setProperty(res.data);
@@ -149,7 +152,7 @@ useEffect(() => {
 
   try {
    const response = await axios.post(
-  "http://localhost:5000/api/booking-requests",
+  `${BACKEND_URI}/api/booking-requests`,
   {
     propertyId: property._id,
     moveInDate: bookingFormData.moveInDate,

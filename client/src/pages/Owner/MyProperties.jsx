@@ -34,6 +34,7 @@ import {
 import { Link } from "react-router-dom";
 import axios from "axios";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
@@ -49,7 +50,7 @@ const MyProperties = () => {
     const fetchProperties = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/properties", {
+        const res = await axios.get(`${BACKEND_URL}/api/properties`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -85,7 +86,7 @@ const handleEditProperty = (property) => {
     uid: index.toString(),
     name: filename,
     status: 'done',
-    url: `http://localhost:5000/uploads/${filename}`, // ✅ Full URL
+    url: `${BACKEND_URL}/uploads/${filename}`, // ✅ Full URL
   })),
 });
 
@@ -106,7 +107,7 @@ const handleDeleteProperty = async (id) => {
         
         // 1. Make the API call
         const response = await axios.delete(
-          `http://localhost:5000/api/properties/${id}`,
+          `${BACKEND_URL}/api/properties/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -179,7 +180,7 @@ const handleDeleteProperty = async (id) => {
         <Avatar
           src={
             record.images?.[0]
-              ? `http://localhost:5000/uploads/${record.images[0]}`
+              ? `${BACKEND_URL}/uploads/${record.images[0]}`
               : null
           }
           icon={<HomeOutlined />}
@@ -477,7 +478,7 @@ for (let pair of formData.entries()) {
 
     if (editingProperty) {
       response = await axios.put(
-        `http://localhost:5000/api/properties/${editingProperty._id}`,
+        `${BACKEND_URL}/api/properties/${editingProperty._id}`,
         formData,
         config
       );
@@ -490,7 +491,7 @@ for (let pair of formData.entries()) {
       message.success("Property updated successfully");
     } else {
       response = await axios.post(
-        "http://localhost:5000/api/properties",
+       `${BACKEND_URL}/api/properties`,
         formData,
         config
       );

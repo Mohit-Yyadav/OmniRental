@@ -4,6 +4,9 @@ import { Card, Form, Input, Button, Avatar, Upload, Select, Row, Col, message } 
 import { EditOutlined, SaveOutlined, UploadOutlined, CameraOutlined } from '@ant-design/icons';
 import useAuth from '../../context/useAuth';
 
+
+const BACKEND_URI = import.meta.env.VITE_BACKEND_URL;
+
 const { Option } = Select;
 
 const Profile = () => {
@@ -39,7 +42,7 @@ const Profile = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/user/me', {
+      const response = await fetch(`${BACKEND_URI}/api/user/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -91,7 +94,7 @@ const Profile = () => {
 
       const token = localStorage.getItem('token');
 
-      const res = await fetch('http://localhost:5000/api/user/me/upload', {
+      const res = await fetch(`${BACKEND_URI}/api/user/me/upload`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -146,7 +149,7 @@ const getAvatarSrc = () => {
   return profileData?.profilePic
     ? profileData.profilePic.startsWith("http")
       ? profileData.profilePic
-      : `http://localhost:5000${profileData.profilePic}`
+      : `${BACKEND_URI}${profileData.profilePic}`
     : null;
 };
 
