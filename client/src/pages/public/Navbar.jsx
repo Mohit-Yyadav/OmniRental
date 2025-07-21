@@ -164,7 +164,7 @@ const Navbar = () => {
   >
     {/* Dynamic logo handling - falls back to SVG if image not found */}
     <img
-      src={user?.photoURL || '/src/assets/logo.svg'}  // Use your actual logo path
+      src={user?.photoURL}  // Use your actual logo path
       alt="OmniRental Logo"
       className="img-fluid"
       style={{ 

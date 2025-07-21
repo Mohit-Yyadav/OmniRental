@@ -3,6 +3,7 @@ const Razorpay = require('razorpay');
 const Payment = require('../models/Payment');
 require('dotenv').config();
 const Property = require('../models/Property');
+const MonthlyRecord = require('../models/MonthlyRecord'); // or Invoice
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
@@ -41,6 +42,19 @@ exports.createPayment = async (req, res) => {
 
     await payment.save();
     // ✅ Auto-add tenant to property and mark it booked
+
+if (paymentType === 'rent') {
+  await MonthlyRecord.findOneAndUpdate(
+    {
+      tenant: req.user._id,  // ✅ Use correct field name
+      property: propertyId,
+      month,
+    },
+    { $set: { isPaid: true } }
+  );
+}
+
+
 if (paymentType === 'deposit') {
   await Property.findByIdAndUpdate(propertyId, {
     $addToSet: { tenants: req.user._id },
@@ -84,13 +98,17 @@ exports.getMyPayments = async (req, res) => {
   }
 };
 
-// 🧾 Create Razorpay Order
 exports.createOrder = async (req, res) => {
   try {
     const { amount } = req.body;
+    console.log('📦 createOrder received amount:', amount);
+
+    if (!amount || isNaN(amount)) {
+      return res.status(400).json({ message: 'Invalid or missing amount' });
+    }
 
     const options = {
-      amount: amount * 100, // in paise
+      amount: Math.round(amount * 100), // Convert to paise
       currency: 'INR',
       receipt: `receipt_${Date.now()}`,
     };
@@ -102,6 +120,7 @@ exports.createOrder = async (req, res) => {
     res.status(500).json({ success: false, message: 'Order creation failed' });
   }
 };
+
 
 // ✅ Verify Razorpay Payment
 exports.verifyPayment = async (req, res) => {
@@ -116,11 +135,11 @@ exports.verifyPayment = async (req, res) => {
     paymentType,
     month,
     note,
-    tenantId, // ✅ From frontend
+    tenantId,
   } = req.body;
 
   try {
-    // 🔒 Verify Razorpay signature
+    // 🔒 Signature Check
     const sign = `${razorpay_order_id}|${razorpay_payment_id}`;
     const expectedSignature = crypto
       .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
@@ -134,7 +153,19 @@ exports.verifyPayment = async (req, res) => {
       });
     }
 
-    // ✅ Save payment with tenantId
+    // 🧾 Debug payload
+    console.log('🧾 Payment Data:', {
+      tenantId,
+      ownerId,
+      propertyId,
+      amount,
+      method,
+      paymentType,
+      month,
+      note,
+    });
+
+    // ✅ Save payment
     const payment = new Payment({
       tenantId,
       ownerId,
@@ -153,8 +184,29 @@ exports.verifyPayment = async (req, res) => {
 
     await payment.save();
 
-    // 🏠 Auto-add tenant to property if it's a deposit
+    // ✅ Mark MonthlyRecord as paid if rent payment
+if (paymentType === 'rent') {
+  const updated = await MonthlyRecord.findOneAndUpdate(
+    {
+      tenant: tenantId,
+      property: propertyId,
+      month,
+    },
+    { $set: { isPaid: true, status: "paid" } },
+    { new: true }
+  );
+
+  if (updated) {
+    console.log('✅ Monthly record marked as paid:', updated._id);
+  } else {
+    console.warn('⚠️ No MonthlyRecord found to mark as paid');
+  }
+}
+
+
+    // 🏠 Auto-book property
     if (paymentType === 'deposit') {
+      console.log('🏠 Updating property with tenant...');
       await Property.findByIdAndUpdate(propertyId, {
         $addToSet: { tenants: tenantId },
         isBooked: true,
@@ -170,6 +222,7 @@ exports.verifyPayment = async (req, res) => {
     });
   }
 };
+
 
 
 

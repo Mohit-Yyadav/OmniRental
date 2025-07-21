@@ -129,10 +129,10 @@ const RazorpayCheckout = () => {
 
         {paymentData ? (
           <>
-            <p><strong>Booking ID:</strong> {bookingId || '—'}</p>
+            {/* <p><strong>Booking ID:</strong> {bookingId || '—'}</p>
             <p><strong>Tenant ID:</strong> {paymentData.tenantId || '—'}</p>
             <p><strong>Owner ID:</strong> {paymentData.ownerId}</p>
-            <p><strong>Property ID:</strong> {paymentData.propertyId}</p>
+            <p><strong>Property ID:</strong> {paymentData.propertyId}</p> */}
             <p><strong>Amount:</strong> ₹{paymentData.amount}</p>
             <p><strong>Method:</strong> {paymentData.method}</p>
             <p><strong>Status:</strong> {paymentData.status}</p>

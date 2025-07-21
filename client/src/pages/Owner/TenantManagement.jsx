@@ -137,6 +137,14 @@ const TenantManagement = () => {
     }
   };
 
+useEffect(() => {
+  if (selectedTenant?.id) {
+    fetchMonthlyRecords(selectedTenant.id);
+  }
+}, [selectedTenant]);
+
+
+
   useEffect(() => {
     (async () => {
       try {
@@ -227,44 +235,72 @@ const TenantManagement = () => {
 
   // Generate monthly invoice
   // Ensure you use this if you set Vite proxy!
+  // const handleGenerateInvoice = async () => {
+  //   try {
+  //     const payload = {
+  //       tenantId: selectedTenant.tenantId || selectedTenant.id,
+  //       month: currentMonth,
+  //       newMeterReading: parseInt(newMeterReading),
+  //       extraCharges: parseInt(extraCharges) || 0,
+  //     };
+
+  //     const res = await axios.post("/api/tenants/generate-invoice", payload, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+
+  //     setMonthlyRecords((prev) => [
+  //       ...prev,
+  //       {
+  //         _id: res.data.id,
+  //         tenant: selectedTenant.tenantId || selectedTenant.id,
+  //         property: selectedTenant.property,
+  //         month: currentMonth,
+  //         rent: res.data.rentAmount,
+  //         previousReading: res.data.previousReading,
+  //         newMeterReading: res.data.newMeterReading,
+  //         pricePerUnit: res.data.pricePerUnit,
+  //         extraCharges: res.data.extraCharges,
+  //         totalAmount: res.data.totalAmount,
+  //         status: res.data.status,
+  //       },
+  //     ]);
+
+  //     toast.success("Invoice generated!");
+  //     setNewMeterReading("");
+  //     setExtraCharges("");
+  //   } catch (err) {
+  //     toast.error(err.response?.data?.error || "Invoice failed.");
+  //   }
+  // };
+
   const handleGenerateInvoice = async () => {
-    try {
-      const payload = {
-        tenantId: selectedTenant.tenantId || selectedTenant.id,
-        month: currentMonth,
-        newMeterReading: parseInt(newMeterReading),
-        extraCharges: parseInt(extraCharges) || 0,
-      };
+  try {
+    const payload = {
+      tenantId: selectedTenant.tenantId || selectedTenant.id,
+      month: currentMonth,
+      newMeterReading: parseInt(newMeterReading),
+      extraCharges: parseInt(extraCharges) || 0,
+    };
 
-      const res = await axios.post("/api/tenants/generate-invoice", payload, {
-  headers: { Authorization: `Bearer ${token}` },
-});
+    const res = await axios.post("/api/tenants/generate-invoice", payload, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    toast.success("✅ Invoice generated!");
+
+    // 🟢 Step: Refresh ALL monthly records after generating
+    await fetchMonthlyRecords(selectedTenant.tenantId || selectedTenant.id);
+
+    // Clear form inputs
+    setNewMeterReading("");
+    setExtraCharges("");
+    setOpenGenerateDialog(false);
+  } catch (err) {
+    toast.error(err.response?.data?.error || "Invoice failed.");
+  }
+};
 
 
-      setMonthlyRecords((prev) => [
-        ...prev,
-        {
-          _id: res.data.id,
-          tenant: selectedTenant.tenantId || selectedTenant.id,
-          property: selectedTenant.property,
-          month: currentMonth,
-          rent: res.data.rentAmount,
-          previousReading: res.data.previousReading,
-          newMeterReading: res.data.newMeterReading,
-          pricePerUnit: res.data.pricePerUnit,
-          extraCharges: res.data.extraCharges,
-          totalAmount: res.data.totalAmount,
-          status: res.data.status,
-        },
-      ]);
-
-      toast.success("Invoice generated!");
-      setNewMeterReading("");
-      setExtraCharges("");
-    } catch (err) {
-      toast.error(err.response?.data?.error || "Invoice failed.");
-    }
-  };
 
   // Handle payment via Razorpay
   const handlePayment = async () => {
@@ -921,7 +957,8 @@ const TenantManagement = () => {
                 variant="contained"
                 startIcon={<ReceiptIcon />}
                 onClick={() => setOpenGenerateDialog(true)}
-                disabled={loading || currentMonthRecord}
+                disabled={loading || (currentMonthRecord && currentMonthRecord.isPaid)}
+
               >
                 Generate Current Month Invoice
               </Button>
@@ -1013,68 +1050,65 @@ const TenantManagement = () => {
                 <TableContainer component={Paper}>
                   <Table size="small">
                     <TableHead>
-                      <TableRow>
-                        <TableCell>Month</TableCell>
-                        <TableCell align="right">Rent</TableCell>
-                        <TableCell align="right">Prev Reading</TableCell>
-                        <TableCell align="right">New Reading</TableCell>
-                        <TableCell align="right">Units</TableCell>
-                        <TableCell align="right">Rate/Unit</TableCell>
-                        <TableCell align="right">Electricity</TableCell>
-                        <TableCell align="right">Extra</TableCell>
-                        <TableCell align="right">Total</TableCell>
-                        <TableCell align="right">Status</TableCell>
-                      </TableRow>
-                    </TableHead>
+  <TableRow>
+    <TableCell><strong>Month</strong></TableCell>
+    <TableCell align="right"><strong>Rent</strong></TableCell>
+    <TableCell align="right"><strong>Prev</strong></TableCell>
+    <TableCell align="right"><strong>New</strong></TableCell>
+    <TableCell align="right"><strong>Units</strong></TableCell>
+    <TableCell align="right"><strong>Rate</strong></TableCell>
+    <TableCell align="right"><strong>Elec ₹</strong></TableCell>
+    <TableCell align="right"><strong>Extra</strong></TableCell>
+    <TableCell align="right"><strong>Total</strong></TableCell>
+    <TableCell align="center"><strong>Status</strong></TableCell>
+  </TableRow>
+</TableHead>
+
                     <TableBody>
-                      {monthlyRecords
-                        .sort((a, b) => dayjs(a.month).diff(dayjs(b.month))) // sort by month
-                        .map((record, index) => {
-                          const prev = monthlyRecords[index - 1];
-                          const prevReading = prev?.newMeterReading || 0;
+                      {[...monthlyRecords]
+                        .sort((a, b) => dayjs(b.month).diff(dayjs(a.month))) // Latest first
+                        .map((record) => {
+                          const prevReading = record.previousReading || 0;
                           const newReading = record.newMeterReading || 0;
-                          const units = newReading - prevReading;
+                          const units =
+                            record.meterUnits ?? newReading - prevReading;
                           const rate = record.pricePerUnit || 0;
-                          const electricity = units * rate;
+                          const electricity =
+                            record.electricityCharge ?? units * rate;
+                          const extra = record.extraCharges || 0;
+                          const total =
+                            record.totalAmount ||
+                            electricity + extra + (record.rent || 0);
+                          const status = record.isPaid ? "paid" : "pending";
 
                           return (
-                            <TableRow key={record._id || record.id}>
-                              <TableCell>
-                                {dayjs(record.month).format("MMM YYYY")}
-                              </TableCell>
-                              <TableCell align="right">
-                                ₹{record.rent}
-                              </TableCell>
-                              <TableCell align="right">{prevReading}</TableCell>
-                              <TableCell align="right">{newReading}</TableCell>
-                              <TableCell align="right">{units}</TableCell>
+                      <TableRow key={record._id}>
+  <TableCell>{dayjs(record.month).format("MMM YYYY")}</TableCell>
 
-                              <TableCell align="right">₹{rate}</TableCell>
-                              <TableCell align="right">
-                                ₹{electricity}
-                              </TableCell>
-                              <TableCell align="right">
-                                ₹{record.extraCharges || 0}
-                              </TableCell>
-                              <TableCell align="right">
-                                ₹{record.totalAmount}
-                              </TableCell>
-                              <TableCell align="right">
-                                <Chip
-                                  label={(
-                                    record.status || "unknown"
-                                  ).toUpperCase()}
-                                  size="small"
-                                  color={
-                                    record.status === "paid"
-                                      ? "success"
-                                      : record.status === "pending"
-                                      ? "warning"
-                                      : "default"
-                                  }
-                                />
-                              </TableCell>
-                            </TableRow>
+  <TableCell align="right">₹{record.rent?.toLocaleString() || 0}</TableCell>
+  <TableCell align="right">{prevReading}</TableCell>
+  <TableCell align="right">{newReading}</TableCell>
+  <TableCell align="right">{units}</TableCell>
+  <TableCell align="right">₹{rate}</TableCell>
+  <TableCell align="right">₹{electricity.toLocaleString()}</TableCell>
+  <TableCell align="right">₹{extra.toLocaleString()}</TableCell>
+  <TableCell align="right">₹{total.toLocaleString()}</TableCell>
+
+  <TableCell align="center">
+    <Chip
+      label={
+        status === "paid"
+          ? "✅ Paid"
+          : status === "pending"
+          ? "⏳ Pending"
+          : status
+      }
+      color={status === "paid" ? "success" : "warning"}
+      size="small"
+    />
+  </TableCell>
+</TableRow>
+
                           );
                         })}
                     </TableBody>

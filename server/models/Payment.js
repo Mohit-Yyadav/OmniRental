@@ -7,11 +7,12 @@ const paymentSchema = new mongoose.Schema({
   amount: Number,
   method: String,
   status: String,
-  paymentType: {
-    type: String,
-    enum: ['deposit', 'monthly rent', 'maintenance'],
-    required: true,
-  },
+ paymentType: {
+  type: String,
+  enum: ['deposit', 'rent', 'maintenance', 'other'], // add 'rent'
+  required: true,
+},
+
   month: {
     type: String, // e.g., "July 2025"
   },
