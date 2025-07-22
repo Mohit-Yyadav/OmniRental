@@ -1,15 +1,14 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
-
-const backendUrl = process.env.VITE_BACKEND_URL;
-
+// 👇 Fix: safely access env vars with process.env
+const backendUrl = process.env?.VITE_BACKEND_URL || 'http://localhost:5000';
 
 export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      "/api": {
+      '/api': {
         target: backendUrl,
         changeOrigin: true,
         secure: false,

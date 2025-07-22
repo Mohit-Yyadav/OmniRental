@@ -11,9 +11,21 @@ const app = express();
 
 // ✅ Middleware
 app.use(cors({
-  origin: 'http://localhost:5173', // Frontend URL
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'https://omnirental.onrender.com',
+      'http://localhost:5173'
+    ];
+
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
+
 app.use(express.json());
 
 // ✅ Serve static files (for image/file uploads)
