@@ -1,73 +1,34 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const path = require('path');
-
-// Load environment variables from .env
-dotenv.config();
+// index.js or app.js (backend entry file)
+const express = require("express");
+const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
 
-// ✅ Middleware
+// ✅ CORS setup to allow both production and local dev frontend
+const allowedOrigins = [
+  "https://omnirental.onrender.com",
+  "http://localhost:5173"
+];
+
 app.use(cors({
   origin: function (origin, callback) {
-    const allowedOrigins = [
-      'https://omnirental.onrender.com',
-      'http://localhost:5173'
-    ];
-
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
+    if (!origin) return callback(null, true); // allow server-to-server or tools like Postman
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      return callback(new Error("CORS error: Not allowed by CORS"));
     }
   },
-  credentials: true
+  credentials: true,
 }));
 
+// Your other middleware
 app.use(express.json());
 
-// ✅ Serve static files (for image/file uploads)
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Your routes
+app.use("/api/auth", require("./routes/auth")); // example
 
-// ✅ Route Imports
-const authRoutes = require('./routes/auth');
-const userRoutes = require('./routes/userRoutes');
-const propertyRoutes = require('./routes/propertyRoutes');
-const bookingRoutes = require('./routes/bookingRoutes');
-
-const paymentRoutes = require('./routes/paymentRoutes');
-const ownerRoutes = require('./routes/ownerRoutes');
-
-const tenantRoutes = require('./routes/tenantRoutes');// 🔥 FIXED: Make sure this file exists
-
-
-
-// ✅ Mount API Routes
-app.use('/api/auth', authRoutes);                 // Signup, login, etc.
-app.use('/api/user', userRoutes);                 // Profile, etc.
-app.use('/api/properties', propertyRoutes);       // Property CRUD
-app.use('/api/booking-requests', bookingRoutes);  // Booking logic
-          // All tenants route (GET /api/tenants)
-app.use('/api/payments', paymentRoutes);
-     // Payments: /my, /order, /verify, etc.
-app.use('/api/owner', ownerRoutes);               // Owner-specific actions like add-tenant
-
-
-app.use('/api/tenants', tenantRoutes);
-
-// ✅ MongoDB Connection
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-
-.then(() => console.log('✅ MongoDB connected'))
-.catch((err) => console.error('❌ MongoDB connection error:', err));
-
-// ✅ Start the Server
+// Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

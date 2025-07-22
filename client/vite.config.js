@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// 👇 Fix: safely access env vars with process.env
+// Use VITE_BACKEND_URL from .env or fallback to localhost
 const backendUrl = process.env?.VITE_BACKEND_URL || 'http://localhost:5000';
 
 export default defineConfig({
