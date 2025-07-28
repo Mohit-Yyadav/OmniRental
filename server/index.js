@@ -38,7 +38,7 @@ app.use('/uploads', express.static('uploads'));
 
 // ✅ Routes
 app.use("/api/auth", require("./routes/auth"));
-app.use("/api/users", require("./routes/userRoutes"));             // ✅ add this
+app.use("/api/user", require("./routes/userRoutes"));             // ✅ add this
 app.use("/api/properties", require("./routes/propertyRoutes"));    // ✅ already added
 app.use("/api/payments", require("./routes/paymentRoutes"));       // ✅ add this
 app.use("/api/tenants", require("./routes/tenantRoutes"));         // ✅ add this
