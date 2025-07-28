@@ -27,9 +27,25 @@ app.use(cors({
 app.use(express.json());
 
 // ✅ Routes
-app.use("/api/auth", require("./routes/auth")); // add other routes similarly
-// app.use("/api/users", require("./routes/users"));
-// app.use("/api/properties", require("./routes/properties"));
+// app.use("/api/auth", require("./routes/auth")); // add other routes similarly
+// // app.use("/api/users", require("./routes/users"));
+// // app.use("/api/properties", require("./routes/properties"));
+
+// app.use("/api/properties", require("./routes/propertyRoutes")); // ✅ Make sure the file name matches
+
+// ✅ Serve uploaded images from /uploads folder
+app.use('/uploads', express.static('uploads'));
+
+// ✅ Routes
+app.use("/api/auth", require("./routes/auth"));
+app.use("/api/users", require("./routes/userRoutes"));             // ✅ add this
+app.use("/api/properties", require("./routes/propertyRoutes"));    // ✅ already added
+app.use("/api/payments", require("./routes/paymentRoutes"));       // ✅ add this
+app.use("/api/tenants", require("./routes/tenantRoutes"));         // ✅ add this
+app.use("/api/booking-requests", require("./routes/bookingRoutes")); // ✅ add this
+app.use("/api/owner", require("./routes/ownerRoutes"));            // ✅ add this if needed
+
+
 
 
 // ✅ Connect to MongoDB and start server

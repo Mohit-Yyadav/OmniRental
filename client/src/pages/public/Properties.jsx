@@ -19,7 +19,7 @@ const Property = () => {
 
   const fetchProperties = async () => {
     try {
-      const res = await axios.get(`${BACKEND_URI}/api/properties/publiC`);
+      const res = await axios.get(`${BACKEND_URI}/api/properties/public`);
       setProperties(res.data);
       setLoading(false);
     } catch (error) {
