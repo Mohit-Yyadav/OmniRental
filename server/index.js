@@ -1,6 +1,6 @@
-// index.js or app.js (backend entry file)
 const express = require("express");
 const cors = require("cors");
+const mongoose = require("mongoose");
 require("dotenv").config();
 
 const app = express();
@@ -13,7 +13,7 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // allow server-to-server or tools like Postman
+    if (!origin) return callback(null, true); // allow Postman/server-side tools
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     } else {
@@ -23,12 +23,28 @@ app.use(cors({
   credentials: true,
 }));
 
-// Your other middleware
+// ✅ Middleware
 app.use(express.json());
 
-// Your routes
-app.use("/api/auth", require("./routes/auth")); // example
+// ✅ Routes
+app.use("/api/auth", require("./routes/auth")); // add other routes similarly
+// app.use("/api/users", require("./routes/users"));
+// app.use("/api/properties", require("./routes/properties"));
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// ✅ Connect to MongoDB and start server
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => {
+  console.log("✅ MongoDB connected");
+
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+  });
+})
+.catch((err) => {
+  console.error("❌ MongoDB connection error:", err.message);
+});
