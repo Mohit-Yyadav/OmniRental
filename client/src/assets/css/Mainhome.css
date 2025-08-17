@@ -1,0 +1,423 @@
+/* Mainhome.css */
+
+/* Base Styles */
+.main-home {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+/* Hero Section */
+.hero-section {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7));
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+}
+
+.hero-container {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  color: white;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
+  line-height: 1.2;
+}
+
+.text-highlight {
+  color: #ffc107;
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  margin-bottom: 2.5rem;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.hero-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+.hero-btn-primary {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #212529;
+  transition: all 0.3s ease;
+}
+
+.hero-btn-primary:hover {
+  background-color: #e0a800;
+  border-color: #e0a800;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.hero-btn-secondary {
+  transition: all 0.3s ease;
+}
+
+.hero-btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.trust-indicators {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.trust-item {
+  display: flex;
+  align-items: center;
+  color: white;
+  font-weight: 500;
+}
+
+.trust-icon {
+  margin-right: 0.5rem;
+  color: #ffc107;
+}
+
+/* Categories Section */
+.categories-section {
+  background-color: #f8f9fa;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-weight: 700;
+  color: #212529;
+  margin: 0;
+}
+
+.section-link {
+  color: #6c757d;
+  text-decoration: none;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+}
+
+.section-link:hover {
+  color: #0d6efd;
+}
+
+.category-card {
+  height: 100%;
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  background: white;
+}
+
+.category-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.category-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.category-name {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.category-count {
+  color: #6c757d;
+}
+
+/* Featured Rentals */
+.featured-section {
+  background-color: white;
+}
+
+.rental-card {
+  height: 100%;
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+}
+
+.rental-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.rental-image {
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.featured-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  font-weight: 500;
+  padding: 0.35rem 0.75rem;
+}
+
+.rental-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.rental-category {
+  font-weight: 500;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+}
+
+.rental-rating {
+  display: flex;
+  align-items: center;
+  color: #495057;
+}
+
+.rating-icon {
+  color: #ffc107;
+  margin-right: 0.25rem;
+}
+
+.rating-count {
+  color: #6c757d;
+  margin-left: 0.25rem;
+}
+
+.rental-title {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #212529;
+}
+
+.rental-description {
+  color: #6c757d;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.rental-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rental-location {
+  display: flex;
+  align-items: center;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.location-icon {
+  margin-right: 0.25rem;
+  font-size: 0.8rem;
+}
+
+.rental-price {
+  color: #0d6efd;
+  font-weight: 600;
+  margin: 0;
+}
+
+.rental-price span {
+  font-size: 0.8rem;
+  color: #6c757d;
+  font-weight: normal;
+}
+
+.rental-actions {
+  background: white;
+  border: none;
+  padding-top: 0;
+}
+
+/* How It Works */
+.how-it-works {
+  background-color: #f8f9fa;
+}
+
+.step-card {
+  padding: 2rem 1.5rem;
+  background: white;
+  border-radius: 10px;
+  height: 100%;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.step-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.step-number {
+  width: 60px;
+  height: 60px;
+  background-color: #0d6efd;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-weight: 700;
+}
+
+.step-icon {
+  font-size: 2rem;
+  color: #0d6efd;
+  margin-bottom: 1.5rem;
+}
+
+.step-description {
+  color: #6c757d;
+}
+
+/* CTA Section */
+.cta-section {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.cta-title {
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.cta-subtitle {
+  font-size: 1.25rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+}
+
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cta-btn-primary {
+  background-color: white;
+  color: #0d6efd;
+  font-weight: 600;
+  padding: 0.5rem 2rem;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+
+.cta-btn-primary:hover {
+  background-color: #f8f9fa;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.cta-btn-secondary {
+  border-color: white;
+  color: white;
+  font-weight: 600;
+  padding: 0.5rem 2rem;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+
+.cta-btn-secondary:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.2rem;
+  }
+  
+  .trust-indicators {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .hero-btn-primary,
+  .hero-btn-secondary {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  
+  .cta-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .cta-btn-primary,
+  .cta-btn-secondary {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+}
+
+/* In your main CSS or inside Navbar.module.css */
+.dropdown-menu {
+  z-index: 1055 !important;
+}
+
+

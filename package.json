@@ -1,0 +1,27 @@
+{
+  "name": "omnirental",
+  "private": true,
+  "scripts": {
+    "client": "npm run dev --prefix client",
+    "server": "npm run dev --prefix server",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "dependencies": {
+    "@ant-design/icons": "^6.0.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.2.0",
+    "@mui/material": "^7.2.0",
+    "antd": "^5.26.4",
+    "bootstrap-icons": "^1.13.1",
+    "chart.js": "^4.5.0",
+    "jwt-decode": "^4.0.0",
+    "multer": "^2.0.1",
+    "react": "^18.3.1",
+    "react-chartjs-2": "^5.3.0",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  }
+}

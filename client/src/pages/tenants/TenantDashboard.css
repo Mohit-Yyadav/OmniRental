@@ -1,0 +1,342 @@
+.dashboard-content {
+  padding: 20px;
+}
+
+.dashboard-content h2 {
+  margin-bottom: 20px;
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.dashboard-card {
+  height: 100%;
+}
+
+.rent-status {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.rent-info {
+  flex: 1;
+}
+
+.profile-content, .property-content, .payments-content, .requests-content {
+  padding: 20px;
+}
+
+.profile-header, .property-header, .payments-header, .requests-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.profile-details {
+  display: flex;
+  gap: 40px;
+}
+
+.profile-picture {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-form, .property-form {
+  flex: 1;
+}
+
+.property-status {
+  margin-bottom: 20px;
+}
+
+.form-row {
+  display: flex; 
+  gap: 20px;
+}
+
+.form-col {
+  flex: 1;
+}
+
+.site-header {
+  background: #fff;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-name {
+  margin-left: 8px;
+}
+
+.site-content {
+  margin: 16px;
+  padding: 24px;
+  background: #fff;
+  min-height: calc(100vh - 64px - 32px);
+}
+
+.notifications-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.notification-item {
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.notification-item.unread {
+  font-weight: bold;
+}
+
+.notification-item small {
+  color: #888;
+}
+
+.logo {
+  height: 32px;
+  margin: 16px;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* src/components/Sidebar.css */
+/* src/components/Sidebar.css */
+.custom-sidebar {
+  background-color: #001529;
+  overflow: auto;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  left: 0;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease-in-out;
+}
+
+.logo-container {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo-img {
+  display: block;
+  height: 36px;
+  margin-right: 8px;
+}
+
+.logo-text {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.sidebar-menu {
+  padding-top: 8px;
+}
+
+.sidebar-menu-item {
+  margin: 4px 0;
+  font-size: 15px;
+  border-radius: 6px !important;
+}
+
+.ant-menu-item-selected {
+  background-color: #1890ff !important;
+  font-weight: bold;
+  color: white !important;
+}
+
+.ant-menu-dark .ant-menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+
+
+/* src/components/Navbar.css */
+.site-header {
+  background: #fff;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 64px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.menu-toggle {
+  font-size: 18px;
+}
+
+.dashboard-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgb(3, 3, 3);
+  font-weight: 500;
+}
+
+
+.user-name {
+  font-weight: 500;
+}
+
+/* history */
+
+.history-page {
+  padding: 20px;
+}
+
+/* Profile  */
+
+.profile-page {
+  padding: 20px;
+}
+
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+/* Property */
+
+.property-page {
+  padding: 20px;
+}
+
+.property-page .form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.property-page .form-row .ant-form-item {
+  flex: 1;
+}
+
+
+.site-header {
+  background: #fff;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  height: 64px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.menu-toggle {
+  font-size: 18px;
+  margin-right: 16px;
+}
+
+.dashboard-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-name {
+  font-weight: 500;
+}
+
+/* payments */
+
+.payments-content {
+  padding: 20px;
+}
+
+
+/* src/pages/tenants/Requests.css */
+.requests-page {
+  padding: 20px;
+}
+
+.requests-page .ant-card {
+  border-radius: 8px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+}
+
+.requests-page .ant-card-head {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.requests-page .ant-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.requests-page .ant-table-thead > tr > th {
+  background-color: #fafafa;
+  font-weight: 500;
+}
+
+.requests-page .ant-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
