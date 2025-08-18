@@ -16,6 +16,6 @@ build/
 *.log
 npm-debug.log*
 
-# Ignore files inside uploads but keep the folder
+# Ignore uploaded images but keep the folder
 server/uploads/*
 !server/uploads/.keep

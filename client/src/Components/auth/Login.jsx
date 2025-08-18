@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { FaLock, FaUser, FaEye, FaEyeSlash, FaSpinner } from "react-icons/fa";
+import { FaLock, FaUser, FaEye, FaEyeSlash, FaSpinner ,FaGoogle,FaFacebookF } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { useNavigate, Link } from "react-router-dom";
 import { Container, Row, Col, Form, Button, Alert, InputGroup } from "react-bootstrap";
-import rentImage from "../../assets/images/rent2.jpg";
-import useAuth from '../../context/useAuth'; // Adjust the import path as necessary
-
-
+import rentImage from "../../assets/images/bghome.jpg";
+import useAuth from '../../context/useAuth'; // Adjust the import path as necessa
+import OmniRental from '../../assets/images/OmniRentalwhitetext.png';
+import bgImage from '../../assets/images/bg.jpg'
+import LogoM from '../../assets/images/OmniRental4.png'
+import '../../assets/css/Auth.css'
+// import { left } from "@popperjs/core";
 const Login = () => {
   const navigate = useNavigate();
   const { login, isAuthenticated, user } = useAuth(); // ✅ Add 'user'
@@ -104,31 +107,112 @@ useEffect(() => {
 
 
   return (
-    <div className="min-vh-100 d-flex align-items-center bg-light">
-      <Container className="my-5">
-        <Row className="justify-content-center">
+    <div className="min-vh-100 d-flex align-items-center bg-light  "  style={{
+     backgroundImage: `url(${bgImage})`, // import bgImage from assets
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    minHeight: '100vh',
+  }}>
+      <Container className="my-5  ">
+        <Row className="justify-content-center ">
           <Col md={10} lg={8} xl={7}>
-            <div className="card shadow-lg overflow-hidden">
+            <div className="card shadow-lg shadow-sm overflow-hidden  "> 
               <Row className="g-0">
-                {/* Image Section */}
-                <Col md={6} className="d-none d-md-flex">
-                  <div
-                    className="h-100 w-100"
-                    style={{
-                      backgroundImage: `url(${rentImage})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                      minHeight: "500px",
-                    }}
-                  />
-                </Col>
+                {/* Image Section */} 
+<Col md={6} className=" left-col d-none d-md-flex shadow">
+  <div
+    className="h-100 w-100 d-flex  align-items-center justify-content-center text-white"
+    style={{
+      backgroundImage: `url(${rentImage})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      position: "relative",
+      zIndex: 3,
+    }}
+  >
+    {/* Overlay */}
+    <div
+      style={{
+        backgroundColor: "rgba(79, 78, 78, 0.5)",
+        position: "absolute",
+        top: 0,
+        left: 0,
+        height: "100%",
+        width: "100%",
+        zIndex: 1,
+      }}
+    ></div>
+
+    {/* Logo (fixed top-left) */}
+    <div
+      style={{
+        position: "absolute",
+        top: "20px",
+        left: "20px",
+        zIndex: 2,
+      }}
+    >
+      <Link to="/" className="Logo">
+        <img
+          src={OmniRental}
+          alt="Logo"
+          style={{ width: "100px", cursor: "pointer"}}
+        />
+      </Link>
+    </div>
+
+    {/* Center Content (now includes Welcome + paragraph) */}
+    <div
+  style={{
+    position: "absolute",
+    top: "100px",
+    zIndex: 2,
+    padding: "20px",
+    
+   
+   
+    color: "#f1f1f1",
+    fontSize: "1.1rem",
+    textAlign: "center",
+    width: "100%",
+  }}
+>
+  <h1
+    className="fw-bold fs-2"
+    style={{ margin: 0, marginLeft: "30px" ,color:"#0e287cff"}}  // ✅ Add marginLeft here
+  >
+    Welcome Back!
+  </h1>
+  <p
+    style={{ margin: 0, marginLeft: "30px", color: "#e0e0e0" , marginTop:"10px"}}  // ✅ Same here
+  >
+    Find your dream apartment, tools, or vehicle – all in one place!
+  </p>
+</div>
+
+
+  </div>
+</Col>
 
                 {/* Form Section */}
-                <Col md={6}>
+                <Col md={6}  xs={12} className="right-col">
+                
                   <div className="p-4 p-md-5">
-                    <div className="text-center mb-4">
-                      <h2 className="fw-bold text-primary">Welcome Back</h2>
-                      <p className="text-muted">Sign in to your account</p>
+                    
+                    <div className=" mb-4">
+                      <div className="  d-md-none text-center mb-0 mt-2 mt-md-3 h-5">
+                        <Link to="/">
+                               <img
+                                src={LogoM}
+                               alt="Logo"
+                              style={{ width: "200px",height:"auto", cursor: "pointer",textAlign:"center" }}
+                              />
+                       </Link>
+                      
+                      </div>
+                       <p  className="text-primary d-md-none  fs-1 fw-bold mt-3 text-center">Welcome Back</p>
+                      <p className="text-muted mt-0 fs-4 fw-bold text-dark">Sign in</p>
                     </div>
 
                     {message.text && (
@@ -144,16 +228,17 @@ useEffect(() => {
 
                     <Form onSubmit={handleSubmit} noValidate>
                       {/* Email Field */}
-                      <Form.Group className="mb-3">
+                      <Form.Group className="mb-3 fs-6 inputbox">
                         <Form.Label>
-                          <MdEmail className="me-2" />
+                          <MdEmail className="me-2 " />
                           Email Address
                         </Form.Label>
                         <InputGroup hasValidation>
-                          <InputGroup.Text>
-                            <MdEmail />
+                          <InputGroup.Text className="d-none d-md-block">
+                            <MdEmail  />
                           </InputGroup.Text>
                           <Form.Control
+                              className="rounded-md-0 "
                             type="email"
                             name="email"
                             placeholder="Enter your email"
@@ -172,14 +257,15 @@ useEffect(() => {
                       {/* Password Field */}
                       <Form.Group className="mb-3">
                         <Form.Label>
-                          <FaLock className="me-2" />
+                          <FaLock className="me-2 fs-6" />
                           Password
                         </Form.Label>
                         <InputGroup hasValidation>
-                          <InputGroup.Text>
+                          <InputGroup.Text className="d-none d-md-block">
                             <FaLock />
                           </InputGroup.Text>
                           <Form.Control
+                          
                             type={showPassword ? "text" : "password"}
                             name="password"
                             placeholder="Enter your password"
@@ -221,9 +307,10 @@ useEffect(() => {
 
                       {/* Submit Button */}
                       <Button
+                      
                         variant="primary"
                         type="submit"
-                        className="w-100 py-2 mb-3 fw-bold"
+                        className="w-100 py-2 mb-3 fw-bold fs-6"
                         disabled={isLoading}
                       >
                         {isLoading ? (
@@ -251,16 +338,16 @@ useEffect(() => {
                           className="flex-grow-1"
                           disabled
                         >
-                          <FaUser className="me-2" />
-                          Google
+                          <FaGoogle className="me-2" />
+                          
                         </Button>
                         <Button
                           variant="outline-dark"
                           className="flex-grow-1"
                           disabled
                         >
-                          <FaUser className="me-2" />
-                          Facebook
+                          <FaFacebookF  className="me-2" />
+                          
                         </Button>
                       </div>
 
