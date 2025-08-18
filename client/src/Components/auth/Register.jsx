@@ -291,7 +291,7 @@ const Register = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    role: ''
+    role: '' // default to tenant
   });
 
   const [showPassword, setShowPassword] = useState(false);

@@ -2,6 +2,10 @@
 node_modules/
 client/node_modules/
 server/node_modules/
+<<<<<<< HEAD
+=======
+
+>>>>>>> d0211f8d4265298b38abcead818659b35ea112dc
 # Environment files
 .env
 *.env
@@ -14,3 +18,9 @@ build/
 .vite/
 *.log
 npm-debug.log*
+<<<<<<< HEAD
+=======
+
+# Ignore uploaded images
+server/uploads/
+>>>>>>> d0211f8d4265298b38abcead818659b35ea112dc
