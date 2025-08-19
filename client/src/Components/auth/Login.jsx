@@ -9,6 +9,12 @@ import OmniRental from '../../assets/images/OmniRentalwhitetext.png';
 import bgImage from '../../assets/images/bg.jpg'
 import LogoM from '../../assets/images/OmniRental4.png'
 import '../../assets/css/Auth.css'
+
+import { GoogleLogin } from "@react-oauth/google";
+import axios from "axios";
+
+
+
 // import { left } from "@popperjs/core";
 const Login = () => {
   const navigate = useNavigate();
@@ -333,14 +339,40 @@ useEffect(() => {
 
                       {/* Social Login Options */}
                       <div className="d-flex gap-2 mb-4">
-                        <Button
-                          variant="outline-primary"
-                          className="flex-grow-1"
-                          disabled
-                        >
-                          <FaGoogle className="me-2" />
-                          
-                        </Button>
+                        <GoogleLogin
+  onSuccess={async (credentialResponse) => {
+  try {
+    const token = credentialResponse.credential;
+
+    // Send token to backend
+    const res = await axios.post(
+      `${import.meta.env.VITE_BACKEND_URL}/api/auth/google`,
+      { tokenId: token }
+    );
+
+    const userData = res.data; // { token, user }
+
+    login(userData); // ✅ ensure login sets user + token correctly
+
+    const redirectPath =
+      userData.user.role === "tenant" ? "/tenant/dashboard" : "/owner/dashboard";
+
+    navigate(redirectPath, { replace: true });
+  } catch (err) {
+    console.error(err);
+    setMessage({
+      text: "Google login failed. Please try again.",
+      type: "danger",
+    });
+  }
+}}
+onError={() => {
+  setMessage({ text: "Google login was unsuccessful.", type: "danger" });
+}}
+useOneTap
+/>
+
+
                         <Button
                           variant="outline-dark"
                           className="flex-grow-1"

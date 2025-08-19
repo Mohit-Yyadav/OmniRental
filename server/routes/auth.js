@@ -7,6 +7,13 @@ const auth = require('../middleware/auth');
 // @route   POST api/auth/register
 // @desc    Register user
 // @access  Public
+router.post('/google', authController.googleLogin);
+// Send OTP to email
+router.post('/send-otp', authController.sendOTP);
+
+// Verify entered OTP
+router.post('/verify-otp', authController.verifyOTP);
+
 router.post(
   '/register',
   [

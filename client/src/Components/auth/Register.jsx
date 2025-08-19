@@ -299,13 +299,28 @@ const Register = () => {
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  // OTP related states
+const [otp, setOtp] = useState("");
+const [isOTPSent, setIsOTPSent] = useState(false);
+const [isOTPVerified, setIsOTPVerified] = useState(false);
+// Add at top
+const [otpTimer, setOtpTimer] = useState(0);
+
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  setFormData(prev => ({
+    ...prev,
+    [name]: value
+  }));
+
+  if(name === "email") {
+    // reset OTP flow if email changes
+    setIsOTPSent(false);
+    setIsOTPVerified(false);
+    setOtp("");
+  }
+};
+
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -321,6 +336,13 @@ const Register = () => {
       setMessageType("danger");
       return;
     }
+
+    if (!isOTPVerified) {
+  setMessage("Please verify your email first");
+  setMessageType("danger");
+  return;
+}
+
 
     try {
       const res = await fetch(`${BACKEND_URI}/api/auth/register`, {
@@ -346,6 +368,43 @@ const Register = () => {
       setMessageType("danger");
     }
   };
+
+const sendOtp = async () => {
+  if (!formData.email) {
+    setMessage("Enter email first");
+    setMessageType("danger");
+    return;
+  }
+  try {
+    const res = await fetch(`${BACKEND_URI}/api/auth/send-otp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: formData.email }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+
+    setMessage("OTP sent to your email");
+    setMessageType("success");
+    setIsOTPSent(true);
+    setOtpTimer(60); // Start 60s countdown
+
+    const timerInterval = setInterval(() => {
+      setOtpTimer(prev => {
+        if (prev <= 1) {
+          clearInterval(timerInterval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  } catch (err) {
+    setMessage(err.message);
+    setMessageType("danger");
+  }
+};
+
+
 
  return (
   <div
@@ -500,6 +559,7 @@ const Register = () => {
                     value={role}
                     checked={formData.role === role}
                     onChange={handleChange}
+                  
                   />
                 ))}
               </div>
@@ -521,19 +581,85 @@ const Register = () => {
             </Form.Group>
 
             {/* Email */}
-            <Form.Group className="mb-3">
-              <Form.Label className="fw-semibold">
-                <MdEmail className="me-2" />
-                Email
-              </Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                placeholder="Enter your email"
-                onChange={handleChange}
-                required
-              />
-            </Form.Group>
+           <Form.Group className="mb-3">
+    <Form.Label className="fw-semibold">
+      <MdEmail className="me-2" />
+      Email
+    </Form.Label>
+    <Form.Control
+      type="email"
+      name="email"
+      placeholder="Enter your email"
+      onChange={handleChange}
+      value={formData.email}
+      required
+      disabled={isOTPVerified} // disable after OTP verified
+    />
+  </Form.Group>
+
+{/* Send OTP Button */}
+  {!isOTPSent && !isOTPVerified && (
+    <Button
+      variant="secondary"
+      className="mb-3"
+      onClick={sendOtp} // <-- Use the new function
+    >
+      Send OTP
+    </Button>
+  )}
+
+  {/* OTP Input & Verify Button */}
+{isOTPSent && !isOTPVerified && (
+  <Form.Group className="mb-3">
+    <Form.Label>Enter OTP</Form.Label>
+    <Form.Control
+      type="text"
+      placeholder="Enter OTP"
+      value={otp}
+      onChange={(e) => setOtp(e.target.value)}
+    />
+
+    <div className="d-flex align-items-center gap-2 mt-2">
+      {/* Verify OTP Button */}
+      <Button
+        variant="primary"
+        onClick={async () => {
+          try {
+            const res = await fetch(`${BACKEND_URI}/api/auth/verify-otp`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: formData.email, otp }),
+            });
+            const data = await res.json();
+            if(!res.ok) throw new Error(data.message);
+            setMessage("OTP Verified! You can now complete registration.");
+            setMessageType("success");
+            setIsOTPVerified(true);
+            setIsOTPSent(false); // hide OTP input
+          } catch(err){
+            setMessage(err.message);
+            setMessageType("danger");
+          }
+        }}
+      >
+        Verify OTP
+      </Button>
+
+      {/* Resend OTP Button */}
+      <Button
+        variant="secondary"
+        disabled={otpTimer > 0}
+        onClick={sendOtp}
+      >
+        {otpTimer > 0 ? `Resend OTP in ${otpTimer}s` : "Resend OTP"}
+      </Button>
+    </div>
+  </Form.Group>
+)}
+
+
+
+
 
             {/* Password */}
             <Form.Group className="mb-3">
@@ -549,6 +675,7 @@ const Register = () => {
                   value={formData.password}
                   onChange={handleChange}
                   required
+                    disabled={!isOTPVerified}
                 />
                 <InputGroup.Text
                   onClick={() => setShowPassword(!showPassword)}
@@ -573,6 +700,7 @@ const Register = () => {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   required
+                    disabled={!isOTPVerified}
                 />
                 <InputGroup.Text
                   onClick={() =>

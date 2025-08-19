@@ -7,21 +7,19 @@ const app = express();
 
 // ✅ CORS setup to allow both production and local dev frontend
 const allowedOrigins = [
-  "https://omnirental.onrender.com",
-  "http://localhost:5173"
+  "http://localhost:5173",           // local frontend
+  "https://omnirental.onrender.com"  // production frontend
 ];
 
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // allow Postman/server-side tools
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      return callback(new Error("CORS error: Not allowed by CORS"));
-    }
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); // allow Postman / server requests
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error("CORS error: Not allowed by CORS"));
   },
   credentials: true,
 }));
+
 
 // ✅ Middleware
 app.use(express.json());
