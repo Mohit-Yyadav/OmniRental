@@ -11,8 +11,7 @@ router.post('/google', authController.googleLogin);
 // Send OTP to email
 router.post('/send-otp', authController.sendOTP);
 
-// Verify entered OTP
-router.post('/verify-otp', authController.verifyOTP);
+
 
 router.post(
   '/register',
@@ -41,5 +40,17 @@ router.post(
 // @desc    Get current user
 // @access  Private
 router.get('/me', auth, authController.getMe);
+
+// @desc    Forgot password - send OTP
+// @access  Public
+router.post('/forgot-password', authController.sendOTP);
+
+// @desc    Verify OTP
+// @access  Public
+router.post('/verify-otp', authController.verifyOTP);
+
+// @desc    Reset password (after OTP verified)
+// @access  Public
+router.post('/reset-password', authController.resetPassword);
 
 module.exports = router;
