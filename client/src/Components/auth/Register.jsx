@@ -12,7 +12,6 @@
 //   const navigate = useNavigate();
 //   const allowedRoles = ['tenant', 'owner'];
 
-
 //   const [formData, setFormData] = useState({
 //     username: '',
 //     email: '',
@@ -54,7 +53,7 @@
 //   try {
 //     const res = await fetch(`${BACKEND_URI}/api/auth/register`, {
 //       method: "POST",
-//       headers: { 
+//       headers: {
 //         "Content-Type": "application/json",
 //       },
 //       body: JSON.stringify({
@@ -73,7 +72,7 @@
 
 //     setMessage("Registration Successful! Redirecting to login...");
 //     setMessageType("success");
-    
+
 //     // Automatically log in after registration if desired
 //     setTimeout(() => navigate("/login"), 1000);
 //   } catch (error) {
@@ -160,7 +159,6 @@
 //     ))}
 //   </div>
 // </div>
-
 
 //             {/* Username Field */}
 //             <div className="form-group mb-3">
@@ -261,71 +259,87 @@
 //   );
 // };
 
-
-
-
 // export default Register;
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-import { Form, Button, Row, Col, Container, Alert, InputGroup } from 'react-bootstrap';
-import { FaUser, FaLock, FaEye, FaEyeSlash, FaBuilding, FaHome } from 'react-icons/fa';
+import {
+  Form,
+  Button,
+  Row,
+  Col,
+  Container,
+  Alert,
+  InputGroup,
+} from "react-bootstrap";
+import {
+  FaUser,
+  FaLock,
+  FaEye,
+  FaEyeSlash,
+  FaBuilding,
+  FaHome,
+} from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
-import { useNavigate } from 'react-router-dom';
-import '../../assets/css/Auth.css';
-import OmniRental from '../../assets/images/OmniRentalwhitetext.png';
+import { useNavigate } from "react-router-dom";
+import "../../assets/css/Auth.css";
+import OmniRental from "../../assets/images/OmniRentalwhitetext.png";
 import rentImage from "../../assets/images/bghome.jpg";
- import bgImage from '../../assets/images/bg.jpg'
-import LogoM from '../../assets/images/OmniRental4.png'
+import bgImage from "../../assets/images/bg.jpg";
+import LogoM from "../../assets/images/OmniRental4.png";
 // import rent from '../../assets/images/bghome.jpg';
 
 const BACKEND_URI = import.meta.env.VITE_BACKEND_URL;
 
 const Register = () => {
   const navigate = useNavigate();
-  const allowedRoles = ['tenant', 'owner'];
+  const allowedRoles = ["tenant", "owner"];
 
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    role: '' // default to tenant
+    username: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "", // default to tenant
   });
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [message, setMessage] = useState('');
-  const [messageType, setMessageType] = useState('');
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState("");
 
   // OTP related states
-const [otp, setOtp] = useState("");
-const [isOTPSent, setIsOTPSent] = useState(false);
-const [isOTPVerified, setIsOTPVerified] = useState(false);
-// Add at top
-const [otpTimer, setOtpTimer] = useState(0);
+  const [otp, setOtp] = useState("");
+  const [isOTPSent, setIsOTPSent] = useState(false);
+  const [isOTPVerified, setIsOTPVerified] = useState(false);
+  // Add at top
+  const [otpTimer, setOtpTimer] = useState(0);
 
-const handleChange = (e) => {
-  const { name, value } = e.target;
-  setFormData(prev => ({
-    ...prev,
-    [name]: value
-  }));
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
 
-  if(name === "email") {
-    // reset OTP flow if email changes
-    setIsOTPSent(false);
-    setIsOTPVerified(false);
-    setOtp("");
-  }
-};
-
+    if (name === "email") {
+      // reset OTP flow if email changes
+      setIsOTPSent(false);
+      setIsOTPVerified(false);
+      setOtp("");
+    }
+  };
 
   const submitHandler = async (e) => {
     e.preventDefault();
 
-    if (!formData.username || !formData.email || !formData.password || !formData.confirmPassword) {
+    if (
+      !formData.username ||
+      !formData.email ||
+      !formData.password ||
+      !formData.confirmPassword
+    ) {
       setMessage("All fields are required");
       setMessageType("danger");
       return;
@@ -338,11 +352,10 @@ const handleChange = (e) => {
     }
 
     if (!isOTPVerified) {
-  setMessage("Please verify your email first");
-  setMessageType("danger");
-  return;
-}
-
+      setMessage("Please verify your email first");
+      setMessageType("danger");
+      return;
+    }
 
     try {
       const res = await fetch(`${BACKEND_URI}/api/auth/register`, {
@@ -352,7 +365,7 @@ const handleChange = (e) => {
           username: formData.username,
           email: formData.email,
           password: formData.password,
-          role: formData.role
+          role: formData.role,
         }),
       });
 
@@ -369,369 +382,365 @@ const handleChange = (e) => {
     }
   };
 
-const sendOtp = async () => {
-  if (!formData.email) {
-    setMessage("Enter email first");
-    setMessageType("danger");
-    return;
-  }
-  try {
-    const res = await fetch(`${BACKEND_URI}/api/auth/send-otp`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: formData.email }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message);
-
-    setMessage("OTP sent to your email");
-    setMessageType("success");
-    setIsOTPSent(true);
-    setOtpTimer(60); // Start 60s countdown
-
-    const timerInterval = setInterval(() => {
-      setOtpTimer(prev => {
-        if (prev <= 1) {
-          clearInterval(timerInterval);
-          return 0;
-        }
-        return prev - 1;
+  const sendOtp = async () => {
+    if (!formData.email) {
+      setMessage("Enter email first");
+      setMessageType("danger");
+      return;
+    }
+    try {
+      const res = await fetch(`${BACKEND_URI}/api/auth/send-otp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: formData.email }),
       });
-    }, 1000);
-  } catch (err) {
-    setMessage(err.message);
-    setMessageType("danger");
-  }
-};
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
 
+      setMessage("OTP sent to your email");
+      setMessageType("success");
+      setIsOTPSent(true);
+      setOtpTimer(60); // Start 60s countdown
 
-
- return (
-  <div
-    className="min-vh-100 bg-light"
-    style={{
-      backgroundImage: `url(${bgImage})`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundRepeat: "no-repeat",
-      minHeight: "100vh",
-    }}
-  >
-    {/* ✅ Mobile Top Logo */}
-    <div className="d-md-none text-center pt-3">
-      <Link to="/">
-        <img
-          src={LogoM}
-          alt="Logo"
-          style={{
-            width: "200px",
-            height: "auto",
-            cursor: "pointer",
-          }}
-        />
-      </Link>
-    </div>
-
-    <Container 
-      className="d-flex justify-content-center align-items-center vh-100 bg-gradient"
-    >
-      <div
-        className="container w-100 rounded shadow-lg bg-white d-flex flex-md-row flex-column card shadow-sm overflow-hidden "
-        style={{ maxWidth: "900px" }}
-      >
-        {/* Left image side (Desktop only) */}
-        <Col md={6} className="left-col d-none d-md-flex shadow">
-          <div
-            className="h-100 w-100 d-flex align-items-center justify-content-center text-white"
-            style={{
-              backgroundImage: `url(${rentImage})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              position: "relative",
-              zIndex: 3,
-              paddingRight: 0,
-              paddingLeft: 0
-
-            }}
-          >
-            {/* Overlay */}
-            <div
-              style={{
-                backgroundColor: "rgba(79, 78, 78, 0.5)",
-                position: "absolute",
-                top: 0,
-                left: 0,
-                height: "100%",
-                width: "100%",
-                zIndex: 1,
-              }}
-            ></div>
-
-            {/* Logo top-left */}
-            <div
-              style={{
-                position: "absolute",
-                top: "20px",
-                left: "20px",
-                zIndex: 2,
-              }}
-            >
-              <Link to="/" className="Logo">
-                <img
-                  src={OmniRental}
-                  alt="Logo"
-                  style={{ width: "100px", cursor: "pointer" }}
-                />
-              </Link>
-            </div>
-
-            {/* Center text */}
-            <div
-              style={{
-                position: "absolute",
-                top: "100px",
-                zIndex: 2,
-                padding: "20px",
-                color: "#f1f1f1",
-                fontSize: "1.1rem",
-                textAlign: "center",
-                width: "100%",
-              }}
-            >
-              <h1
-                className="fw-bold fs-2"
-                style={{
-                  margin: 0,
-                  marginLeft: "30px",
-                  color: "#0e287cff",
-                }}
-              >
-                Register Now
-              </h1>
-              <p
-                style={{
-                  margin: 0,
-                  marginLeft: "30px",
-                  color: "#e0e0e0",
-                  marginTop: "10px",
-                }}
-              >
-                Find your dream apartment, tools, or vehicle – all in one place!
-              </p>
-            </div>
-          </div>
-        </Col>
-
-        {/* Right Form Side */}
-        <Col
-          md={6}
-          xs={12}
-          className="p-lg-4 p-sm-0 d-flex flex-column justify-content-center formdivmobil  "
-        >
-          
-
-          <h4 className="mb-4 p-2 mt-3 fw-bold text-center text-md-start">
-            Sign up
-          </h4>
-
-          {message && (
-            <Alert
-              variant={messageType}
-              onClose={() => setMessage("")}
-              dismissible
-            >
-              {message}
-            </Alert>
-          )}
-
-          <Form onSubmit={submitHandler} className="p-2">
-            {/* Role Selection */}
-            <Form.Group className="mb-3">
-              <Form.Label className="fw-semibold">Select Role:</Form.Label>
-              <div className="d-flex gap-3">
-                {allowedRoles.map((role) => (
-                  <Form.Check
-                    inline
-                    key={role}
-                    label={role.charAt(0).toUpperCase() + role.slice(1)}
-                    name="role"
-                    type="radio"
-                    value={role}
-                    checked={formData.role === role}
-                    onChange={handleChange}
-                  
-                  />
-                ))}
-              </div>
-            </Form.Group>
-
-            {/* Username */}
-            <Form.Group className="mb-3">
-              <Form.Label className="fw-semibold">
-                <FaUser className="me-2" />
-                User Name
-              </Form.Label>
-              <Form.Control
-                type="text"
-                name="username"
-                placeholder="Enter your name"
-                onChange={handleChange}
-                required
-              />
-            </Form.Group>
-
-            {/* Email */}
-           <Form.Group className="mb-3">
-    <Form.Label className="fw-semibold">
-      <MdEmail className="me-2" />
-      Email
-    </Form.Label>
-    <Form.Control
-      type="email"
-      name="email"
-      placeholder="Enter your email"
-      onChange={handleChange}
-      value={formData.email}
-      required
-      disabled={isOTPVerified} // disable after OTP verified
-    />
-  </Form.Group>
-
-{/* Send OTP Button */}
-  {!isOTPSent && !isOTPVerified && (
-    <Button
-      variant="secondary"
-      className="mb-3"
-      onClick={sendOtp} // <-- Use the new function
-    >
-      Send OTP
-    </Button>
-  )}
-
-  {/* OTP Input & Verify Button */}
-{isOTPSent && !isOTPVerified && (
-  <Form.Group className="mb-3">
-    <Form.Label>Enter OTP</Form.Label>
-    <Form.Control
-      type="text"
-      placeholder="Enter OTP"
-      value={otp}
-      onChange={(e) => setOtp(e.target.value)}
-    />
-
-    <div className="d-flex align-items-center gap-2 mt-2">
-      {/* Verify OTP Button */}
-      <Button
-        variant="primary"
-        onClick={async () => {
-          try {
-            const res = await fetch(`${BACKEND_URI}/api/auth/verify-otp`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ email: formData.email, otp }),
-            });
-            const data = await res.json();
-            if(!res.ok) throw new Error(data.message);
-            setMessage("OTP Verified! You can now complete registration.");
-            setMessageType("success");
-            setIsOTPVerified(true);
-            setIsOTPSent(false); // hide OTP input
-          } catch(err){
-            setMessage(err.message);
-            setMessageType("danger");
+      const timerInterval = setInterval(() => {
+        setOtpTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(timerInterval);
+            return 0;
           }
-        }}
-      >
-        Verify OTP
-      </Button>
+          return prev - 1;
+        });
+      }, 1000);
+    } catch (err) {
+      setMessage(err.message);
+      setMessageType("danger");
+    }
+  };
 
-      {/* Resend OTP Button */}
-      <Button
-        variant="secondary"
-        disabled={otpTimer > 0}
-        onClick={sendOtp}
-      >
-        {otpTimer > 0 ? `Resend OTP in ${otpTimer}s` : "Resend OTP"}
-      </Button>
-    </div>
-  </Form.Group>
-)}
-
-
-
-
-
-            {/* Password */}
-            <Form.Group className="mb-3">
-              <Form.Label className="fw-semibold">
-                <FaLock className="me-2" />
-                Password
-              </Form.Label>
-              <InputGroup>
-                <Form.Control
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  placeholder="Enter password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                    disabled={!isOTPVerified}
-                />
-                <InputGroup.Text
-                  onClick={() => setShowPassword(!showPassword)}
-                  style={{ cursor: "pointer" }}
-                >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </InputGroup.Text>
-              </InputGroup>
-            </Form.Group>
-
-            {/* Confirm Password */}
-            <Form.Group className="mb-3">
-              <Form.Label className="fw-semibold">
-                <FaLock className="me-2" />
-                Confirm Password
-              </Form.Label>
-              <InputGroup>
-                <Form.Control
-                  type={showConfirmPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  placeholder="Confirm password"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  required
-                    disabled={!isOTPVerified}
-                />
-                <InputGroup.Text
-                  onClick={() =>
-                    setShowConfirmPassword(!showConfirmPassword)
-                  }
-                  style={{ cursor: "pointer" }}
-                >
-                  {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-                </InputGroup.Text>
-              </InputGroup>
-            </Form.Group>
-
-            <Button variant="primary" type="submit" className="w-100">
-              Register
-            </Button>
-
-            <div className="text-center mt-3 p-3">
-              <span className="text-muted">
-                Already have an account?{" "}
-                <a href="/login" className="text-primary">
-                  Login
-                </a>
-              </span>
-            </div>
-          </Form>
-        </Col>
+  return (
+    <div
+      className="min-vh-100 bg-light"
+      style={{
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        minHeight: "100vh",
+      }}
+    >
+      {/* ✅ Mobile Top Logo */}
+      <div className="d-md-none text-center pt-3">
+        <Link to="/">
+          <img
+            src={LogoM}
+            alt="Logo"
+            style={{
+              width: "200px",
+              height: "auto",
+              cursor: "pointer",
+            }}
+          />
+        </Link>
       </div>
-    </Container>
-  </div>
-);
 
+      <Container className="d-flex justify-content-center align-items-center vh-100 bg-gradient">
+        <div
+          className="container w-100 rounded shadow-lg bg-white d-flex flex-md-row flex-column card shadow-sm overflow-hidden "
+          style={{ maxWidth: "900px" }}
+        >
+          {/* Left image side (Desktop only) */}
+          <Col md={6} className="left-col d-none d-md-flex shadow">
+            <div
+              className="h-100 w-100 d-flex align-items-center justify-content-center text-white"
+              style={{
+                backgroundImage: `url(${rentImage})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                position: "relative",
+                zIndex: 3,
+                paddingRight: 0,
+                paddingLeft: 0,
+              }}
+            >
+              {/* Overlay */}
+              <div
+                style={{
+                  backgroundColor: "rgba(79, 78, 78, 0.5)",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  height: "100%",
+                  width: "100%",
+                  zIndex: 1,
+                }}
+              ></div>
+
+              {/* Logo top-left */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: "20px",
+                  left: "20px",
+                  zIndex: 2,
+                }}
+              >
+                <Link to="/" className="Logo">
+                  <img
+                    src={OmniRental}
+                    alt="Logo"
+                    style={{ width: "100px", cursor: "pointer" }}
+                  />
+                </Link>
+              </div>
+
+              {/* Center text */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: "100px",
+                  zIndex: 2,
+                  padding: "20px",
+                  color: "#f1f1f1",
+                  fontSize: "1.1rem",
+                  textAlign: "center",
+                  width: "100%",
+                }}
+              >
+                <h1
+                  className="fw-bold fs-2"
+                  style={{
+                    margin: 0,
+                    marginLeft: "30px",
+                    color: "#0e287cff",
+                  }}
+                >
+                  Register Now
+                </h1>
+                <p
+                  style={{
+                    margin: 0,
+                    marginLeft: "30px",
+                    color: "#e0e0e0",
+                    marginTop: "10px",
+                  }}
+                >
+                  Find your dream apartment, tools, or vehicle – all in one
+                  place!
+                </p>
+              </div>
+            </div>
+          </Col>
+
+          {/* Right Form Side */}
+          <Col
+            md={6}
+            xs={12}
+            className="p-lg-4 p-sm-0 d-flex flex-column justify-content-center formdivmobil  "
+          >
+            <h4 className="mb-4 p-2 mt-3 fw-bold text-center text-md-start">
+              Sign up
+            </h4>
+
+            {message && (
+              <Alert
+                variant={messageType}
+                onClose={() => setMessage("")}
+                dismissible
+              >
+                {message}
+              </Alert>
+            )}
+
+            <Form onSubmit={submitHandler} className="p-2">
+              {/* Role Selection */}
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-semibold">Select Role:</Form.Label>
+                <div className="d-flex gap-3">
+                  {allowedRoles.map((role) => (
+                    <Form.Check
+                      inline
+                      key={role}
+                      label={role.charAt(0).toUpperCase() + role.slice(1)}
+                      name="role"
+                      type="radio"
+                      value={role}
+                      checked={formData.role === role}
+                      onChange={handleChange}
+                    />
+                  ))}
+                </div>
+              </Form.Group>
+
+              {/* Username */}
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-semibold">
+                  <FaUser className="me-2" />
+                  User Name
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  name="username"
+                  placeholder="Enter your name"
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+
+              {/* Email */}
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-semibold">
+                  <MdEmail className="me-2" />
+                  Email
+                </Form.Label>
+                <Form.Control
+                  type="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  onChange={handleChange}
+                  value={formData.email}
+                  required
+                  disabled={isOTPVerified} // disable after OTP verified
+                />
+              </Form.Group>
+
+              {/* Send OTP Button */}
+              {!isOTPSent && !isOTPVerified && (
+                <Button
+                  variant="secondary"
+                  className="mb-3"
+                  onClick={sendOtp} // <-- Use the new function
+                >
+                  Send OTP
+                </Button>
+              )}
+
+              {/* OTP Input & Verify Button */}
+              {isOTPSent && !isOTPVerified && (
+                <Form.Group className="mb-3">
+                  <Form.Label>Enter OTP</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter OTP"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                  />
+
+                  <div className="d-flex align-items-center gap-2 mt-2">
+                    {/* Verify OTP Button */}
+                    <Button
+                      variant="primary"
+                      onClick={async () => {
+                        try {
+                          const res = await fetch(
+                            `${BACKEND_URI}/api/auth/verify-otp`,
+                            {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({
+                                email: formData.email,
+                                otp,
+                              }),
+                            }
+                          );
+                          const data = await res.json();
+                          if (!res.ok) throw new Error(data.message);
+                          setMessage(
+                            "OTP Verified! You can now complete registration."
+                          );
+                          setMessageType("success");
+                          setIsOTPVerified(true);
+                          setIsOTPSent(false); // hide OTP input
+                        } catch (err) {
+                          setMessage(err.message);
+                          setMessageType("danger");
+                        }
+                      }}
+                    >
+                      Verify OTP
+                    </Button>
+
+                    {/* Resend OTP Button */}
+                    <Button
+                      variant="secondary"
+                      disabled={otpTimer > 0}
+                      onClick={sendOtp}
+                    >
+                      {otpTimer > 0
+                        ? `Resend OTP in ${otpTimer}s`
+                        : "Resend OTP"}
+                    </Button>
+                  </div>
+                </Form.Group>
+              )}
+
+              {/* Password */}
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-semibold">
+                  <FaLock className="me-2" />
+                  Password
+                </Form.Label>
+                <InputGroup>
+                  <Form.Control
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    placeholder="Enter password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    disabled={!isOTPVerified}
+                  />
+                  <InputGroup.Text
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </InputGroup.Text>
+                </InputGroup>
+              </Form.Group>
+
+              {/* Confirm Password */}
+              <Form.Group className="mb-3">
+                <Form.Label className="fw-semibold">
+                  <FaLock className="me-2" />
+                  Confirm Password
+                </Form.Label>
+                <InputGroup>
+                  <Form.Control
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    placeholder="Confirm password"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    required
+                    disabled={!isOTPVerified}
+                  />
+                  <InputGroup.Text
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                  </InputGroup.Text>
+                </InputGroup>
+              </Form.Group>
+
+              <Button variant="primary" type="submit" className="w-100">
+                Register
+              </Button>
+
+              <div className="text-center mt-3 p-3">
+                <span className="text-muted">
+                  Already have an account?{" "}
+                  <a href="/login" className="text-primary">
+                    Login
+                  </a>
+                </span>
+              </div>
+            </Form>
+          </Col>
+        </div>
+      </Container>
+    </div>
+  );
 };
 
 export default Register;
