@@ -178,21 +178,25 @@ exports.googleLogin = async (req, res) => {
 // @route   POST /api/auth/send-otp
 exports.sendOTP = async (req, res) => {
   const { email } = req.body;
-
   if (!email) return res.status(400).json({ message: "Email is required" });
 
   try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    otpStore[email] = { otp, expires: Date.now() + 5 * 60 * 1000 };
+    user.otp = otp;
+    user.otpExpiry = Date.now() + 5 * 60 * 1000; // 5 minutes
+    user.isEmailVerified = false;
+    await user.save();
 
-  const transporter = nodemailer.createTransport({
-  service: "gmail",  // lowercase
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
@@ -204,34 +208,87 @@ exports.sendOTP = async (req, res) => {
     res.json({ message: "OTP sent successfully" });
   } catch (err) {
     console.error("OTP send error:", err);
-    res.status(500).json({ message: "Failed to send OTP. Check email credentials." });
+    res.status(500).json({ message: "Failed to send OTP" });
   }
 };
 
 
 
+
 // @desc    Verify OTP
 // @route   POST /api/auth/verify-otp
+// ✅ Modify verifyOTP
 exports.verifyOTP = async (req, res) => {
   const { email, otp } = req.body;
+  if (!email || !otp) return res.status(400).json({ message: "Email and OTP are required" });
 
-  if (!email || !otp)
-    return res.status(400).json({ message: 'Email and OTP are required' });
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-  const record = otpStore[email];
+    if (!user.otp || !user.otpExpiry) {
+      return res.status(400).json({ message: "No OTP request found" });
+    }
 
-  if (!record)
-    return res.status(400).json({ message: 'OTP not found. Request a new one.' });
+    if (user.otpExpiry < Date.now()) {
+      return res.status(400).json({ message: "OTP expired" });
+    }
 
-  if (record.expires < Date.now())
-    return res.status(400).json({ message: 'OTP expired. Request a new one.' });
+    if (user.otp !== otp) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
 
-  if (record.otp !== otp)
-    return res.status(400).json({ message: 'Invalid OTP' });
+    user.isEmailVerified = true;
+    user.otp = null;
+    user.otpExpiry = null;
+    await user.save();
 
-  // OTP verified
-  // Optional: you can delete OTP after verification
-  delete otpStore[email];
-
-  res.json({ message: 'OTP verified successfully' });
+    res.json({ message: "OTP verified successfully" });
+  } catch (err) {
+    console.error("OTP verify error:", err);
+    res.status(500).json({ message: "Server error verifying OTP" });
+  }
 };
+
+
+
+const bcrypt = require("bcryptjs");
+
+// @desc    Reset password after OTP verification
+// @route   POST /api/auth/reset-password
+// @desc    Reset password after OTP verification
+// @route   POST /api/auth/reset-password
+exports.resetPassword = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and new password are required" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // ✅ Only allow if OTP was verified
+    if (!user.isEmailVerified) {
+      return res.status(400).json({ message: "OTP not verified. Please verify OTP first." });
+    }
+
+    // ✅ Just assign password (hook will hash it)
+    user.password = password;
+user.markModified("password");
+    // ✅ Reset verification fields
+    user.isEmailVerified = false;
+    user.otp = null;
+    user.otpExpiry = null;
+
+    await user.save();
+
+    res.json({ message: "Password reset successful. You can now login." });
+  } catch (error) {
+    console.error("Reset password error:", error);
+    res.status(500).json({ message: "Server error resetting password" });
+  }
+};
+
+
