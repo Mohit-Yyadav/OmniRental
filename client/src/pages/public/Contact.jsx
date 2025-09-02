@@ -25,7 +25,7 @@ const Contact = () => {
     }
   ];
 
-  return (
+return (
     <>
      
       <Container className="my-5 py-4">
@@ -47,27 +47,27 @@ const Contact = () => {
                   <Row>
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Label>First Name</Form.Label>
+                        <Form.Label className='ms-1'>First Name</Form.Label>
                         <Form.Control type="text" placeholder="Your first name" required />
                       </Form.Group>
                     </Col>
                     <Col md={6}>
                       <Form.Group className="mb-3">
-                        <Form.Label>Last Name</Form.Label>
+                        <Form.Label className='ms-1'>Last Name</Form.Label>
                         <Form.Control type="text" placeholder="Your last name" required />
                       </Form.Group>
                     </Col>
                   </Row>
                   <Form.Group className="mb-3">
-                    <Form.Label>Email Address</Form.Label>
+                    <Form.Label className='ms-1'>Email Address</Form.Label>
                     <Form.Control type="email" placeholder="your.email@example.com" required />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>Phone Number</Form.Label>
+                    <Form.Label className='ms-1'>Phone Number</Form.Label>
                     <Form.Control type="tel" placeholder="(123) 456-7890" />
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>Subject</Form.Label>
+                    <Form.Label className='ms-1' >Subject</Form.Label>
                     <Form.Select>
                       <option>General Inquiry</option>
                       <option>Property Listing</option>
@@ -76,7 +76,7 @@ const Contact = () => {
                     </Form.Select>
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>Your Message</Form.Label>
+                    <Form.Label className='ms-1'>Your Message</Form.Label>
                     <Form.Control as="textarea" rows={5} placeholder="How can we help you?" required />
                   </Form.Group>
                   <Button variant="primary" type="submit" className="d-flex align-items-center gap-2">

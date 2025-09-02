@@ -63,7 +63,7 @@ const OwnerNavbar = ({
           type="text"
           icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           onClick={() => setCollapsed(!collapsed)}
-          className="owner-navbar__toggle-btn"
+          className="owner-navbar__toggle-btn  "
         />
         <div className="owner-navbar__brand">
           <PropertySafetyOutlined className="owner-navbar__brand-icon" />
@@ -76,7 +76,7 @@ const OwnerNavbar = ({
           <Button 
             type="text" 
             icon={<DashboardOutlined />} 
-            className="owner-navbar__quick-view"
+            className="owner-navbar__quick-view d-none d-md-block"
           />
         </Tooltip>
 
@@ -84,13 +84,13 @@ const OwnerNavbar = ({
           <Badge 
             count={unreadCount} 
             offset={[-5, 5]}
-            className="owner-navbar__badge"
+            className="owner-navbar__badge d-none d-md-block"
           >
             <Button 
               type="text" 
               icon={<BellOutlined />} 
               size="large" 
-              className="owner-navbar__notifications-btn"
+              className="owner-navbar__notifications-btn "
             />
           </Badge>
         </Tooltip>
@@ -122,7 +122,7 @@ const OwnerNavbar = ({
               <span className="owner-navbar__username">
                 {user?.username || 'Owner'}
               </span>
-              <span className="owner-navbar__role">Property Owner</span>
+              <span className="owner-navbar__role d-none d-md-block">Property Owner</span>
             </div>
           </div>
         </Dropdown>

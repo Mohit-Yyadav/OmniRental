@@ -8,13 +8,19 @@ import {
   HistoryOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu, Tooltip } from 'antd';
-import './TenantDashboard.css';
+import { Layout, Menu, Tooltip, Drawer } from 'antd';
 import { Link } from 'react-router-dom';
 
 const { Sider } = Layout;
 
-const Sidebar = ({ collapsed, setCollapsed, activeMenu, handleMenuClick }) => {
+const Sidebar = ({
+  collapsed,
+  setCollapsed,
+  activeMenu,
+  handleMenuClick,
+  mobileOpen,       // ✅ mobile Drawer open state
+  setMobileOpen,    // ✅ function to close mobile Drawer
+}) => {
   const menuItems = [
     {
       key: 'dashboard',
@@ -84,35 +90,62 @@ const Sidebar = ({ collapsed, setCollapsed, activeMenu, handleMenuClick }) => {
     },
   ];
 
-  return (
-    <Sider
-      collapsible
-      collapsed={collapsed}
-      onCollapse={setCollapsed}
-      width={220}
-      className="custom-sidebar"
-    >
-      <div className="logo-container">
-  <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
-    <img
-      src="/logo192.png"
-      alt="logo"
-      className="logo-img"
-      style={{ width: collapsed ? 36 : 120, transition: 'width 0.3s' }}
-    />
-    {!collapsed && <h2 className="logo-text" style={{ marginLeft: 10, color: '' }}>Omni Rental</h2>}
-  </Link>
-</div>
+  // Sidebar content (menu + logo)
+  const SidebarContent = (
+    <>
+      <div className="logo-container" style={{ padding: '16px', textAlign: 'center' }}>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>
+          <img
+            src="../../assets/images/OmniRentalwhitetext.png"
+            alt="logo"
+            style={{ width: collapsed ? 36 : 120, transition: 'width 0.3s' }}
+          />
+        </Link>
+      </div>
 
       <Menu
         theme="dark"
         mode="inline"
         selectedKeys={[activeMenu]}
-        onClick={handleMenuClick}
-        className="sidebar-menu"
+        onClick={(e) => {
+          handleMenuClick(e);
+          if (mobileOpen) setMobileOpen(false); // close drawer on mobile click
+        }}
         items={menuItems}
       />
-    </Sider>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop Sidebar */}
+      <div className="d-none d-lg-block">
+        <Sider
+          collapsible
+          collapsed={collapsed}
+          onCollapse={setCollapsed}
+          width={220}
+          style={{ minHeight: '100vh' }}
+        >
+          {SidebarContent}
+        </Sider>
+      </div>
+
+      <Drawer
+  placement="left"
+  closable={true}
+  mask={false}   // overlay background हटाने के लिए
+  onClose={() => setMobileOpen(false)}
+  open={mobileOpen}
+  bodyStyle={{ padding: 0, minHeight: '100vh' }}
+  drawerStyle={{ backgroundColor: '#001529' }}
+  width={220}
+  zIndex={1} // content से पीछे रखने के लिए
+  style={{ position: 'fixed' }} // sidebar fix रहेगा
+>
+        {SidebarContent}
+      </Drawer>
+    </>
   );
 };
 

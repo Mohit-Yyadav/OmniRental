@@ -1,7 +1,5 @@
-// src/pages/TenantMain.jsx
 import React, { useState, useEffect } from 'react';
 import { Layout } from 'antd';
-//import { useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import Dashboard from './TenantDashboard';
@@ -10,44 +8,32 @@ import Property from './Property';
 import Payments from './Payments';
 import Requests from './Requests';
 import History from './History';
-import './TenantDashboard.css';
-import useAuth from '../../context/useAuth'; // ✅
 import RazorpayCheckout from './RazorpayCheckout';
+import useAuth from '../../context/useAuth';
 
 const { Content } = Layout;
 
 const TenantMain = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false); // ✅ Mobile overlay state
+  
   const [activeMenu, setActiveMenu] = useState('dashboard');
-
-  // const location = useLocation();
   const { user, logout } = useAuth();
 
-  // ✅ Redirect to Payments if ?payment=true is in URL
-useEffect(() => {
-  const switchToPayments = () => setActiveMenu('payments');
-  const switchToRazorpay = () => setActiveMenu('razorpay');
+  useEffect(() => {
+    const switchToPayments = () => setActiveMenu('payments');
+    const switchToRazorpay = () => setActiveMenu('razorpay');
 
-  window.addEventListener('switchToPayments', switchToPayments);
-  window.addEventListener('switchToRazorpay', switchToRazorpay);
+    window.addEventListener('switchToPayments', switchToPayments);
+    window.addEventListener('switchToRazorpay', switchToRazorpay);
 
-  return () => {
-    window.removeEventListener('switchToPayments', switchToPayments);
-    window.removeEventListener('switchToRazorpay', switchToRazorpay);
-  };
-}, []);
+    return () => {
+      window.removeEventListener('switchToPayments', switchToPayments);
+      window.removeEventListener('switchToRazorpay', switchToRazorpay);
+    };
+  }, []);
 
-
-
-
-  const notifications = [
-    { id: 1, title: 'Payment Reminder', read: false },
-    { id: 2, title: 'Lease Ending Soon', read: true },
-  ];
-
-  const handleLogout = () => {
-    logout();
-  };
+  const handleLogout = () => logout();
 
   const renderPageContent = () => {
     switch (activeMenu) {
@@ -58,29 +44,84 @@ useEffect(() => {
       case 'requests': return <Requests />;
       case 'history': return <History />;
       case 'razorpay': return <RazorpayCheckout />;
-
       default: return <h2>404 - Page Not Found</h2>;
     }
   };
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sidebar
-        collapsed={collapsed}
-        setCollapsed={setCollapsed}
-        activeMenu={activeMenu}
-        handleMenuClick={(e) => setActiveMenu(e.key)}
-      />
+      {/* Desktop Sidebar */}
+      <div className="d-none d-lg-block">
+        <Sidebar
+          collapsed={collapsed}
+          setCollapsed={setCollapsed}
+          activeMenu={activeMenu}
+          handleMenuClick={(e) => setActiveMenu(e.key)}
+          mobileOpen={false}
+          setMobileOpen={() => {}}
+        />
+      </div>
+       {/* Mobile Sidebar only */}
+<div className="d-lg-none">
+  <Sidebar
+    collapsed={collapsed}
+    setCollapsed={setCollapsed}
+    activeMenu={activeMenu}
+    handleMenuClick={(e) => {
+      setActiveMenu(e.key);
+      setMobileOpen(false); // close drawer after menu click
+    }}
+    mobileOpen={mobileOpen}
+    setMobileOpen={setMobileOpen}
+    style={{ zIndex: 2000, position: "fixed", top: 0, left: 0 }} // ✅ Sidebar always on top
+  />
+</div>
+
+
+
       <Layout>
+        {/* Navbar */}
         <Navbar
           collapsed={collapsed}
           setCollapsed={setCollapsed}
           user={user}
-          notifications={notifications}
           onLogout={handleLogout}
+          onToggleMobile={() => setMobileOpen(true)}
         />
-        <Content className="site-content">
-          {renderPageContent()}
+
+       
+        {/* Main Content */}
+        <Content
+          className="site-content"
+          style={{
+            position: 'relative',
+            width: '100%',
+            minHeight: '100vh',
+          }}
+        >
+         {/* Mobile view */}
+<div
+  className="d-lg-none"
+  style={{
+    position: 'fixed',
+    top: '56px', // navbar height
+    left: 0,
+    width: '100%',
+    height: `calc(100% - 56px)`,
+    overflowY: 'auto',
+    zIndex: 0, // ✅ Content stays behind sidebar
+    backgroundColor: '#f8f9fa',
+    padding: '16px',
+  }}
+>
+  {renderPageContent()}
+</div>
+
+
+          {/* Desktop view */}
+          <div className="d-none d-lg-block" style={{ padding: '16px' }}>
+            {renderPageContent()}
+          </div>
         </Content>
       </Layout>
     </Layout>

@@ -13,7 +13,7 @@
   display: flex;
   align-items: center;
   overflow: hidden;
-  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7));
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0.5, 0.7));
 }
 
 .hero-overlay {
@@ -22,7 +22,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+  background-image: url('../images/home.jpg');
   background-size: cover;
   background-position: center;
   z-index: -1;
@@ -34,7 +34,7 @@
 }
 
 .hero-title {
-  font-size: 3.5rem;
+  
   font-weight: 800;
   margin-bottom: 1.5rem;
   color: white;
@@ -374,7 +374,7 @@
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .hero-title {
-    font-size: 2.5rem;
+    /* font-size: 2.5rem; */
   }
   
   .hero-subtitle {
@@ -389,7 +389,7 @@
 
 @media (max-width: 576px) {
   .hero-title {
-    font-size: 2rem;
+    font-size: 10px;
   }
   
   .hero-buttons {

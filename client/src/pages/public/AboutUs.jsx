@@ -48,9 +48,9 @@ const AboutUs = () => {
       {/* Hero Section */}
       <div className="row align-items-center mb-5">
         <div className="col-lg-6">
-          <h1 className="display-5 fw-bold mb-3">Our Story</h1>
-          <p className="lead text-muted mb-4">
-            OmniRental was founded in 2008 with a simple mission: to make finding premium rental properties effortless and enjoyable.
+          <h1 className="display-5 fw-bold mb-3 mt-4">Our Story</h1>
+          <p className=" text-muted mb-4">
+            OmniRental was founded in 2025 with a simple mission: to make finding premium rental properties effortless and enjoyable.
           </p>
           <div className="d-flex gap-3">
             <button className="btn btn-primary px-4">Our Services</button>

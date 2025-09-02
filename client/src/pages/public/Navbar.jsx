@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { House, Search, Users, MessageCircle, User, LogOut, Settings, Bookmark, Bell } from "lucide-react";
 import useAuth from '../../context/useAuth';
-
+import Logo from '../../assets/images/infinity.png';
 import { Dropdown } from "react-bootstrap";
 
 const Navbar = () => {
@@ -142,85 +142,79 @@ const Navbar = () => {
     >
       <div className="container-fluid">
         {/* Logo */}
-       <Link
+      <Link
   to="/"
   className="navbar-brand d-flex align-items-center text-decoration-none"
   aria-label="OmniRental Home"
 >
-  {/* Logo Container */}
-  <div
-    className="me-2 p-2 rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-    style={{
-      background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 100%)',
-      width: "42px",
-      height: "42px",
-      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-      willChange: 'transform',
-      ':hover': {
-        transform: 'scale(1.05)',
-        boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)'
-      }
-    }}
-  >
-    {/* Dynamic logo handling - falls back to SVG if image not found */}
+  {/* Logo + Text ek hi div me */}
+  <div className="d-flex align-items-center">
+    {/* Logo */}
     <img
-      src={user?.photoURL}  // Use your actual logo path
+      src={Logo}  // actual logo path
       alt="OmniRental Logo"
-      className="img-fluid"
+      className="img-fluid me-2 d-none d-md-block"
       style={{ 
-        width: "24px",
-        height: "24px",
-        filter: "brightness(0) invert(1)",
-        objectFit: "contain"
+        width: "50px",
+        height: "50px",
+        objectFit: "contain",
+        transition: "all 0.3s ease",
+        cursor:"pointer"
       }}
       onError={(e) => {
-        // Fallback to house icon if logo fails to load
+        // fallback logo
         e.target.onerror = null;
-        e.target.src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBjbGFzcz0ibHVjaWRlIGx1Y2lkZS1ob3VzZSI+PHBhdGggZD0iTTE5IDIxVjEwYTIgMiAwIDAgMC0yLTJIN2EyIDIgMCAwIDAtMiAydjExIi8+PHBhdGggZD0iTTMgMjFsMTktMTgiLz48cGF0aCBkPSJNOSAyMXYtOGEyIDIgMCAwIDEgMi0yaDJhMiAyIDAgMCAxIDIgMnY4Ii8+PC9zdmc+"
+        e.target.src =
+          "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3..."
       }}
     />
-  </div>
 
-  {/* Brand Text */}
-  <div className="d-flex flex-column">
-    <span 
-      className="fw-bold fs-4" 
-      style={{
-        color: scrolled ? '#3b82f6' : 'white',
-        transition: 'color 0.3s ease, text-shadow 0.3s ease',
-        textShadow: scrolled ? 'none' : '0 2px 4px rgba(0,0,0,0.1)',
-        letterSpacing: '-0.5px',
-        lineHeight: '1.1'
-      }}
-    >
-      OmniRental
-    </span>
-    <small 
-      style={{
-        color: scrolled ? '#6b7280' : 'rgba(255,255,255,0.85)',
-        fontSize: '0.7rem',
-        fontWeight: '500',
-        transition: 'color 0.3s ease',
-        letterSpacing: '0.5px'
-      }}
-    >
-      Premium Properties
-    </small>
+    {/* Brand Text */}
+    <div className="d-flex flex-column">
+      <span 
+        className="fw-bold fs-4"
+        style={{
+          color: scrolled ? '#3b82f6' : '#b6c9e8ff',
+          transition: 'color 0.3s ease, text-shadow 0.3s ease',
+          textShadow: scrolled ? 'none' : '0 2px 4px rgba(0,0,0,0.1)',
+          letterSpacing: '-0.5px',
+          lineHeight: '1.1'
+        }}
+      >
+        OmniRental
+      </span>
+      <small 
+        style={{
+          color: scrolled ? '#6b7280' : '#1a6bedff',
+          fontSize: '0.7rem',
+          fontWeight: '500',
+          transition: 'color 0.3s ease',
+          letterSpacing: '0.5px'
+        }}
+      >
+        Premium Properties
+      </small>
+    </div>
   </div>
 </Link>
 
         {/* Toggler for mobile */}
         <button
-          className={`navbar-toggler ${scrolled ? '' : 'navbar-toggler-white'}`}
+          className={` navbar-toggler ${scrolled ? '' : 'navbar-toggler-white '}`}
           type="button"
           aria-label="Toggle navigation"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           style={{
             boxShadow: 'none',
-            borderColor: scrolled ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.5)'
+            //  borderColor: scrolled ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.5)',
+            border:'none',
+           
+            
+            
+          
           }}
         >
-          <span className="navbar-toggler-icon"></span>
+          <span className="navbar-toggler-icon  " style={{ filter: "invert(1)" }} ></span>
         </button>
 
         {/* Desktop Nav Links */}

@@ -50,14 +50,14 @@ const Navbar = ({
 
 
 
-<span className="user-name">{user?.name || user?.username}</span>
+<span className="user-name d-none d-md-block">{user?.name || user?.username}</span>
  {/* ✅ Fixed */}
 </div>
 
 
 
         <Tooltip title="Logout">
-          <Button type="text" icon={<LogoutOutlined />} onClick={onLogout} />
+          <Button type="text" className='d-none d-md-block' icon={<LogoutOutlined />} onClick={onLogout} />
         </Tooltip>
       </div>
     </Header>

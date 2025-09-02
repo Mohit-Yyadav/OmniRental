@@ -66,6 +66,7 @@ const featuredRentals = [
     { name: "Sports Gear", icon: "⚽", count: 432 },
   ]; // Your existing category data
 
+  
   return (
     <div className="main-home">
       {/* Hero Section */}
@@ -74,20 +75,20 @@ const featuredRentals = [
         <Container className="hero-container">
           <Row className="justify-content-center align-items-center min-vh-75 py-5">
             <Col lg={8} className="text-center">
-              <h1 className="hero-title">
+              <h1 className="hero-title fs-2">
                 Rent Anything You Need, <span className="text-highlight">Anytime</span>
               </h1>
-              <p className="hero-subtitle">
+              <p className="hero-subtitle fs-6">
                 Join thousands of happy renters saving money and space by borrowing 
                 instead of buying. Simple, safe, and sustainable.
               </p>
-              <div className="hero-buttons">
+              <div className="hero-buttons ">
                 <Button 
                   as={Link} 
                   to="/rentals" 
                   variant="warning" 
                   size="lg" 
-                  className="px-4 fw-bold rounded-pill hero-btn-primary"
+                  className="  fw-bold fs-5 rounded-pill hero-btn-primary  "
                 >
                   Explore Rentals Near You
                 </Button>
@@ -96,9 +97,9 @@ const featuredRentals = [
                   to="/how-it-works" 
                   variant="outline-light" 
                   size="lg" 
-                  className="rounded-pill hero-btn-secondary"
+                  className="rounded-pill hero-btn-secondary w-30"
                 >
-                  <span className="d-flex align-items-center">
+                  <span className="d-flex align-items-center fs-5 p-1">
                     How It Works <FaChevronRight className="ms-2" />
                   </span>
                 </Button>
@@ -127,8 +128,8 @@ const featuredRentals = [
       <section className="categories-section py-5">
         <Container>
           <div className="section-header">
-            <h2 className="section-title">Popular Categories</h2>
-            <Link to="/categories" className="section-link">
+            <h2 className="section-title fs-4">Popular Categories</h2>
+            <Link to="/categories" className="section-link ">
               View all <FaChevronRight />
             </Link>
           </div>
@@ -136,8 +137,8 @@ const featuredRentals = [
           <Row className="g-4">
             {categories.map((category, index) => (
               <Col key={index} xs={6} md={4} lg={2}>
-                <Card className="category-card">
-                  <Card.Body className="text-center">
+                <Card className="category-card ">
+                  <Card.Body className="text-center ">
                     <div className="category-icon">{category.icon}</div>
                     <h5 className="category-name">{category.name}</h5>
                     <small className="category-count">{category.count} listings</small>
@@ -150,10 +151,10 @@ const featuredRentals = [
       </section>
       
       {/* Featured Rentals */}
-      <section className="featured-section py-5">
+      <section className="featured-section py-5 ">
         <Container>
           <div className="section-header">
-            <h2 className="section-title">Featured Rentals</h2>
+            <h2 className="section-title fs-5">Featured Rentals</h2>
             <Link to="/properties" className="section-link">
               View all <FaChevronRight />
             </Link>
@@ -164,7 +165,7 @@ const featuredRentals = [
               <Col key={rental.id} xs={12} md={6} lg={4} xl={3}>
                 <Card className="rental-card">
                   <div 
-                    className="rental-image"
+                    className="rental-image "
                     style={{ backgroundImage: `url(${rental.image})` }}
                   >
                     <Badge bg="primary" className="featured-badge">Featured</Badge>

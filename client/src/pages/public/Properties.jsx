@@ -67,11 +67,11 @@ const Property = () => {
     );
   }
 
-  return (
+   return (
     <div className="container py-5">
       <div className="row mb-4">
         <div className="col-12">
-          <h1 className="display-5 fw-bold mb-3">Find Your Perfect Home</h1>
+          <h1 className="display-5 fw-bold mb-3 mt-4 fs-2">Find Your Perfect Home</h1>
           <p className="lead text-muted">
             Browse our selection of premium rentals
           </p>
