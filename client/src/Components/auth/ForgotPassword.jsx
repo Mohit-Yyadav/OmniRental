@@ -84,7 +84,7 @@ const ForgetPassword = () => {
 
     setIsSendingOtp(true);
     try {
-      const res = await fetch(`${BACKEND_URI}/api/auth/forgot-password`, {
+      const res = await fetch(`${BACKEND_URI}/api/auth/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         // sending purpose helps backend distinguish flows (optional)

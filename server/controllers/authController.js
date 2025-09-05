@@ -23,26 +23,22 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 // @desc    Register a new user
 // @route   POST /api/auth/register
 exports.register = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
   const { username, email, password, role } = req.body;
 
   try {
-    // Check if user exists
-    let user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({ message: 'User already exists' });
+    if (!global.tempOtp?.[email] || !global.tempOtp[email].verified) {
+      return res.status(400).json({ message: "Please verify OTP first" });
     }
 
-    // Create new user
+    let user = await User.findOne({ email });
+    if (user) return res.status(400).json({ message: "User already exists" });
+
     user = new User({ username, email, password, role });
     await user.save();
 
-    // Generate JWT
-   const token = generateToken(user._id); 
+    delete global.tempOtp[email]; // cleanup
+
+    const token = generateToken(user._id);
 
     res.status(201).json({
       token,
@@ -52,14 +48,15 @@ exports.register = async (req, res) => {
         email: user.email,
         role: user.role,
         profileComplete: user.profileComplete,
-        accessToken: token, // Include token in user object
-      }
+        accessToken: token,
+      },
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Register error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
+
 
 // @desc    Login user
 // @route   POST /api/auth/login
@@ -176,41 +173,99 @@ exports.googleLogin = async (req, res) => {
 
 // @desc    Send OTP to email
 // @route   POST /api/auth/send-otp
-exports.sendOTP = async (req, res) => {
-  const { email } = req.body;
-  if (!email) return res.status(400).json({ message: "Email is required" });
+// exports.sendOTP = async (req, res) => {
+//   const { email } = req.body;
+//   if (!email) return res.status(400).json({ message: "Email is required" });
 
+//   try {
+//     const user = await User.findOne({ email });
+//     if (!user) return res.status(404).json({ message: "User not found" });
+
+//     const otp = Math.floor(100000 + Math.random() * 900000).toString();
+//     user.otp = otp;
+//     user.otpExpiry = Date.now() + 5 * 60 * 1000; // 5 minutes
+//     user.isEmailVerified = false;
+//     await user.save();
+
+//     const transporter = nodemailer.createTransport({
+//       service: "gmail",
+//       auth: {
+//         user: process.env.EMAIL_USER,
+//         pass: process.env.EMAIL_PASS,
+//       },
+//     });
+
+//     await transporter.sendMail({
+//       from: process.env.EMAIL_USER,
+//       to: email,
+//       subject: "Your OmniRental OTP",
+//       text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
+//     });
+
+//     res.json({ message: "OTP sent successfully" });
+//   } catch (err) {
+//     console.error("OTP send error:", err);
+//     res.status(500).json({ message: "Failed to send OTP" });
+//   }
+// };
+
+exports.sendOtp = async (req, res) => {
   try {
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: "User not found" });
+    const { email, purpose } = req.body;
+    if (!email) return res.status(400).json({ message: "Email required" });
+
+    const existing = await User.findOne({ email });
+
+    if (purpose === "register") {
+      if (existing) return res.status(400).json({ message: "User already exists" });
+    }
+    if (purpose === "forgot") {
+      if (!existing) return res.status(404).json({ message: "User not found" });
+    }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    user.otp = otp;
-    user.otpExpiry = Date.now() + 5 * 60 * 1000; // 5 minutes
-    user.isEmailVerified = false;
-    await user.save();
+    const expiry = Date.now() + 5 * 60 * 1000; // 5 min
 
+    if (purpose === "register") {
+      global.tempOtp = global.tempOtp || {};
+      global.tempOtp[email] = { otp, expiry, verified: false };
+    } else {
+      existing.otp = otp;
+      existing.otpExpiry = expiry;
+      await existing.save();
+    }
+
+    // ✅ Send email with Nodemailer
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: process.env.EMAIL_HOST,
+      port: process.env.EMAIL_PORT,
+      secure: false, // TLS
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
+      tls: {
+        rejectUnauthorized: false, // Fix for local dev SSL issues
+      },
     });
 
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: `"OmniRental Team" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Your OmniRental OTP",
       text: `Your OTP is ${otp}. It will expire in 5 minutes.`,
     });
 
+    console.log(`✅ OTP ${otp} sent to ${email}`);
     res.json({ message: "OTP sent successfully" });
   } catch (err) {
-    console.error("OTP send error:", err);
-    res.status(500).json({ message: "Failed to send OTP" });
+    console.error("sendOtp error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
+
+
+
 
 
 
@@ -219,36 +274,43 @@ exports.sendOTP = async (req, res) => {
 // @route   POST /api/auth/verify-otp
 // ✅ Modify verifyOTP
 exports.verifyOTP = async (req, res) => {
-  const { email, otp } = req.body;
-  if (!email || !otp) return res.status(400).json({ message: "Email and OTP are required" });
+  const { email, otp, purpose } = req.body;
+  if (!email || !otp) return res.status(400).json({ message: "Email and OTP required" });
 
   try {
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: "User not found" });
+    if (purpose === "register") {
+      const entry = global.tempOtp?.[email];
+      if (!entry) return res.status(400).json({ message: "No OTP request found" });
+      if (entry.expiry < Date.now()) return res.status(400).json({ message: "OTP expired" });
+      if (entry.otp !== otp) return res.status(400).json({ message: "Invalid OTP" });
 
-    if (!user.otp || !user.otpExpiry) {
-      return res.status(400).json({ message: "No OTP request found" });
+      entry.verified = true;
+      return res.json({ message: "OTP verified. You can now register." });
     }
 
-    if (user.otpExpiry < Date.now()) {
-      return res.status(400).json({ message: "OTP expired" });
+    if (purpose === "forgot") {
+      const user = await User.findOne({ email });
+      if (!user) return res.status(404).json({ message: "User not found" });
+
+      if (!user.otp || !user.otpExpiry) return res.status(400).json({ message: "No OTP request found" });
+      if (user.otpExpiry < Date.now()) return res.status(400).json({ message: "OTP expired" });
+      if (user.otp !== otp) return res.status(400).json({ message: "Invalid OTP" });
+
+      user.isEmailVerified = true;
+      user.otp = null;
+      user.otpExpiry = null;
+      await user.save();
+
+      return res.json({ message: "OTP verified. You can now reset password." });
     }
 
-    if (user.otp !== otp) {
-      return res.status(400).json({ message: "Invalid OTP" });
-    }
-
-    user.isEmailVerified = true;
-    user.otp = null;
-    user.otpExpiry = null;
-    await user.save();
-
-    res.json({ message: "OTP verified successfully" });
+    res.status(400).json({ message: "Invalid purpose" });
   } catch (err) {
-    console.error("OTP verify error:", err);
+    console.error("verifyOtp error:", err);
     res.status(500).json({ message: "Server error verifying OTP" });
   }
 };
+
 
 
 

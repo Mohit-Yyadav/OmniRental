@@ -4,15 +4,16 @@ const authController = require('../controllers/authController');
 const { check } = require('express-validator');
 const auth = require('../middleware/auth');
 
+// @route   POST api/auth/google
+// @desc    Google login
+router.post('/google', authController.googleLogin);
+
+// @route   POST api/auth/send-otp
+// @desc    Send OTP (register / forgot password)
+router.post('/send-otp', authController.sendOtp);
+
 // @route   POST api/auth/register
 // @desc    Register user
-// @access  Public
-router.post('/google', authController.googleLogin);
-// Send OTP to email
-router.post('/send-otp', authController.sendOTP);
-
-
-
 router.post(
   '/register',
   [
@@ -26,7 +27,6 @@ router.post(
 
 // @route   POST api/auth/login
 // @desc    Login user
-// @access  Public
 router.post(
   '/login',
   [
@@ -38,19 +38,14 @@ router.post(
 
 // @route   GET api/auth/me
 // @desc    Get current user
-// @access  Private
 router.get('/me', auth, authController.getMe);
 
-// @desc    Forgot password - send OTP
-// @access  Public
-router.post('/forgot-password', authController.sendOTP);
-
+// @route   POST api/auth/verify-otp
 // @desc    Verify OTP
-// @access  Public
 router.post('/verify-otp', authController.verifyOTP);
 
+// @route   POST api/auth/reset-password
 // @desc    Reset password (after OTP verified)
-// @access  Public
 router.post('/reset-password', authController.resetPassword);
 
 module.exports = router;
