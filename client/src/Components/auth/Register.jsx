@@ -392,8 +392,9 @@ const Register = () => {
       const res = await fetch(`${BACKEND_URI}/api/auth/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: formData.email }),
+        body: JSON.stringify({ email: formData.email, purpose: "register" }),
       });
+
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
 
@@ -639,9 +640,11 @@ const Register = () => {
                               body: JSON.stringify({
                                 email: formData.email,
                                 otp,
+                                purpose: "register", // ✅ add this
                               }),
                             }
                           );
+
                           const data = await res.json();
                           if (!res.ok) throw new Error(data.message);
                           setMessage(
