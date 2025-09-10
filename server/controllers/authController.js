@@ -120,35 +120,30 @@ exports.googleLogin = async (req, res) => {
   try {
     const { tokenId } = req.body;
 
-    // Verify token
     const ticket = await client.verifyIdToken({
       idToken: tokenId,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
 
     const { email_verified, name, email, picture } = ticket.getPayload();
-
     if (!email_verified) {
       return res.status(400).json({ message: 'Google login failed. Try again.' });
     }
 
-    // Check if user exists
     let user = await User.findOne({ email });
 
     if (!user) {
-      // Create new user if not exists
       user = new User({
         username: name,
         email,
-        password: Math.random().toString(36).slice(-8), // Dummy password
-        role: 'tenant', // Default role (you can change logic)
+        password: Math.random().toString(36).slice(-8),
+        role: "tenant",         // ✅ default role always tenant
         profilePic: picture,
         profileComplete: false,
       });
       await user.save();
     }
 
-    // Generate JWT
     const token = generateToken(user._id);
 
     res.json({
@@ -158,16 +153,17 @@ exports.googleLogin = async (req, res) => {
         username: user.username,
         email: user.email,
         role: user.role,
-        profileComplete: user.profileComplete,
         profilePic: user.profilePic,
+        profileComplete: user.profileComplete,
         accessToken: token,
       },
     });
   } catch (error) {
-    console.error('Google login error:', error);
-    res.status(500).json({ message: 'Server error in Google login' });
+    console.error("Google login error:", error);
+    res.status(500).json({ message: "Server error in Google login" });
   }
 };
+
 
 
 

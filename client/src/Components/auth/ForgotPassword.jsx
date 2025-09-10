@@ -122,11 +122,16 @@ const ForgetPassword = () => {
 
     setIsVerifying(true);
     try {
-      const res = await fetch(`${BACKEND_URI}/api/auth/verify-otp`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), otp: otp.trim() }),
-      });
+     const res = await fetch(`${BACKEND_URI}/api/auth/verify-otp`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ 
+    email: email.trim(), 
+    otp: otp.trim(),
+    purpose: "forgot"  // ✅ add this
+  }),
+});
+
 
       const data = await res.json();
       if (!res.ok) {

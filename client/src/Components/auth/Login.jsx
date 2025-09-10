@@ -1,26 +1,39 @@
 import React, { useState, useEffect } from "react";
-import { FaLock, FaUser, FaEye, FaEyeSlash, FaSpinner ,FaGoogle,FaFacebookF } from "react-icons/fa";
+import {
+  FaLock,
+  FaUser,
+  FaEye,
+  FaEyeSlash,
+  FaSpinner,
+  FaGoogle,
+  FaFacebookF,
+} from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { useNavigate, Link } from "react-router-dom";
-import { Container, Row, Col, Form, Button, Alert, InputGroup } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  Alert,
+  InputGroup,
+} from "react-bootstrap";
 import rentImage from "../../assets/images/bghome.jpg";
-import useAuth from '../../context/useAuth'; // Adjust the import path as necessa
-import OmniRental from '../../assets/images/OmniRentalwhitetext.png';
-import bgImage from '../../assets/images/bg.jpg'
-import LogoM from '../../assets/images/OmniRental4.png'
-import '../../assets/css/Auth.css'
+import useAuth from "../../context/useAuth"; // Adjust the import path as necessa
+import OmniRental from "../../assets/images/OmniRentalwhitetext.png";
+import bgImage from "../../assets/images/bg.jpg";
+import LogoM from "../../assets/images/OmniRental4.png";
+import "../../assets/css/Auth.css";
 
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 
-
-
 // import { left } from "@popperjs/core";
 const Login = () => {
   const navigate = useNavigate();
-  const { login, isAuthenticated, user } = useAuth(); // ✅ Add 'user'
+const { login, googleLogin, isAuthenticated, user } = useAuth();
 
-  
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -32,14 +45,14 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
 
   // Redirect if already authenticated
-// Redirect if already authenticated
-useEffect(() => {
-  if (isAuthenticated && user) {
-    const redirectPath = user.role === 'tenant' ? '/tenant/dashboard' : '/dashboard';
-    navigate(redirectPath, { replace: true });
-  }
-}, [isAuthenticated, user, navigate]);
-
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const redirectPath =
+        user.role === "tenant" ? "/tenant/dashboard" : "/dashboard";
+      navigate(redirectPath, { replace: true });
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const validateForm = () => {
     const errors = {};
@@ -77,148 +90,161 @@ useEffect(() => {
     }
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!validateForm()) return;
+    if (!validateForm()) return;
 
-  setIsLoading(true);
-  setMessage({ text: "", type: "" });
+    setIsLoading(true);
+    setMessage({ text: "", type: "" });
 
-  try {
-    const user = await login(formData.email, formData.password); // ✅ Now user is returned
+    try {
+      const user = await login(formData.email, formData.password); // ✅ Now user is returned
 
-    const redirectPath = user.role === 'tenant'
-      ? '/tenant/dashboard'
-      : '/owner/dashboard';
+      const redirectPath =
+        user.role === "tenant" ? "/tenant/dashboard" : "/owner/dashboard";
 
-    setMessage({
-      text: "Login successful! Redirecting...",
-      type: "success",
-    });
+      setMessage({
+        text: "Login successful! Redirecting...",
+        type: "success",
+      });
 
-    setTimeout(() => {
-      navigate(redirectPath, { replace: true });
-    }, 1000);
-  } catch (error) {
-    setMessage({
-      text: error.message || "Invalid credentials. Please try again.",
-      type: "danger",
-    });
-    setFormData(prev => ({ ...prev, password: "" }));
-  } finally {
-    setIsLoading(false);
-  }
-};
-
+      setTimeout(() => {
+        navigate(redirectPath, { replace: true });
+      }, 1000);
+    } catch (error) {
+      setMessage({
+        text: error.message || "Invalid credentials. Please try again.",
+        type: "danger",
+      });
+      setFormData((prev) => ({ ...prev, password: "" }));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <div className="min-vh-100 d-flex align-items-center bg-light  "  style={{
-     backgroundImage: `url(${bgImage})`, // import bgImage from assets
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    minHeight: '100vh',
-  }}>
+    <div
+      className="min-vh-100 d-flex align-items-center bg-light  "
+      style={{
+        backgroundImage: `url(${bgImage})`, // import bgImage from assets
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        minHeight: "100vh",
+      }}
+    >
       <Container className="my-5  ">
         <Row className="justify-content-center ">
           <Col md={10} lg={8} xl={7}>
-            <div className="card shadow-lg shadow-sm overflow-hidden  "> 
+            <div className="card shadow-lg shadow-sm overflow-hidden  ">
               <Row className="g-0">
-                {/* Image Section */} 
-<Col md={6} className=" left-col d-none d-md-flex shadow">
-  <div
-    className="h-100 w-100 d-flex  align-items-center justify-content-center text-white"
-    style={{
-      backgroundImage: `url(${rentImage})`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      position: "relative",
-      zIndex: 3,
-    }}
-  >
-    {/* Overlay */}
-    <div
-      style={{
-        backgroundColor: "rgba(79, 78, 78, 0.5)",
-        position: "absolute",
-        top: 0,
-        left: 0,
-        height: "100%",
-        width: "100%",
-        zIndex: 1,
-      }}
-    ></div>
+                {/* Image Section */}
+                <Col md={6} className=" left-col d-none d-md-flex shadow">
+                  <div
+                    className="h-100 w-100 d-flex  align-items-center justify-content-center text-white"
+                    style={{
+                      backgroundImage: `url(${rentImage})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      position: "relative",
+                      zIndex: 3,
+                    }}
+                  >
+                    {/* Overlay */}
+                    <div
+                      style={{
+                        backgroundColor: "rgba(79, 78, 78, 0.5)",
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        height: "100%",
+                        width: "100%",
+                        zIndex: 1,
+                      }}
+                    ></div>
 
-    {/* Logo (fixed top-left) */}
-    <div
-      style={{
-        position: "absolute",
-        top: "20px",
-        left: "20px",
-        zIndex: 2,
-      }}
-    >
-      <Link to="/" className="Logo">
-        <img
-          src={OmniRental}
-          alt="Logo"
-          style={{ width: "100px", cursor: "pointer"}}
-        />
-      </Link>
-    </div>
+                    {/* Logo (fixed top-left) */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "20px",
+                        left: "20px",
+                        zIndex: 2,
+                      }}
+                    >
+                      <Link to="/" className="Logo">
+                        <img
+                          src={OmniRental}
+                          alt="Logo"
+                          style={{ width: "100px", cursor: "pointer" }}
+                        />
+                      </Link>
+                    </div>
 
-    {/* Center Content (now includes Welcome + paragraph) */}
-    <div
-  style={{
-    position: "absolute",
-    top: "100px",
-    zIndex: 2,
-    padding: "20px",
-    
-   
-   
-    color: "#f1f1f1",
-    fontSize: "1.1rem",
-    textAlign: "center",
-    width: "100%",
-  }}
->
-  <h1
-    className="fw-bold fs-2"
-    style={{ margin: 0, marginLeft: "30px" ,color:"#0e287cff"}}  // ✅ Add marginLeft here
-  >
-    Welcome Back!
-  </h1>
-  <p
-    style={{ margin: 0, marginLeft: "30px", color: "#e0e0e0" , marginTop:"10px"}}  // ✅ Same here
-  >
-    Find your dream apartment, tools, or vehicle – all in one place!
-  </p>
-</div>
+                    {/* Center Content (now includes Welcome + paragraph) */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "100px",
+                        zIndex: 2,
+                        padding: "20px",
 
-
-  </div>
-</Col>
+                        color: "#f1f1f1",
+                        fontSize: "1.1rem",
+                        textAlign: "center",
+                        width: "100%",
+                      }}
+                    >
+                      <h1
+                        className="fw-bold fs-2"
+                        style={{
+                          margin: 0,
+                          marginLeft: "30px",
+                          color: "#0e287cff",
+                        }} // ✅ Add marginLeft here
+                      >
+                        Welcome Back!
+                      </h1>
+                      <p
+                        style={{
+                          margin: 0,
+                          marginLeft: "30px",
+                          color: "#e0e0e0",
+                          marginTop: "10px",
+                        }} // ✅ Same here
+                      >
+                        Find your dream apartment, tools, or vehicle – all in
+                        one place!
+                      </p>
+                    </div>
+                  </div>
+                </Col>
 
                 {/* Form Section */}
-                <Col md={6}  xs={12} className="right-col">
-                
+                <Col md={6} xs={12} className="right-col">
                   <div className="p-4 p-md-5">
-                    
                     <div className=" mb-4">
                       <div className="  d-md-none text-center mb-0 mt-2 mt-md-3 h-5">
                         <Link to="/">
-                               <img
-                                src={LogoM}
-                               alt="Logo"
-                              style={{ width: "200px",height:"auto", cursor: "pointer",textAlign:"center" }}
-                              />
-                       </Link>
-                      
+                          <img
+                            src={LogoM}
+                            alt="Logo"
+                            style={{
+                              width: "200px",
+                              height: "auto",
+                              cursor: "pointer",
+                              textAlign: "center",
+                            }}
+                          />
+                        </Link>
                       </div>
-                       <p  className="text-primary d-md-none  fs-1 fw-bold mt-3 text-center">Welcome Back</p>
-                      <p className="text-muted mt-0 fs-4 fw-bold text-dark">Sign in</p>
+                      <p className="text-primary d-md-none  fs-1 fw-bold mt-3 text-center">
+                        Welcome Back
+                      </p>
+                      <p className="text-muted mt-0 fs-4 fw-bold text-dark">
+                        Sign in
+                      </p>
                     </div>
 
                     {message.text && (
@@ -241,10 +267,10 @@ useEffect(() => {
                         </Form.Label>
                         <InputGroup hasValidation>
                           <InputGroup.Text className="d-none d-md-block">
-                            <MdEmail  />
+                            <MdEmail />
                           </InputGroup.Text>
                           <Form.Control
-                              className="rounded-md-0 "
+                            className="rounded-md-0 "
                             type="email"
                             name="email"
                             placeholder="Enter your email"
@@ -271,7 +297,6 @@ useEffect(() => {
                             <FaLock />
                           </InputGroup.Text>
                           <Form.Control
-                          
                             type={showPassword ? "text" : "password"}
                             name="password"
                             placeholder="Enter your password"
@@ -313,7 +338,6 @@ useEffect(() => {
 
                       {/* Submit Button */}
                       <Button
-                      
                         variant="primary"
                         type="submit"
                         className="w-100 py-2 mb-3 fw-bold fs-6"
@@ -339,38 +363,36 @@ useEffect(() => {
 
                       {/* Social Login Options */}
                       <div className="d-flex gap-2 mb-4">
-                        <GoogleLogin
+<GoogleLogin
   onSuccess={async (credentialResponse) => {
-  try {
-    const token = credentialResponse.credential;
+    try {
+      const tokenId = credentialResponse.credential;
 
-    // Send token to backend
-    const res = await axios.post(
-      `${import.meta.env.VITE_BACKEND_URL}/api/auth/google`,
-      { tokenId: token }
-    );
+      const userData = await googleLogin(tokenId);
 
-    const userData = res.data; // { token, user }
+      const redirectPath =
+        userData.role === "tenant"
+          ? "/tenant/dashboard"
+          : "/owner/dashboard";
 
-    login(userData); // ✅ ensure login sets user + token correctly
-
-    const redirectPath =
-      userData.user.role === "tenant" ? "/tenant/dashboard" : "/owner/dashboard";
-
-    navigate(redirectPath, { replace: true });
-  } catch (err) {
-    console.error(err);
+      navigate(redirectPath, { replace: true });
+    } catch (err) {
+      console.error(err);
+      setMessage({
+        text: "Google login failed. Please try again.",
+        type: "danger",
+      });
+    }
+  }}
+  onError={() => {
     setMessage({
-      text: "Google login failed. Please try again.",
+      text: "Google login was unsuccessful.",
       type: "danger",
     });
-  }
-}}
-onError={() => {
-  setMessage({ text: "Google login was unsuccessful.", type: "danger" });
-}}
-useOneTap
+  }}
+  useOneTap
 />
+
 
 
                         {/* <Button
