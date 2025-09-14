@@ -1,19 +1,18 @@
 const mongoose = require('mongoose');
 
 const monthlyRecordSchema = new mongoose.Schema({
-  tenant: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // ✅ FIXED
+  tenant: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   property: { type: mongoose.Schema.Types.ObjectId, ref: 'Property', required: true },
-  month: { type: String, required: true }, // e.g. "2025-07"
+  ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // ✅ ADD ownerId
+  month: { type: String, required: true },
 
   rent: { type: Number, required: true },
-
   previousReading: { type: Number, required: true },
   newMeterReading: { type: Number, required: true },
   pricePerUnit: { type: Number, required: true },
 
   meterUnits: { type: Number },
   electricityCharge: { type: Number, default: 0 },
-
   extraCharges: { type: Number, default: 0 },
   totalAmount: { type: Number },
 

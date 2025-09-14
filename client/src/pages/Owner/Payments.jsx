@@ -87,32 +87,41 @@ const Payments = () => {
     }
   }, [selectedProperty, dateRange]);
 
-  const fetchPropertyPayments = async (propertyId) => {
-    try {
-      setPaymentsLoading(true);
-      const token = localStorage.getItem("token");
-      let url = `${BACKEND_URI}/api/payments/property/${propertyId}`;
-      
-      // Add date range to URL if specified
-      if (dateRange && dateRange.length === 2) {
-        const params = {
-          startDate: dayjs(dateRange[0]).format('YYYY-MM-DD'),
-          endDate: dayjs(dateRange[1]).format('YYYY-MM-DD')
-        };
-        url += `?startDate=${params.startDate}&endDate=${params.endDate}`;
-      }
-
-      const res = await axios.get(url, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setPropertyPayments(res.data);
-    } catch (err) {
-      console.error(err);
-      message.error("Failed to fetch property payments");
-    } finally {
-      setPaymentsLoading(false);
+const fetchPropertyPayments = async (propertyId) => {
+  try {
+    setPaymentsLoading(true);
+    const token = localStorage.getItem("token");
+    let url = `${BACKEND_URI}/api/payments/property/${propertyId}/payments`;
+    
+    if (dateRange && dateRange.length === 2) {
+      const startDate = dayjs(dateRange[0]).format('YYYY-MM-DD');
+      const endDate = dayjs(dateRange[1]).format('YYYY-MM-DD');
+      url += `?startDate=${startDate}&endDate=${endDate}`;
     }
-  };
+
+    const res = await axios.get(url, { headers: { Authorization: `Bearer ${token}` } });
+
+    const payments = res.data.map(p => ({
+      ...p,
+      tenantName: p.tenantName || "Tenant",
+      email: p.email || "",
+      month: p.month || "",
+      amount: p.amount || 0,
+      status: p.status || 'pending',
+      note: p.note || '',
+      date: p.date || new Date(),
+    }));
+
+    setPropertyPayments(payments);
+  } catch (err) {
+    console.error(err);
+    message.error("Failed to fetch property payments");
+  } finally {
+    setPaymentsLoading(false);
+  }
+};
+
+
 
   // Calculate statistics
   const totalDeposits = depositedTenants.reduce((sum, tenant) => sum + tenant.amount, 0);

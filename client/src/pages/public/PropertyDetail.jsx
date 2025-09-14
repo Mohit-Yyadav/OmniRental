@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { message } from "antd";
 import {
   MapPin,
   Bed,
@@ -135,40 +136,39 @@ useEffect(() => {
     alert("Your inquiry has been submitted successfully!");
   };
 
- const handleBookingSubmit = async (e) => {
+ // make sure this is imported
+
+const handleBookingSubmit = async (e) => {
   e.preventDefault();
 
- 
-
   if (!user) {
-    alert("You must be logged in to send a booking request.");
+    message.warning("⚠️ Please log in to send a booking request.");
     return;
   }
 
   if (user.role !== "tenant") {
-    alert("Only tenants can send booking requests.");
+    message.error("❌ Only tenants are allowed to send booking requests.");
     return;
   }
 
   try {
-   const response = await axios.post(
-  `${BACKEND_URI}/api/booking-requests`,
-  {
-    propertyId: property._id,
-    moveInDate: bookingFormData.moveInDate,
-    duration: bookingFormData.duration,
-    occupation: bookingFormData.occupation,
-    additionalInfo: bookingFormData.additionalInfo,
-    numPersons: bookingFormData.numPersons,
-  rent: bookingFormData.rent,
-  },
-  {
-    headers: {
-     Authorization: `Bearer ${localStorage.getItem('token')}`,
-    },
-  }
-);
-
+    const response = await axios.post(
+      `${BACKEND_URI}/api/booking-requests`,
+      {
+        propertyId: property._id,
+        moveInDate: bookingFormData.moveInDate,
+        duration: bookingFormData.duration,
+        occupation: bookingFormData.occupation,
+        additionalInfo: bookingFormData.additionalInfo,
+        numPersons: bookingFormData.numPersons,
+        rent: bookingFormData.rent,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
 
     console.log("✅ Booking request submitted:", response.data);
     setBookingFormData({
@@ -181,12 +181,20 @@ useEffect(() => {
       additionalInfo: "",
     });
     setShowBookingModal(false);
-    alert("Booking request sent successfully!");
+    message.success("✅ Your booking request has been sent successfully!");
   } catch (error) {
-    console.error("❌ Booking request failed:", error.response?.data || error.message);
-    alert(error.response?.data?.message || "Failed to submit booking request.");
+    console.error(
+      "❌ Booking request failed:",
+      error.response?.data || error.message
+    );
+    message.error(
+      `⚠️ Booking failed: ${
+        error.response?.data?.message || "Something went wrong. Please try again."
+      }`
+    );
   }
 };
+
 
 
   const toggleSave = () => {

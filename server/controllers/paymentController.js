@@ -262,30 +262,50 @@ exports.getDepositedTenants = async (req, res) => {
 // 🏘 Get All Payments for a Property (Owner view)
 exports.getPaymentsForProperty = async (req, res) => {
   try {
+    const ownerId = req.user._id;
     const { propertyId } = req.params;
+    const { startDate, endDate } = req.query;
 
-    const payments = await Payment.find({ propertyId })
-      .populate('tenantId', 'name email')
+    const query = { 
+      propertyId, 
+      ownerId,
+      paymentType: { $in: ['rent', 'deposit'] }
+    };
+
+    if (startDate && endDate) {
+      query.date = { 
+        $gte: new Date(startDate),
+        $lte: new Date(endDate)
+      };
+    }
+
+    const payments = await Payment.find(query)
+      .populate('tenantId', 'name email phone')
+      .populate('propertyId', 'name roomNo address')
       .sort({ date: -1 });
 
-    const data = payments.map(p => ({
+    const formatted = payments.map(p => ({
       _id: p._id,
       tenantName: p.tenantId?.name || 'N/A',
-      email: p.tenantId?.email,
-      amount: p.amount,
-      method: p.method,
-      status: p.status,
+      email: p.tenantId?.email || '',
+      tenantPhone: p.tenantId?.phone || '',
+      propertyName: p.propertyId?.name || '',
+      address: p.propertyId?.address || '',
+      roomNo: p.propertyId?.roomNo || '',
+      amount: p.amount || 0,
+      status: p.status || 'pending',
       paymentType: p.paymentType,
-      month: p.month,
-      note: p.note,
-      date: p.date,
+      month: p.month || '',
+      note: p.note || '',
+      date: p.date || new Date(),
     }));
 
-    res.status(200).json(data);
+    res.status(200).json(formatted);
   } catch (err) {
     console.error("❌ getPaymentsForProperty error:", err);
     res.status(500).json({ message: "Failed to fetch property payments" });
   }
 };
+
 
 

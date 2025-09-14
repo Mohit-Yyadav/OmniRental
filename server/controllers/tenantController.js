@@ -4,6 +4,8 @@ const MonthlyRecord = require('../models/MonthlyRecord');
 const Payment = require("../models/Payment");
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
+const mongoose = require("mongoose"); 
+
 // ✅ Get all tenants assigned to this owner
 exports.getAllTenants = async (req, res) => {
   try {
@@ -43,6 +45,7 @@ exports.getAllTenants = async (req, res) => {
   }
 };
 
+// controllers/tenantController.js
 exports.addTenant = async (req, res) => {
   try {
     console.log("📥 Incoming Payload:", req.body);
@@ -60,7 +63,8 @@ exports.addTenant = async (req, res) => {
       pricePerUnit,
     } = req.body;
 
-    if (!tenantId || !propertyId || !roomNo || !members || !rent || !startDate || !endDate || !pricePerUnit) {
+    // Validate required fields (you can relax endDate if desired)
+    if (!tenantId || !propertyId || !roomNo || !members || !rent || !startDate || !pricePerUnit) {
       console.log("⚠️ Missing required fields");
       return res.status(400).json({ error: "Missing required fields" });
     }
@@ -73,15 +77,26 @@ exports.addTenant = async (req, res) => {
       members: Number(members),
       rent: Number(rent),
       startDate: new Date(startDate),
-      endDate: new Date(endDate),
+      endDate: endDate ? new Date(endDate) : null,
       meterNumber: Number(meterNumber) || 0,
       pricePerUnit: Number(pricePerUnit),
       status: "active",
     });
 
     console.log("🛠 Saving new tenant:", newTenant);
-
     await newTenant.save();
+
+    // → IMPORTANT: keep property in sync
+    try {
+      await Property.findByIdAndUpdate(
+        propertyId,
+        { $set: { isBooked: true, status: "Occupied" } },
+        { new: true }
+      );
+    } catch (propErr) {
+      console.warn("⚠️ Could not update property status:", propErr);
+      // don't fail whole request just because property update failed
+    }
 
     res.status(201).json({ message: "Tenant added successfully", tenant: newTenant });
   } catch (error) {
@@ -89,6 +104,7 @@ exports.addTenant = async (req, res) => {
     res.status(500).json({ error: error.message || "Failed to add tenant" });
   }
 };
+
 
 
 
@@ -115,38 +131,55 @@ exports.getMonthlyRecords = async (req, res) => {
 
 
 
-// ✅ Generate invoice for current month
+// controllers/tenantController.js
+// ✅ Generate monthly invoice for a tenant
 exports.generateInvoice = async (req, res) => {
   try {
-    const { tenantId, month, newMeterReading, extraCharges = 0 } = req.body;
+    const { tenantId: incomingTenantId, month, newMeterReading, extraCharges = 0 } = req.body;
 
-    const tenant = await Tenant.findById(tenantId);
-    if (!tenant) return res.status(404).json({ error: "Tenant not found" });
-
-    const existing = await MonthlyRecord.findOne({ tenant: tenantId, month });
-    if (existing) {
-      return res.status(400).json({ error: "Invoice already exists for this month" });
+    if (!incomingTenantId || !month) {
+      return res.status(400).json({ error: "tenantId and month are required" });
     }
 
-    const lastRecord = await MonthlyRecord.findOne({ tenant: tenantId }).sort({ month: -1 });
+    // Load Tenant document
+    const tenantDoc = await Tenant.findById(incomingTenantId);
+    if (!tenantDoc) return res.status(404).json({ error: "Tenant not found" });
 
+    const tenantUserId = tenantDoc.tenantId;
+    if (!tenantUserId) return res.status(400).json({ error: "Tenant user id missing" });
+
+    // Prevent duplicate invoice
+    const existing = await MonthlyRecord.findOne({ tenant: tenantUserId, month });
+    if (existing) return res.status(400).json({ error: "Invoice already exists for this month" });
+
+    // Get previous reading
+    const lastRecord = await MonthlyRecord.findOne({ tenant: tenantUserId }).sort({ month: -1 });
     const previousReading = lastRecord
-      ? Number(lastRecord.newMeterReading)
-      : Number(tenant.meterNumber) || 0;
+      ? Number(lastRecord.newMeterReading || 0)
+      : Number(tenantDoc.meterNumber || 0);
 
     const newReading = Number(newMeterReading);
-    const extras = Number(extraCharges);
-    const unitRate = Number(tenant.pricePerUnit);
-    const rent = Number(tenant.rent);
+    if (Number.isNaN(newReading)) return res.status(400).json({ error: "Invalid newMeterReading" });
 
-    const unitsConsumed = Math.max(0, newReading - previousReading); // Always positive
+    const extras = Number(extraCharges || 0);
+    const unitRate = Number(tenantDoc.pricePerUnit || 0);
+    const rent = Number(tenantDoc.rent || 0);
+
+    const unitsConsumed = Math.max(0, newReading - previousReading);
     const electricityCharge = unitsConsumed * unitRate;
-
     const totalAmount = rent + electricityCharge + extras;
 
+    // Get ownerId from the property
+    const propertyDoc = await Property.findById(tenantDoc.property);
+    if (!propertyDoc) return res.status(404).json({ error: "Property not found" });
+
+    const ownerId = propertyDoc.owner;
+
+    // Create MonthlyRecord
     const newRecord = new MonthlyRecord({
-     tenant: tenant.tenantId,
-      property: tenant.property,
+      tenant: tenantUserId,
+      property: tenantDoc.property,
+      ownerId,              // ✅ Add ownerId
       month,
       rent,
       previousReading,
@@ -154,13 +187,14 @@ exports.generateInvoice = async (req, res) => {
       meterUnits: unitsConsumed,
       pricePerUnit: unitRate,
       extraCharges: extras,
+      electricityCharge,
       totalAmount,
       isPaid: false,
     });
 
     await newRecord.save();
 
-    res.status(201).json({
+    return res.status(201).json({
       id: newRecord._id,
       month,
       rentAmount: rent,
@@ -172,12 +206,16 @@ exports.generateInvoice = async (req, res) => {
       extraCharges: extras,
       totalAmount,
       status: "pending",
+      ownerId, // ✅ return ownerId
     });
+
   } catch (err) {
     console.error("❌ Generate Invoice Error:", err);
     res.status(500).json({ error: "Failed to generate invoice" });
   }
 };
+
+
 
 
 
