@@ -137,7 +137,7 @@ const Sidebar = ({
   mask={false}   // overlay background हटाने के लिए
   onClose={() => setMobileOpen(false)}
   open={mobileOpen}
-  bodyStyle={{ padding: 0, minHeight: '100vh' }}
+  // bodyStyle={{ padding: 0, minHeight: '100vh' }}
   drawerStyle={{ backgroundColor: '#001529' }}
   width={220}
   zIndex={1} // content से पीछे रखने के लिए

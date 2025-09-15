@@ -18,6 +18,7 @@ const { Header } = Layout;
 const OwnerNavbar = ({
   collapsed,
   setCollapsed,
+  setMobileOpen,
   notifications = [],
    user = {},
   onLogout = () => {},
@@ -57,12 +58,22 @@ const OwnerNavbar = ({
   );
 
   return (
-    <Header className="owner-navbar">
+    <Header className={`owner-navbar ${collapsed ? "collapsed" : ""} `}>
       <div className="owner-navbar__left">
         <Button
           type="text"
           icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={() => {
+    if (window.innerWidth < 992) {
+      // 👈 mobile ke liye
+      if (typeof setMobileOpen === "function") {
+        setMobileOpen(true);
+      }
+    } else {
+      // 👈 desktop ke liye
+      setCollapsed(!collapsed);
+    }
+  }}
           className="owner-navbar__toggle-btn  "
         />
         <div className="owner-navbar__brand">

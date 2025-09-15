@@ -225,47 +225,56 @@ const Payments = () => {
       </Row>
 
       {/* Filters */}
-      <Card style={{ marginBottom: 24 }}>
-        <Space size="large">
-          <Space>
-            <Text strong>Date Range:</Text>
-            <RangePicker 
-              onChange={handleDateFilter} 
-              disabledDate={current => current && current > dayjs().endOf('day')}
-            />
-          </Space>
-          
-          <Space>
-            <Text strong>Status:</Text>
-            <Select
-              placeholder="Filter by status"
-              style={{ width: 150 }}
-              onChange={handleStatusFilter}
-              allowClear
-            >
-              <Option value="paid">Paid</Option>
-              <Option value="pending">Pending</Option>
-              <Option value="failed">Failed</Option>
-            </Select>
-          </Space>
-          
-          <Space>
-            <Text strong>Type:</Text>
-            <Select
-              placeholder="Filter by type"
-              style={{ width: 150 }}
-              onChange={handleTypeFilter}
-              allowClear
-            >
-              <Option value="monthly rent">Monthly Rent</Option>
-              <Option value="deposit">Deposit</Option>
-              <Option value="maintenance">Maintenance</Option>
-            </Select>
-          </Space>
-          
-          <Button onClick={() => fetchMyPayments()}>Reset Filters</Button>
-        </Space>
-      </Card>
+<Card style={{ marginBottom: 24 }}>
+  <Row gutter={[16, 16]}>
+    <Col xs={24} sm={12} md={8} lg={6}>
+      <Space>
+        <Text strong>Date Range:</Text>
+        <RangePicker 
+          onChange={handleDateFilter} 
+          disabledDate={current => current && current > dayjs().endOf('day')}
+        />
+      </Space>
+    </Col>
+
+    <Col xs={24} sm={12} md={8} lg={6}>
+      <Space>
+        <Text strong>Status:</Text>
+        <Select
+          placeholder="Filter by status"
+          style={{ width: "100%" }}
+          onChange={handleStatusFilter}
+          allowClear
+        >
+          <Option value="paid">Paid</Option>
+          <Option value="pending">Pending</Option>
+          <Option value="failed">Failed</Option>
+        </Select>
+      </Space>
+    </Col>
+
+    <Col xs={24} sm={12} md={8} lg={6}>
+      <Space>
+        <Text strong>Type:</Text>
+        <Select
+          placeholder="Filter by type"
+          style={{ width: "100%" }}
+          onChange={handleTypeFilter}
+          allowClear
+        >
+          <Option value="monthly rent">Monthly Rent</Option>
+          <Option value="deposit">Deposit</Option>
+          <Option value="maintenance">Maintenance</Option>
+        </Select>
+      </Space>
+    </Col>
+
+    <Col xs={24} sm={12} md={8} lg={6}>
+      <Button block onClick={() => fetchMyPayments()}>Reset Filters</Button>
+    </Col>
+  </Row>
+</Card>
+
 
       {/* Payment History Table */}
       <Card>

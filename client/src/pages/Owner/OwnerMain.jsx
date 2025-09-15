@@ -1,13 +1,12 @@
 // src/pages/OwnerMain.jsx
 import React, { useState } from "react";
-import { Layout } from "antd";
+import { Layout, Drawer } from "antd";
 import OwnerSidebar from "./Sidebar";
 import OwnerNavbar from "./Navbar";
 import OwnerDashboard from "./Dashboard";
 import OwnerProfile from "./Profile";
 import TenantManagement from "./TenantManagement";
 import Documents from "./Documents";
-import Profile from "./Profile";
 import Settings from "./Settings";
 import MyProperties from "./MyProperties";
 import Financials from "./Financials";
@@ -15,13 +14,14 @@ import Maintenance from "./Maintenance";
 import Reports from "./Reports";
 import Payments from "./Payments";
 import BookingRequests from "./BookingRequests";
-import "./OwnerDashboard.css"; // Changed from OwnerDashboard.css to OwnerMain.css
+import "./OwnerDashboard.css";
 import useAuth from "../../context/useAuth";
 
 const { Content } = Layout;
 
 const OwnerMain = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false); // 👈 for mobile drawer
   const [activeMenu, setActiveMenu] = useState("dashboard");
 
   const { user, logout } = useAuth();
@@ -45,10 +45,8 @@ const OwnerMain = () => {
         return <BookingRequests />;
       case "tenants":
         return <TenantManagement />;
-
       case "documents":
         return <Documents />;
-
       case "settings":
         return <Settings />;
       case "properties":
@@ -60,7 +58,7 @@ const OwnerMain = () => {
       case "reports":
         return <Reports />;
       case "profile":
-        return <Profile />;
+        return <OwnerProfile />;
       case "payments":
         return <Payments />;
       default:
@@ -70,27 +68,67 @@ const OwnerMain = () => {
 
   return (
     <Layout className="owner-main__layout">
-      <OwnerSidebar
-        collapsed={collapsed}
-        setCollapsed={setCollapsed}
-        activeMenu={activeMenu}
-        pendingRequestsCount={
-          notifications.filter(
-            (n) => !n.read && n.title.includes("Maintenance")
-          ).length
-        }
-        handleMenuClick={(e) => setActiveMenu(e.key)}
-      />
-      <Layout className="owner-main__content-layout">
-        <OwnerNavbar
+      {/* Desktop Sidebar */}
+      <div className=" d-none d-lg-block owner-sidebar-desktop">
+        <OwnerSidebar
+          className="owner-sidebar"
           collapsed={collapsed}
           setCollapsed={setCollapsed}
+          activeMenu={activeMenu}
+          pendingRequestsCount={
+            notifications.filter(
+              (n) => !n.read && n.title.includes("Maintenance")
+            ).length
+          }
+          handleMenuClick={(e) => setActiveMenu(e.key)}
+        />
+      </div>
+
+      {/* Mobile Sidebar (Drawer) */}
+      <Drawer
+        placement="left"
+        closable={true}
+        onClose={() => setMobileOpen(false)}
+        open={mobileOpen}
+        bodyStyle={{ padding: 0 }}
+        width={230} 
+      >
+        <OwnerSidebar
+          className="owner-sidebar"
+          collapsed={false} // Drawer always full width
+          setCollapsed={setCollapsed}
+          activeMenu={activeMenu}
+          pendingRequestsCount={
+            notifications.filter(
+              (n) => !n.read && n.title.includes("Maintenance")
+            ).length
+          }
+          handleMenuClick={(e) => {
+            setActiveMenu(e.key);
+            setMobileOpen(false); // close drawer on click
+          }}
+        />
+      </Drawer>
+
+      {/* Main Layout */}
+      <Layout className="owner-main__content-layout">
+        <OwnerNavbar
+          className="owner-navbar"
+          collapsed={collapsed}
+          setCollapsed={setCollapsed}
+          setMobileOpen={setMobileOpen}  // 👈 pass here
           user={user}
           notifications={notifications}
           onLogout={handleLogout}
           setActiveMenu={setActiveMenu}
         />
-        <Content className="owner-main__content">{renderPageContent()}</Content>
+        <Content 
+  className="owner-main__content" 
+  style={{ width: "100%" }}
+>
+  {renderPageContent()}
+</Content>
+
       </Layout>
     </Layout>
   );

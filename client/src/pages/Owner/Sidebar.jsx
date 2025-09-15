@@ -23,6 +23,7 @@ const OwnerSidebar = ({
   handleMenuClick,
   pendingRequestsCount = 0 
 }) => {
+  
   const menuItems = [
     {
       key: 'dashboard',
