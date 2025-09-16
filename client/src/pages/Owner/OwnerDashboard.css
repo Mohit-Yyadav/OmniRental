@@ -2,6 +2,7 @@
 .owner-main__layout {
   min-height: 100vh;
   background-color: #f8f9fa;
+  margin-left: 0 !important;
 }
 
 .owner-main__content-layout {
@@ -9,9 +10,7 @@
    /* Default sidebar width */
 }
 
-.owner-main__content-layout.collapsed {
-  margin-left: 80px; /* Collapsed sidebar width */
-}
+
 
 .owner-main__content {
   margin: 24px 16px;
