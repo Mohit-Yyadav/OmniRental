@@ -15,9 +15,10 @@ const { Content } = Layout;
 
 const TenantMain = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false); // ✅ Mobile overlay state
-  
+  const [mobileOpen, setMobileOpen] = useState(false); // ✅ mobile state
   const [activeMenu, setActiveMenu] = useState('dashboard');
+  const [notifications, setNotifications] = useState([]); // ✅ FIX: added notifications state
+
   const { user, logout } = useAuth();
 
   useEffect(() => {
@@ -50,46 +51,30 @@ const TenantMain = () => {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      {/* Desktop Sidebar */}
-      <div className="d-none d-lg-block">
-        <Sidebar
-          collapsed={collapsed}
-          setCollapsed={setCollapsed}
-          activeMenu={activeMenu}
-          handleMenuClick={(e) => setActiveMenu(e.key)}
-          mobileOpen={false}
-          setMobileOpen={() => {}}
-        />
-      </div>
-       {/* Mobile Sidebar only */}
-<div className="d-lg-none">
-  <Sidebar
-    collapsed={collapsed}
-    setCollapsed={setCollapsed}
-    activeMenu={activeMenu}
-    handleMenuClick={(e) => {
-      setActiveMenu(e.key);
-      setMobileOpen(false); // close drawer after menu click
-    }}
-    mobileOpen={mobileOpen}
-    setMobileOpen={setMobileOpen}
-    style={{ zIndex: 2000, position: "fixed", top: 0, left: 0 }} // ✅ Sidebar always on top
-  />
-</div>
-
-
+      {/* ✅ Sidebar works for both desktop & mobile */}
+      <Sidebar
+      className='tenant-sidebar'
+        collapsed={collapsed}
+        setCollapsed={setCollapsed}
+        activeMenu={activeMenu}
+        handleMenuClick={(e) => setActiveMenu(e.key)}
+        mobileOpen={mobileOpen}
+        setMobileOpen={setMobileOpen}
+        
+      />
 
       <Layout>
-        {/* Navbar */}
-        <Navbar
-          collapsed={collapsed}
-          setCollapsed={setCollapsed}
-          user={user}
-          onLogout={handleLogout}
-          onToggleMobile={() => setMobileOpen(true)}
-        />
+        {/* ✅ Navbar passes mobile toggle */}
+        <Navbar 
+  collapsed={collapsed}
+  setCollapsed={setCollapsed}
+  notifications={notifications}
+  user={user}
+  onLogout={handleLogout}
+  onToggleMobile={() => setMobileOpen(prev => !prev)} // toggle mobile sidebar
+/>
 
-       
+
         {/* Main Content */}
         <Content
           className="site-content"
@@ -97,31 +82,11 @@ const TenantMain = () => {
             position: 'relative',
             width: '100%',
             minHeight: '100vh',
+            backgroundColor: '#f8f9fa',
+            padding: '16px',
           }}
         >
-         {/* Mobile view */}
-<div
-  className="d-lg-none"
-  style={{
-    position: 'fixed',
-    top: '56px', // navbar height
-    left: 0,
-    width: '100%',
-    height: `calc(100% - 56px)`,
-    overflowY: 'auto',
-    zIndex: 0, // ✅ Content stays behind sidebar
-    backgroundColor: '#f8f9fa',
-    padding: '16px',
-  }}
->
-  {renderPageContent()}
-</div>
-
-
-          {/* Desktop view */}
-          <div className="d-none d-lg-block" style={{ padding: '16px' }}>
-            {renderPageContent()}
-          </div>
+          {renderPageContent()}
         </Content>
       </Layout>
     </Layout>

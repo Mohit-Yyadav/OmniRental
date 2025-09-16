@@ -176,10 +176,15 @@
   background-color: rgba(255, 255, 255, 0.08);
 }
 
-/* Mobile screens: hide the desktop sidebar */
+/* Only for mobile screens */
 @media (max-width: 768px) {
-  .owner-sidebar-desktop {
-    display: none;
+  .ant-drawer {
+    top: 64px !important;              /* push Drawer below navbar */
+    height: calc(100% - 64px) !important; /* adjust height */
+  }
+  
+  .ant-drawer-body {
+    padding-top: 0; /* optional: remove extra top padding if needed */
   }
 }
 

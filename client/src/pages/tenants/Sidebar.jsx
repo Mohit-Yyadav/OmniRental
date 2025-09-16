@@ -1,5 +1,5 @@
 // src/components/Sidebar.jsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   DashboardOutlined,
   HomeOutlined,
@@ -18,85 +18,66 @@ const Sidebar = ({
   setCollapsed,
   activeMenu,
   handleMenuClick,
-  mobileOpen,       // ✅ mobile Drawer open state
-  setMobileOpen,    // ✅ function to close mobile Drawer
+  mobileOpen,
+  setMobileOpen,
 }) => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 992); // lg breakpoint
+
+  // Update isMobile on resize
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 992;
+      setIsMobile(mobile);
+      if (!mobile) {
+        setMobileOpen(false); // ✅ close Drawer on desktop
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [setMobileOpen]);
+
   const menuItems = [
     {
       key: 'dashboard',
       icon: <DashboardOutlined />,
-      label: collapsed ? (
-        <Tooltip title="Dashboard" placement="right">
-          <DashboardOutlined />
-        </Tooltip>
-      ) : (
-        'Dashboard'
-      ),
+      label: collapsed ? <Tooltip title="Dashboard"><DashboardOutlined /></Tooltip> : 'Dashboard',
     },
     {
       key: 'profile',
       icon: <UserOutlined />,
-      label: collapsed ? (
-        <Tooltip title="My Profile" placement="right">
-          <UserOutlined />
-        </Tooltip>
-      ) : (
-        'My Profile'
-      ),
+      label: collapsed ? <Tooltip title="My Profile"><UserOutlined /></Tooltip> : 'My Profile',
     },
     {
       key: 'property',
       icon: <HomeOutlined />,
-      label: collapsed ? (
-        <Tooltip title="Property Details" placement="right">
-          <HomeOutlined />
-        </Tooltip>
-      ) : (
-        'Property Details'
-      ),
+      label: collapsed ? <Tooltip title="Property Details"><HomeOutlined /></Tooltip> : 'Property Details',
     },
     {
       key: 'payments',
       icon: <DollarOutlined />,
-      label: collapsed ? (
-        <Tooltip title="Payments" placement="right">
-          <DollarOutlined />
-        </Tooltip>
-      ) : (
-        'Payments'
-      ),
+      label: collapsed ? <Tooltip title="Payments"><DollarOutlined /></Tooltip> : 'Payments',
     },
     {
       key: 'requests',
       icon: <EditOutlined />,
-      label: collapsed ? (
-        <Tooltip title="My Requests" placement="right">
-          <EditOutlined />
-        </Tooltip>
-      ) : (
-        'My Requests'
-      ),
+      label: collapsed ? <Tooltip title="My Requests"><EditOutlined /></Tooltip> : 'My Requests',
     },
     {
       key: 'history',
       icon: <HistoryOutlined />,
-      label: collapsed ? (
-        <Tooltip title="Rental History" placement="right">
-          <HistoryOutlined />
-        </Tooltip>
-      ) : (
-        'Rental History'
-      ),
+      label: collapsed ? <Tooltip title="Rental History"><HistoryOutlined /></Tooltip> : 'Rental History',
     },
   ];
 
-  // Sidebar content (menu + logo)
   const SidebarContent = (
     <>
       <div className="logo-container" style={{ padding: '16px', textAlign: 'center' }}>
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>
+        <Link
+          to="/"
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}
+        >
           <img
-            src="../../assets/images/OmniRentalwhitetext.png"
+            src="../../assets/images/infinity.png"
             alt="logo"
             style={{ width: collapsed ? 36 : 120, transition: 'width 0.3s' }}
           />
@@ -109,7 +90,7 @@ const Sidebar = ({
         selectedKeys={[activeMenu]}
         onClick={(e) => {
           handleMenuClick(e);
-          if (mobileOpen) setMobileOpen(false); // close drawer on mobile click
+          if (mobileOpen) setMobileOpen(false); // close Drawer on menu click
         }}
         items={menuItems}
       />
@@ -119,7 +100,7 @@ const Sidebar = ({
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="d-none d-lg-block">
+      {!isMobile && (
         <Sider
           collapsible
           collapsed={collapsed}
@@ -129,22 +110,24 @@ const Sidebar = ({
         >
           {SidebarContent}
         </Sider>
-      </div>
+      )}
 
-      <Drawer
-  placement="left"
-  closable={true}
-  mask={false}   // overlay background हटाने के लिए
-  onClose={() => setMobileOpen(false)}
-  open={mobileOpen}
-  // bodyStyle={{ padding: 0, minHeight: '100vh' }}
-  drawerStyle={{ backgroundColor: '#001529' }}
-  width={220}
-  zIndex={1} // content से पीछे रखने के लिए
-  style={{ position: 'fixed' }} // sidebar fix रहेगा
->
-        {SidebarContent}
-      </Drawer>
+      {/* Mobile Drawer Sidebar */}
+      {isMobile && (
+        <Drawer
+        
+          placement="left"
+          closable={false}
+          mask={true}
+          onClose={() => setMobileOpen(false)}
+          open={mobileOpen}
+          drawerStyle={{ backgroundColor: '#001529' }}
+          width={220}
+          zIndex={2000}
+        >
+          {SidebarContent}
+        </Drawer>
+      )}
     </>
   );
 };
