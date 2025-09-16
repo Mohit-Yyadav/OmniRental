@@ -177,13 +177,15 @@ const History = () => {
       )}
 
       {/* Drawer for detailed invoice */}
-      <Drawer
-        title={selectedInvoice ? `Invoice — ${selectedInvoice.month || ''}` : 'Invoice'}
-        width={520}
-        placement="right"
-        onClose={closeDrawer}
-        open={drawerVisible}
-      >
+   <Drawer
+  className="history-drawer"
+  title={selectedInvoice ? `Invoice — ${selectedInvoice.month || ''}` : 'Invoice'}
+  width={520}
+  placement="right"
+  onClose={closeDrawer}
+  open={drawerVisible}
+>
+
         {selectedInvoice ? (
           <>
             <Descriptions bordered column={1} size="small">

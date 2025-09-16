@@ -1,3 +1,6 @@
+/* =======================
+   Dashboard Content
+======================= */
 .dashboard-content {
   padding: 20px;
 }
@@ -26,11 +29,20 @@
   flex: 1;
 }
 
-.profile-content, .property-content, .payments-content, .requests-content {
+/* =======================
+   Shared Page Layouts
+======================= */
+.profile-content,
+.property-content,
+.payments-content,
+.requests-content {
   padding: 20px;
 }
 
-.profile-header, .property-header, .payments-header, .requests-header {
+.profile-header,
+.property-header,
+.payments-header,
+.requests-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -49,7 +61,8 @@
   gap: 10px;
 }
 
-.profile-form, .property-form {
+.profile-form,
+.property-form {
   flex: 1;
 }
 
@@ -58,7 +71,7 @@
 }
 
 .form-row {
-  display: flex; 
+  display: flex;
   gap: 20px;
 }
 
@@ -66,6 +79,9 @@
   flex: 1;
 }
 
+/* =======================
+   Header / Navbar
+======================= */
 .site-header {
   background: #fff;
   padding: 0 20px;
@@ -73,130 +89,7 @@
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.user-name {
-  margin-left: 8px;
-}
-
-.site-content {
-  margin: 16px;
-  padding: 24px;
-  background: #fff;
-  min-height: calc(100vh - 64px - 32px);
-}
-
-.notifications-list {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.notification-item {
-  padding: 10px 0;
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.notification-item.unread {
-  font-weight: bold;
-}
-
-.notification-item small {
-  color: #888;
-}
-
-.logo {
-  height: 32px;
-  margin: 16px;
-  color: white;
-  font-size: 18px;
-  font-weight: bold;
-  text-align: center;
-}
-
-
-/* src/components/Sidebar.css */
-.custom-sidebar {
-  background-color: #001529;
-  overflow: auto;
-  height: 100vh;
-  position: sticky;
-  top: 0;
-  left: 0;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease-in-out;
-}
-
-.logo-container {
   height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.logo-img {
-  display: block;
-  height: 36px;
-  margin-right: 8px;
-}
-
-.logo-text {
-  color: #ffffff;
-  font-size: 18px;
-  font-weight: 600;
-  margin: 0;
-  white-space: nowrap;
-}
-
-.sidebar-menu {
-  padding-top: 8px;
-}
-
-.sidebar-menu-item {
-  margin: 4px 0;
-  font-size: 15px;
-  border-radius: 6px !important;
-}
-
-.ant-menu-item-selected {
-  background-color: #1890ff !important;
-  font-weight: bold;
-  color: white !important;
-}
-
-.ant-menu-dark .ant-menu-item:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-}
-
-/* Only for mobile screens */
-@media (max-width: 768px) {
-  .ant-drawer {
-    top: 64px !important;              /* push Drawer below navbar */
-    height: calc(100% - 64px) !important; /* adjust height */
-  }
-  
-  .ant-drawer-body {
-    padding-top: 0; /* optional: remove extra top padding if needed */
-  }
-}
-
-/* src/components/Navbar.css */
-.site-header {
-  background: #fff;
-  padding: 0 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 64px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -206,85 +99,6 @@
   display: flex;
   align-items: center;
   gap: 16px;
-}
-
-.menu-toggle {
-  font-size: 18px;
-}
-
-.dashboard-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: rgb(3, 3, 3);
-  font-weight: 500;
-}
-
-
-.user-name {
-  font-weight: 500;
-}
-
-/* history */
-
-.history-page {
-  padding: 20px;
-}
-
-/* Profile  */
-
-.profile-page {
-  padding: 20px;
-}
-
-.avatar-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-
-/* Property */
-
-.property-page {
-  padding: 20px;
-}
-
-.property-page .form-row {
-  display: flex;
-  gap: 20px;
-}
-
-.property-page .form-row .ant-form-item {
-  flex: 1;
-}
-
-
-.site-header {
-  background: #fff;
-  padding: 0 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
-  height: 64px;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
 }
 
 .menu-toggle {
@@ -308,20 +122,276 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  color: #030303;
+  font-weight: 500;
 }
 
 .user-name {
   font-weight: 500;
+  margin-left: 8px;
 }
 
-/* payments */
+/* =======================
+   Site Content
+======================= */
+.site-content {
+  margin: 16px;
+  padding: 24px;
+  background: #fff;
+  min-height: calc(100vh - 64px - 32px);
+}
 
+/* =======================
+   Notifications
+======================= */
+.notifications-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.notification-item {
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.notification-item.unread {
+  font-weight: bold;
+}
+
+.notification-item small {
+  color: #888;
+}
+
+/* =======================
+   Sidebar
+======================= */
+/* Sidebar container */
+.custom-sidebar {
+  background-color: #001529;
+  overflow: auto;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  left: 0;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease-in-out;
+  z-index: 2000;
+}
+
+/* Logo area */
+.logo-container {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo-img {
+  display: block;
+  height: 36px;
+  margin: 0 auto;
+}
+
+.logo-text {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Menu item styling */
+.sidebar-menu {
+  padding-top: 8px;
+}
+
+.sidebar-menu-item {
+  margin: 4px 0;
+  font-size: 15px;
+  border-radius: 6px !important;
+}
+
+/* Selected menu item */
+.ant-menu-item-selected {
+  background-color: #1890ff !important;
+  font-weight: bold;
+  color: white !important;
+}
+
+/* Hover effect */
+.ant-menu-dark .ant-menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 992px) {
+  .ant-drawer-content-wrapper {
+    width: 220px !important; /* same as desktop sidebar */
+  }
+
+  .ant-drawer {
+    top: 64px !important; /* start below navbar */
+    height: calc(100% - 64px) !important;
+  }
+
+  .ant-drawer-body {
+    padding-top: 0;
+  }
+}
+
+
+
+/* =======================
+   History
+======================= */
+/* src/pages/History.css */
+
+/* Page wrapper */
+.tenant-history {
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Page heading */
+.tenant-history h3 {
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+/* Ant Design Table styling */
+.tenant-history .ant-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.tenant-history .ant-table-thead > tr > th {
+  background: #fafafa;
+  font-weight: 500;
+}
+
+.tenant-history .ant-tag {
+  font-size: 13px;
+  padding: 2px 8px;
+}
+
+/* Drawer */
+.ant-drawer-title {
+  font-weight: 600;
+}
+
+.ant-descriptions-bordered .ant-descriptions-item-label {
+  font-weight: 500;
+  background: #fafafa;
+}
+
+/* Buttons */
+.tenant-history .ant-btn {
+  border-radius: 6px;
+}
+
+/* Mobile Responsive Fixes */
+@media (max-width: 768px) {
+  .tenant-history {
+    padding: 12px;
+  }
+
+  .tenant-history h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  /* Make table scrollable horizontally */
+  .tenant-history .ant-table {
+    font-size: 13px;
+  }
+
+  .tenant-history .ant-table-thead > tr > th,
+  .tenant-history .ant-table-tbody > tr > td {
+    white-space: nowrap;
+  }
+
+  /* Drawer smaller on mobile */
+  .ant-drawer-content-wrapper {
+    width: 100% !important;
+  }
+
+  .ant-descriptions-bordered .ant-descriptions-item-label {
+    font-size: 13px;
+  }
+}
+
+
+/* Solid white background for Drawer content */
+.history-drawer .ant-drawer-content {
+  background-color: #fff !important;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Dimmed overlay behind the Drawer */
+.history-drawer .ant-drawer-mask {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Proper padding and scroll for content */
+.history-drawer .ant-drawer-body {
+  padding: 20px;
+  overflow-y: auto;
+  background-color: #fff !important;
+}
+
+/* Mobile full-width Drawer */
+@media (max-width: 768px) {
+  .history-drawer .ant-drawer-content-wrapper {
+    width: 100% !important;
+  }
+}
+
+
+
+
+/* =======================
+   Profile
+======================= */
+.profile-page {
+  padding: 20px;
+}
+
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* =======================
+   Property
+======================= */
+.property-page {
+  padding: 20px;
+}
+
+.property-page .form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.property-page .form-row .ant-form-item {
+  flex: 1;
+}
+
+/* =======================
+   Payments
+======================= */
 .payments-content {
   padding: 20px;
 }
 
-
-/* src/pages/tenants/Requests.css */
+/* =======================
+   Requests
+======================= */
 .requests-page {
   padding: 20px;
 }
@@ -349,4 +419,77 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
+}
+
+/* =======================
+   Mobile Responsive Fixes
+======================= */
+@media (max-width: 768px) {
+  /* Sidebar Drawer below Navbar */
+  .ant-drawer {
+    top: 64px !important;
+    height: calc(100% - 64px) !important;
+  }
+
+  .ant-drawer-body {
+    padding-top: 0;
+  }
+
+  /* Dashboard cards stack */
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+  }
+
+  /* Profile details stack */
+  .profile-details {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .profile-picture {
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Form rows stack */
+  .form-row {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .form-col {
+    width: 100%;
+  }
+
+  /* Headers stack */
+  .profile-header,
+  .property-header,
+  .payments-header,
+  .requests-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  /* Compact site content */
+  .site-content {
+    margin: 8px;
+    padding: 16px;
+  }
+
+  /* Buttons smaller */
+  .ant-btn {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+
+  /* Notifications compact */
+  .notifications-list {
+    max-height: 200px;
+  }
+
+  .logo {
+    font-size: 16px;
+    margin: 10px;
+  }
 }

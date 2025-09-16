@@ -1,7 +1,18 @@
 // src/pages/tenants/Property.jsx
-import React, { useEffect, useState } from 'react';
-import { Card, Form, Input, Button, DatePicker, Select, Divider, Tag } from 'antd';
-import dayjs from 'dayjs';
+import React, { useEffect, useState } from "react";
+import {
+  Card,
+  Form,
+  Input,
+  Button,
+  DatePicker,
+  Select,
+  Divider,
+  Tag,
+  Row,
+  Col,
+} from "antd";
+import dayjs from "dayjs";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -9,15 +20,15 @@ const { Option } = Select;
 const Property = () => {
   const [form] = Form.useForm();
   const [propertyData, setPropertyData] = useState({
-    propertyName: 'Sunshine Apartments',
-    roomNumber: '304',
-    address: '456 Sunshine Ave, New York, NY 10002',
+    propertyName: "Sunshine Apartments",
+    roomNumber: "304",
+    address: "456 Sunshine Ave, New York, NY 10002",
     rentAmount: 1200,
     deposit: 2400,
-    leaseStart: '2023-01-15',
-    leaseEnd: '2024-01-14',
-    amenities: ['WiFi', 'Laundry', 'Parking'],
-    status: 'approved',
+    leaseStart: "2023-01-15",
+    leaseEnd: "2024-01-14",
+    amenities: ["WiFi", "Laundry", "Parking"],
+    status: "approved",
   });
 
   useEffect(() => {
@@ -32,20 +43,20 @@ const Property = () => {
     const updated = form.getFieldsValue();
     setPropertyData({
       ...updated,
-      leaseStart: updated.leaseStart.format('YYYY-MM-DD'),
-      leaseEnd: updated.leaseEnd.format('YYYY-MM-DD'),
+      leaseStart: updated.leaseStart.format("YYYY-MM-DD"),
+      leaseEnd: updated.leaseEnd.format("YYYY-MM-DD"),
     });
-    console.log('Saved property details:', updated);
+    console.log("Saved property details:", updated);
   };
 
   const statusColor = {
-    approved: 'green',
-    pending: 'orange',
-    rejected: 'red',
+    approved: "green",
+    pending: "orange",
+    rejected: "red",
   };
 
   return (
-    <div className="property-page">
+    <div className="property-page" style={{ padding: "10px" }}>
       <Card
         title="Property Details"
         extra={
@@ -64,32 +75,44 @@ const Property = () => {
           <Form.Item label="Property Name" name="propertyName">
             <Input />
           </Form.Item>
+
           <Form.Item label="Room Number" name="roomNumber">
             <Input />
           </Form.Item>
+
           <Form.Item label="Address" name="address">
             <TextArea rows={2} />
           </Form.Item>
 
           <Divider orientation="left">Lease Information</Divider>
 
-          <div className="form-row" style={{ display: 'flex', gap: '20px' }}>
-            <Form.Item label="Monthly Rent" name="rentAmount" style={{ flex: 1 }}>
-              <Input prefix="$" type="number" />
-            </Form.Item>
-            <Form.Item label="Security Deposit" name="deposit" style={{ flex: 1 }}>
-              <Input prefix="$" type="number" />
-            </Form.Item>
-          </div>
+          {/* Rent + Deposit */}
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={12}>
+              <Form.Item label="Monthly Rent" name="rentAmount">
+                <Input prefix="$" type="number" />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
+              <Form.Item label="Security Deposit" name="deposit">
+                <Input prefix="$" type="number" />
+              </Form.Item>
+            </Col>
+          </Row>
 
-          <div className="form-row" style={{ display: 'flex', gap: '20px' }}>
-            <Form.Item label="Lease Start Date" name="leaseStart" style={{ flex: 1 }}>
-              <DatePicker style={{ width: '100%' }} />
-            </Form.Item>
-            <Form.Item label="Lease End Date" name="leaseEnd" style={{ flex: 1 }}>
-              <DatePicker style={{ width: '100%' }} />
-            </Form.Item>
-          </div>
+          {/* Lease Dates */}
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={12}>
+              <Form.Item label="Lease Start Date" name="leaseStart">
+                <DatePicker style={{ width: "100%" }} />
+              </Form.Item>
+            </Col>
+            <Col xs={24} md={12}>
+              <Form.Item label="Lease End Date" name="leaseEnd">
+                <DatePicker style={{ width: "100%" }} />
+              </Form.Item>
+            </Col>
+          </Row>
 
           <Form.Item label="Amenities" name="amenities">
             <Select mode="multiple" placeholder="Select available amenities">

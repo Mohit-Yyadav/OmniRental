@@ -21,21 +21,20 @@ const Sidebar = ({
   mobileOpen,
   setMobileOpen,
 }) => {
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 992); // lg breakpoint
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 992);
 
   // Update isMobile on resize
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 992;
       setIsMobile(mobile);
-      if (!mobile) {
-        setMobileOpen(false); // ✅ close Drawer on desktop
-      }
+      if (!mobile) setMobileOpen(false);
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [setMobileOpen]);
 
+  // Sidebar menu items
   const menuItems = [
     {
       key: 'dashboard',
@@ -69,16 +68,15 @@ const Sidebar = ({
     },
   ];
 
+  // Sidebar content (logo + menu)
   const SidebarContent = (
     <>
-      <div className="logo-container" style={{ padding: '16px', textAlign: 'center' }}>
-        <Link
-          to="/"
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}
-        >
+      <div className="logo-container">
+        <Link to="/">
           <img
             src="../../assets/images/infinity.png"
             alt="logo"
+            className="logo-img"
             style={{ width: collapsed ? 36 : 120, transition: 'width 0.3s' }}
           />
         </Link>
@@ -90,7 +88,7 @@ const Sidebar = ({
         selectedKeys={[activeMenu]}
         onClick={(e) => {
           handleMenuClick(e);
-          if (mobileOpen) setMobileOpen(false); // close Drawer on menu click
+          if (mobileOpen) setMobileOpen(false);
         }}
         items={menuItems}
       />
@@ -106,7 +104,7 @@ const Sidebar = ({
           collapsed={collapsed}
           onCollapse={setCollapsed}
           width={220}
-          style={{ minHeight: '100vh' }}
+          className="custom-sidebar"
         >
           {SidebarContent}
         </Sider>
@@ -114,19 +112,19 @@ const Sidebar = ({
 
       {/* Mobile Drawer Sidebar */}
       {isMobile && (
-        <Drawer
-        
-          placement="left"
-          closable={false}
-          mask={true}
-          onClose={() => setMobileOpen(false)}
-          open={mobileOpen}
-          drawerStyle={{ backgroundColor: '#001529' }}
-          width={220}
-          zIndex={2000}
-        >
-          {SidebarContent}
-        </Drawer>
+      <Drawer
+  placement="left"
+  closable={false}
+  mask
+  onClose={() => setMobileOpen(false)}
+  open={mobileOpen}
+  drawerStyle={{ backgroundColor: '#001529', maxWidth: 220 }}
+  width={220}
+  zIndex={2000}
+>
+  {SidebarContent}
+</Drawer>
+
       )}
     </>
   );
