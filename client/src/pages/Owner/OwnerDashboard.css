@@ -357,7 +357,6 @@
 /* ================================
    RESPONSIVE FIXES
 ================================ */
-
 /* Mobile (≤ 991px) */
 @media (max-width: 991.98px) {
   .owner-navbar {
@@ -372,6 +371,7 @@
     height: calc(100vh - var(--navbar-height));
     transform: translateX(-100%);
     transition: transform 0.3s ease;
+    z-index: 1200; /* above content */
   }
 
   .owner-sidebar.open {
@@ -382,6 +382,7 @@
     margin-left: 0 !important;
   }
 }
+
 
 /* Desktop (≥ 992px) */
 @media (min-width: 992px) {
@@ -394,7 +395,7 @@
     width: calc(100% - var(--sidebar-collapsed));
   }
   .owner-main__content-layout {
-    margin-left: var(--sidebar-expanded);
+    /* margin-left: var(--sidebar-expanded); */
     transition: all 0.3s;
   }
   .owner-main__content-layout.collapsed {
@@ -839,6 +840,9 @@
 .owner-properties__modal .ant-modal-content {
   border-radius: 8px;
 }
+
+
+
 
 /* TenantManagement.css */
 .tenant-management-container {

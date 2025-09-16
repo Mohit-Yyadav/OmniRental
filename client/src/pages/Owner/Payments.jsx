@@ -233,38 +233,51 @@ const fetchPropertyPayments = async (propertyId) => {
         <Tabs defaultActiveKey="deposits">
           {/* Deposited Tenants Tab */}
           <TabPane tab="Deposited Tenants" key="deposits">
-            <Row gutter={16} style={{ marginBottom: 24 }}>
-              <Col span={8}>
-                <Card>
-                  <Statistic
-                    title="Total Deposits"
-                    value={totalDeposits}
-                    precision={2}
-                    prefix="₹"
-                  />
-                </Card>
-              </Col>
-              <Col span={8}>
-                <Card>
-                  <Statistic
-                    title="Total Tenants"
-                    value={depositedTenants.length}
-                  />
-                </Card>
-              </Col>
-              <Col span={8}>
-                <Card>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Button icon={<FilePdfOutlined />} onClick={exportToPDF}>
-                      PDF
-                    </Button>
-                    <Button icon={<FileExcelOutlined />} onClick={exportToExcel}>
-                      Excel
-                    </Button>
-                  </div>
-                </Card>
-              </Col>
-            </Row>
+          <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+  <Col xs={24} sm={12} md={8}>
+    <Card bodyStyle={{ padding: '12px' }}>
+      <Statistic
+        title="Total Deposits"
+        value={totalDeposits}
+        precision={2}
+        prefix="₹"
+        valueStyle={{ fontSize: '16px' }}
+      />
+    </Card>
+  </Col>
+
+  <Col xs={24} sm={12} md={8}>
+    <Card bodyStyle={{ padding: '12px' }}>
+      <Statistic
+        title="Total Tenants"
+        value={depositedTenants.length}
+        valueStyle={{ fontSize: '16px' }}
+      />
+    </Card>
+  </Col>
+
+  <Col xs={24} sm={24} md={8}>
+    <Card bodyStyle={{ padding: '12px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+        <Button
+          icon={<FilePdfOutlined />}
+          onClick={exportToPDF}
+          style={{ marginBottom: 8, flex: '1 1 45%' }}
+        >
+          PDF
+        </Button>
+        <Button
+          icon={<FileExcelOutlined />}
+          onClick={exportToExcel}
+          style={{ flex: '1 1 45%' }}
+        >
+          Excel
+        </Button>
+      </div>
+    </Card>
+  </Col>
+</Row>
+
 
             <Table
               columns={depositedTenantColumns}
@@ -277,68 +290,84 @@ const fetchPropertyPayments = async (propertyId) => {
 
           {/* Property Payments Tab */}
           <TabPane tab="Property Payments" key="payments">
-            <Row gutter={16} style={{ marginBottom: 24 }}>
-              <Col span={6}>
-                <Select
-                  style={{ width: '100%' }}
-                  placeholder="Select Property"
-                  onChange={setSelectedProperty}
-                  loading={!ownerProperties.length}
-                >
-                  {ownerProperties.map(property => (
-                    <Option key={property._id} value={property._id}>
-                      {property.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Col>
-              <Col span={10}>
-                <RangePicker 
-                  style={{ width: '100%' }}
-                  onChange={setDateRange}
-                  disabled={!selectedProperty}
-                />
-              </Col>
-              <Col span={8}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Button icon={<FilePdfOutlined />} onClick={exportToPDF}>
-                    PDF
-                  </Button>
-                  <Button icon={<FileExcelOutlined />} onClick={exportToExcel}>
-                    Excel
-                  </Button>
-                </div>
-              </Col>
-            </Row>
+           <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+  <Col xs={24} sm={12} md={6}>
+    <Select
+      style={{ width: '100%' }}
+      placeholder="Select Property"
+      onChange={setSelectedProperty}
+      loading={!ownerProperties.length}
+    >
+      {ownerProperties.map(property => (
+        <Option key={property._id} value={property._id}>
+          {property.name}
+        </Option>
+      ))}
+    </Select>
+  </Col>
 
-            <Row gutter={16} style={{ marginBottom: 24 }}>
-              <Col span={8}>
-                <Card>
-                  <Statistic
-                    title="Total Payments"
-                    value={totalPayments}
-                    precision={2}
-                    prefix="₹"
-                  />
-                </Card>
-              </Col>
-              <Col span={8}>
-                <Card>
-                  <Statistic
-                    title="Completed Payments"
-                    value={completedPayments}
-                  />
-                </Card>
-              </Col>
-              <Col span={8}>
-                <Card>
-                  <Statistic
-                    title="Pending Payments"
-                    value={propertyPayments.length - completedPayments}
-                  />
-                </Card>
-              </Col>
-            </Row>
+  <Col xs={24} sm={12} md={10}>
+    <RangePicker 
+      style={{ width: '100%' }}
+      onChange={setDateRange}
+      disabled={!selectedProperty}
+    />
+  </Col>
+
+  <Col xs={24} sm={24} md={8}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+      <Button 
+        icon={<FilePdfOutlined />} 
+        onClick={exportToPDF} 
+        style={{ flex: '1 1 45%', marginBottom: 8 }}
+      >
+        PDF
+      </Button>
+      <Button 
+        icon={<FileExcelOutlined />} 
+        onClick={exportToExcel} 
+        style={{ flex: '1 1 45%' }}
+      >
+        Excel
+      </Button>
+    </div>
+  </Col>
+</Row>
+
+<Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+  <Col xs={24} sm={12} md={8}>
+    <Card bodyStyle={{ padding: '12px' }}>
+      <Statistic
+        title="Total Payments"
+        value={totalPayments}
+        precision={2}
+        prefix="₹"
+        valueStyle={{ fontSize: '16px' }}
+      />
+    </Card>
+  </Col>
+
+  <Col xs={24} sm={12} md={8}>
+    <Card bodyStyle={{ padding: '12px' }}>
+      <Statistic
+        title="Completed Payments"
+        value={completedPayments}
+        valueStyle={{ fontSize: '16px' }}
+      />
+    </Card>
+  </Col>
+
+  <Col xs={24} sm={24} md={8}>
+    <Card bodyStyle={{ padding: '12px' }}>
+      <Statistic
+        title="Pending Payments"
+        value={propertyPayments.length - completedPayments}
+        valueStyle={{ fontSize: '16px' }}
+      />
+    </Card>
+  </Col>
+</Row>
+
 
             <Table
               columns={propertyPaymentsColumns}

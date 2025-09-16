@@ -1,5 +1,5 @@
 // src/components/OwnerSidebar.jsx
-import React from 'react';
+import React from "react";
 import {
   DashboardOutlined,
   PropertySafetyOutlined,
@@ -7,93 +7,92 @@ import {
   WalletOutlined,
   ToolOutlined,
   FileTextOutlined,
-  UserOutlined,
   SettingOutlined,
-  PieChartOutlined
-} from '@ant-design/icons';
-import { Layout, Menu, Tooltip, Badge } from 'antd';
-import { Link } from 'react-router-dom';
+  PieChartOutlined,
+} from "@ant-design/icons";
+import { Layout, Menu, Tooltip, Badge, Drawer } from "antd";
+import { Link } from "react-router-dom";
 
 const { Sider } = Layout;
 
-const OwnerSidebar = ({ 
-  collapsed, 
-  setCollapsed, 
-  activeMenu, 
+const OwnerSidebar = ({
+  collapsed,
+  setCollapsed,
+  activeMenu,
   handleMenuClick,
-  pendingRequestsCount = 0 
+  pendingRequestsCount = 0,
+  mobileOpen = false, // ✅ mobile drawer state
+  onCloseMobile, // ✅ function to close drawer
 }) => {
-  
   const menuItems = [
     {
-      key: 'dashboard',
+      key: "dashboard",
       icon: <DashboardOutlined className="owner-sidebar__menu-icon" />,
       label: collapsed ? (
         <Tooltip title="Dashboard Overview" placement="right">
           <DashboardOutlined className="owner-sidebar__menu-icon" />
         </Tooltip>
       ) : (
-        'Dashboard'
+        "Dashboard"
       ),
     },
     {
-      key: 'properties',
+      key: "properties",
       icon: <PropertySafetyOutlined className="owner-sidebar__menu-icon" />,
       label: collapsed ? (
         <Tooltip title="My Properties" placement="right">
           <PropertySafetyOutlined className="owner-sidebar__menu-icon" />
         </Tooltip>
       ) : (
-        'My Properties'
+        "My Properties"
       ),
     },
-     {
-      key: 'booking-requests',
+    {
+      key: "booking-requests",
       icon: <PropertySafetyOutlined className="owner-sidebar__menu-icon" />,
       label: collapsed ? (
         <Tooltip title="Booking Requests" placement="right">
           <PropertySafetyOutlined className="owner-sidebar__menu-icon" />
         </Tooltip>
       ) : (
-        'Booking Requests'
+        "Booking Requests"
       ),
-      
     },
     {
-      key: 'tenants',
+      key: "tenants",
       icon: <TeamOutlined className="owner-sidebar__menu-icon" />,
       label: collapsed ? (
         <Tooltip title="Tenant Management" placement="right">
           <TeamOutlined className="owner-sidebar__menu-icon" />
         </Tooltip>
       ) : (
-        'Tenants'
+        "Tenants"
       ),
     },
     {
-      key: 'payments',
+      key: "payments",
       icon: <WalletOutlined className="owner-sidebar__menu-icon" />,
       label: collapsed ? (
         <Tooltip title="Payments" placement="right">
           <WalletOutlined className="owner-sidebar__menu-icon" />
         </Tooltip>
       ) : (
-        'Payments'
+        "Payments"
       ),
     },
     {
-      key: 'financials',
+      key: "financials",
       icon: <WalletOutlined className="owner-sidebar__menu-icon" />,
       label: collapsed ? (
         <Tooltip title="Financial Reports" placement="right">
           <WalletOutlined className="owner-sidebar__menu-icon" />
         </Tooltip>
       ) : (
-        'Financials'
+        "Financials"
       ),
     },
     {
-      key: 'requests',
+      key: "requests",
       icon: (
         <Badge count={pendingRequestsCount} size="small" offset={[-5, 5]}>
           <ToolOutlined className="owner-sidebar__menu-icon" />
@@ -109,9 +108,9 @@ const OwnerSidebar = ({
         <span className="owner-sidebar__menu-label">
           Maintenance
           {pendingRequestsCount > 0 && (
-            <Badge 
-              count={pendingRequestsCount} 
-              size="small" 
+            <Badge
+              count={pendingRequestsCount}
+              size="small"
               className="owner-sidebar__badge"
             />
           )}
@@ -119,51 +118,42 @@ const OwnerSidebar = ({
       ),
     },
     {
-      key: 'reports',
+      key: "reports",
       icon: <PieChartOutlined className="owner-sidebar__menu-icon" />,
       label: collapsed ? (
         <Tooltip title="Analytics & Reports" placement="right">
           <PieChartOutlined className="owner-sidebar__menu-icon" />
         </Tooltip>
       ) : (
-        'Reports'
+        "Reports"
       ),
     },
     {
-      key: 'documents',
+      key: "documents",
       icon: <FileTextOutlined className="owner-sidebar__menu-icon" />,
       label: collapsed ? (
         <Tooltip title="Lease Documents" placement="right">
           <FileTextOutlined className="owner-sidebar__menu-icon" />
         </Tooltip>
       ) : (
-        'Documents'
+        "Documents"
       ),
     },
     {
-      key: 'settings',
+      key: "settings",
       icon: <SettingOutlined className="owner-sidebar__menu-icon" />,
       label: collapsed ? (
         <Tooltip title="Account Settings" placement="right">
           <SettingOutlined className="owner-sidebar__menu-icon" />
         </Tooltip>
       ) : (
-        'Settings'
+        "Settings"
       ),
-    }
+    },
   ];
-  
 
-  return (
-    <Sider
-      collapsible
-      collapsed={collapsed}
-      onCollapse={setCollapsed}
-      width={240}
-      className="owner-sidebar"
-      breakpoint="lg"
-      collapsedWidth={80}
-    >
+  const SidebarContent = (
+    <>
       <div className="owner-sidebar__logo">
         <Link to="/owner" className="owner-sidebar__logo-link">
           <PropertySafetyOutlined className="owner-sidebar__logo-icon" />
@@ -183,7 +173,37 @@ const OwnerSidebar = ({
         className="owner-sidebar__menu"
         items={menuItems}
       />
-    </Sider>
+    </>
+  );
+
+  return (
+    <>
+      {/* ✅ Desktop Sidebar */}
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        onCollapse={setCollapsed}
+        width={240}
+        className={`owner-sidebar ${collapsed ? "collapsed" : "open"}`}
+        breakpoint="lg"
+        collapsedWidth={80}
+        trigger={null}
+      >
+        {SidebarContent}
+      </Sider>
+
+      {/* ✅ Mobile Drawer */}
+      <Drawer
+        title="Menu"
+        placement="left"
+        onClose={onCloseMobile}
+        open={mobileOpen}
+        bodyStyle={{ padding: 0 }}
+        width={240}
+      >
+        {SidebarContent}
+      </Drawer>
+    </>
   );
 };
 

@@ -1,6 +1,6 @@
 // src/pages/owners/Dashboard.jsx
 import React from 'react';
-import { Card, Button, Progress, Table, Tag } from 'antd';
+import { Card, Button, Progress, Table, Tag, Row, Col } from 'antd';
 
 const OwnerDashboard = () => {
   const propertyDetails = {
@@ -74,70 +74,74 @@ const OwnerDashboard = () => {
 
   return (
     <div className="owner-dashboard">
-      <h2 className="owner-dashboard__title">Owner Dashboard</h2>
+      <h2 style={{ marginBottom: 24 }}>Owner Dashboard</h2>
 
-      <div className="owner-dashboard__grid">
-        <Card title="Revenue Status" className="owner-dashboard__card">
-          <div className="owner-dashboard__revenue-status">
-            <Progress 
-              type="circle" 
-              percent={75} 
-              format={() => `${18}/${24}`} 
-              className="owner-dashboard__progress"
-            />
-            <div className="owner-dashboard__revenue-info">
-              <p>Occupancy Rate: <strong>75%</strong></p>
-              <p>Monthly Revenue: <strong>${propertyDetails.monthlyRevenue.toLocaleString()}</strong></p>
-              <Button type="primary" className="owner-dashboard__button">
-                View Financials
-              </Button>
+      <Row gutter={[24, 24]}>
+        {/* Revenue Status */}
+        <Col xs={24} md={12} lg={8}>
+          <Card title="Revenue Status">
+            <div style={{ textAlign: 'center' }}>
+              <Progress 
+                type="circle" 
+                percent={(propertyDetails.occupiedUnits / propertyDetails.totalUnits) * 100} 
+                format={() => `${propertyDetails.occupiedUnits}/${propertyDetails.totalUnits}`} 
+              />
+              <p style={{ marginTop: 16 }}>
+                Occupancy Rate: <strong>{((propertyDetails.occupiedUnits / propertyDetails.totalUnits) * 100).toFixed(1)}%</strong>
+              </p>
+              <p>
+                Monthly Revenue: <strong>${propertyDetails.monthlyRevenue.toLocaleString()}</strong>
+              </p>
+              <Button type="primary">View Financials</Button>
             </div>
-          </div>
-        </Card>
+          </Card>
+        </Col>
 
-        <Card title="Property Summary" className="owner-dashboard__card">
-          <div className="owner-dashboard__property-info">
+        {/* Property Summary */}
+        <Col xs={24} md={12} lg={8}>
+          <Card title="Property Summary">
             <p><strong>Property:</strong> {propertyDetails.propertyName}</p>
             <p><strong>Total Units:</strong> {propertyDetails.totalUnits}</p>
             <p><strong>Occupied Units:</strong> {propertyDetails.occupiedUnits}</p>
             <p><strong>Address:</strong> {propertyDetails.address}</p>
-          </div>
-        </Card>
+          </Card>
+        </Col>
 
-        <Card title="Tenant Requests" className="owner-dashboard__card">
-          <Table
-            dataSource={tenantRequests}
-            columns={requestColumns}
-            rowKey="id"
-            size="small"
-            pagination={false}
-            className="owner-dashboard__table"
-          />
-        </Card>
+        {/* Tenant Requests */}
+        <Col xs={24} md={24} lg={8}>
+          <Card title="Tenant Requests">
+            <Table
+              dataSource={tenantRequests}
+              columns={requestColumns}
+              rowKey="id"
+              size="small"
+              pagination={false}
+              scroll={{ x: 500 }}
+            />
+          </Card>
+        </Col>
 
-        <Card title="Notifications" className="owner-dashboard__card">
-          <div className="owner-dashboard__notifications">
+        {/* Notifications */}
+        <Col xs={24}>
+          <Card title="Notifications">
             {notifications.map((notification) => (
               <div
                 key={notification.id}
-                className={`owner-dashboard__notification ${
-                  !notification.read ? 'owner-dashboard__notification--unread' : ''
-                }`}
+                style={{
+                  padding: 12,
+                  marginBottom: 8,
+                  borderRadius: 4,
+                  backgroundColor: !notification.read ? '#e6f7ff' : '#f5f5f5',
+                }}
               >
-                <h4 className="owner-dashboard__notification-title">
-                  {notification.title}
-                </h4>
-                <p className="owner-dashboard__notification-message">
-                  {notification.message}
-                </p>
-                <small className="owner-dashboard__notification-date">
-                  {notification.date}
-                </small>
+                <h4 style={{ marginBottom: 4 }}>{notification.title}</h4>
+                <p style={{ margin: 0 }}>{notification.message}</p>
+                <small>{notification.date}</small>
               </div>
             ))}
-          </div>
-        </Card>
-      </div>
+          </Card>
+        </Col>
+      </Row>
     </div>
   );
 };

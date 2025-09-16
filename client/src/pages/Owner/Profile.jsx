@@ -17,6 +17,7 @@ import {
   CameraOutlined
 } from '@ant-design/icons';
 import useAuth from '../../context/useAuth';
+
 const BACKEND_URI = import.meta.env.VITE_BACKEND_URL;
 
 const Profile = () => {
@@ -43,8 +44,7 @@ const Profile = () => {
     if (!token) return;
 
     try {
-     const res = await fetch(`${BACKEND_URI}/api/user/me`, {
-
+      const res = await fetch(`${BACKEND_URI}/api/user/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -61,7 +61,7 @@ const Profile = () => {
 
   useEffect(() => {
     fetchProfile();
-  }, [form]);
+  }, []);
 
   const handleEdit = () => setEditMode(true);
 
@@ -72,9 +72,7 @@ const Profile = () => {
       const formData = new FormData();
 
       Object.entries(values).forEach(([key, value]) => {
-        if (value !== undefined) {
-          formData.append(key, value);
-        }
+        if (value !== undefined) formData.append(key, value);
       });
 
       if (avatarFile) formData.append('profilePic', avatarFile);
@@ -106,25 +104,18 @@ const Profile = () => {
 
   const handleAvatarChange = (info) => {
     const file = info?.fileList?.[0]?.originFileObj;
-    if (file instanceof Blob) {
+    if (file) {
       setAvatarFile(file);
-      setProfileData(prev => ({
-        ...prev,
-        profilePic: URL.createObjectURL(file),
-      }));
+      setProfileData(prev => ({ ...prev, profilePic: URL.createObjectURL(file) }));
     }
   };
 
   const handleIdProofChange = (info) => {
-    if (info.file) {
-      setIdProofFile(info.file.originFileObj);
-    }
+    if (info.file) setIdProofFile(info.file.originFileObj);
   };
 
   const getAvatarSrc = () => {
-    if (avatarFile instanceof File) {
-      return URL.createObjectURL(avatarFile);
-    }
+    if (avatarFile instanceof File) return URL.createObjectURL(avatarFile);
     return profileData?.profilePic
       ? profileData.profilePic.startsWith("http")
         ? profileData.profilePic
@@ -153,8 +144,8 @@ const Profile = () => {
           )
         }
       >
-        <Row gutter={32}>
-          <Col span={6} style={{ textAlign: 'center' }}>
+        <Row gutter={[32, 32]}>
+          <Col xs={24} md={6} style={{ textAlign: 'center' }}>
             <div style={{ position: 'relative' }}>
               <Avatar size={128} src={getAvatarSrc()} />
               {editMode && (
@@ -175,29 +166,20 @@ const Profile = () => {
             <p style={{ marginTop: 10 }}>{profileData.name}</p>
           </Col>
 
-          <Col span={18}>
-            <Form
-              form={form}
-              layout="vertical"
-              disabled={!editMode}
-              initialValues={profileData}
-            >
+          <Col xs={24} md={18}>
+            <Form form={form} layout="vertical" disabled={!editMode} initialValues={profileData}>
               <Row gutter={16}>
-                <Col span={12}>
+                <Col xs={24} md={12}>
                   <Form.Item label="Full Name" name="name" rules={[{ required: true }]}>
                     <Input />
                   </Form.Item>
                 </Col>
 
-                <Col span={12}>
+                <Col xs={24} md={12}>
                   <Form.Item label="Email" name="email">
                     <Input
                       addonAfter={
-                        <Button
-                          type="link"
-                          size="small"
-                          onClick={fetchProfile}
-                        >
+                        <Button type="link" size="small" onClick={fetchProfile}>
                           Refresh
                         </Button>
                       }
@@ -206,13 +188,13 @@ const Profile = () => {
                   </Form.Item>
                 </Col>
 
-                <Col span={12}>
+                <Col xs={24} md={12}>
                   <Form.Item label="Phone Number" name="phone">
                     <Input />
                   </Form.Item>
                 </Col>
 
-                <Col span={12}>
+                <Col xs={24} md={12}>
                   <Form.Item label="ID Proof Number" name="idProofNumber">
                     <Input />
                   </Form.Item>
@@ -231,32 +213,31 @@ const Profile = () => {
                 </Col>
 
                 <Col span={24}>
-                 <Form.Item label="Upload ID Proof Document">
-  <Upload
-    fileList={idProofFile ? [{
-      uid: '1',
-      name: idProofFile.name,
-      status: 'done',
-    }] : []}
-    onChange={handleIdProofChange}
-    beforeUpload={() => false}
-    maxCount={1}
-  >
-    <Button icon={<UploadOutlined />}>Upload</Button>
-  </Upload>
-  {!editMode && profileData?.idProofDoc?.url && (
-  <Button
-    type="link"
-    target="_blank"
-    href={`${BACKEND_URI}${profileData.idProofDoc.url}`}
-    icon={<UploadOutlined />}
-  >
-    See Uploaded
-  </Button>
-)}
+                  <Form.Item label="Upload ID Proof Document">
+                    <Upload
+                      fileList={idProofFile ? [{
+                        uid: '1',
+                        name: idProofFile.name,
+                        status: 'done',
+                      }] : []}
+                      onChange={handleIdProofChange}
+                      beforeUpload={() => false}
+                      maxCount={1}
+                    >
+                      {editMode && <Button icon={<UploadOutlined />}>Upload</Button>}
+                    </Upload>
 
-</Form.Item>
-
+                    {!editMode && profileData?.idProofDoc?.url && (
+                      <Button
+                        type="link"
+                        target="_blank"
+                        href={`${BACKEND_URI}${profileData.idProofDoc.url}`}
+                        icon={<UploadOutlined />}
+                      >
+                        See Uploaded
+                      </Button>
+                    )}
+                  </Form.Item>
                 </Col>
               </Row>
             </Form>

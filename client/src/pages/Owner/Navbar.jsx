@@ -1,16 +1,16 @@
 // src/components/OwnerNavbar.jsx
-import React from 'react';
-import { 
-  BellOutlined, 
-  LogoutOutlined, 
-  MenuFoldOutlined, 
+import React from "react";
+import {
+  BellOutlined,
+  LogoutOutlined,
+  MenuFoldOutlined,
   MenuUnfoldOutlined,
   DashboardOutlined,
   PropertySafetyOutlined,
-  SettingOutlined 
-} from '@ant-design/icons';
-import { UserOutlined } from '@ant-design/icons';
-import { Layout, Avatar, Badge, Button, Tooltip, Dropdown, Menu } from 'antd';
+  SettingOutlined,
+} from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
+import { Layout, Avatar, Badge, Button, Tooltip, Dropdown, Menu } from "antd";
 
 const BACKEND_URI = import.meta.env.VITE_BACKEND_URL;
 const { Header } = Layout;
@@ -20,35 +20,34 @@ const OwnerNavbar = ({
   setCollapsed,
   setMobileOpen,
   notifications = [],
-   user = {},
+  user = {},
   onLogout = () => {},
-  setActiveMenu = () => {}
-
+  setActiveMenu = () => {},
 }) => {
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   const menu = (
     <Menu className="owner-navbar__dropdown-menu">
-      <Menu.Item 
-  key="profile" 
-  icon={<UserOutlined />} 
-  onClick={() => setActiveMenu("profile")}
->
-  My Profile
-</Menu.Item>
+      <Menu.Item
+        key="profile"
+        icon={<UserOutlined />}
+        onClick={() => setActiveMenu("profile")}
+      >
+        My Profile
+      </Menu.Item>
 
-      <Menu.Item 
-  key="settings" 
-  icon={<SettingOutlined />} 
-  onClick={() => setActiveMenu("settings")}
->
-  Account Settings
-</Menu.Item>
+      <Menu.Item
+        key="settings"
+        icon={<SettingOutlined />}
+        onClick={() => setActiveMenu("settings")}
+      >
+        Account Settings
+      </Menu.Item>
 
       <Menu.Divider />
-      <Menu.Item 
-        key="logout" 
-        icon={<LogoutOutlined />} 
+      <Menu.Item
+        key="logout"
+        icon={<LogoutOutlined />}
         onClick={onLogout}
         className="owner-navbar__logout-item"
       >
@@ -64,76 +63,72 @@ const OwnerNavbar = ({
           type="text"
           icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           onClick={() => {
-    if (window.innerWidth < 992) {
-      // 👈 mobile ke liye
-      if (typeof setMobileOpen === "function") {
-        setMobileOpen(true);
-      }
-    } else {
-      // 👈 desktop ke liye
-      setCollapsed(!collapsed);
-    }
-  }}
+            if (window.innerWidth < 992) {
+              if (typeof setMobileOpen === "function") {
+                setMobileOpen((prev) => !prev); // toggle mobile sidebar
+              }
+            } else {
+              setCollapsed(!collapsed);
+            }
+          }}
           className="owner-navbar__toggle-btn  "
         />
         <div className="owner-navbar__brand">
           <PropertySafetyOutlined className="owner-navbar__brand-icon" />
-          <h1 className="owner-navbar__title">Property Owner Portal</h1>
+          <h1 className="owner-navbar__title">Owner Portal</h1>
         </div>
       </div>
 
       <div className="owner-navbar__right">
         <Tooltip title="Quick View">
-          <Button 
-            type="text" 
-            icon={<DashboardOutlined />} 
+          <Button
+            type="text"
+            icon={<DashboardOutlined />}
             className="owner-navbar__quick-view d-none d-md-block"
           />
         </Tooltip>
 
         <Tooltip title="Notifications">
-          <Badge 
-            count={unreadCount} 
+          <Badge
+            count={unreadCount}
             offset={[-5, 5]}
             className="owner-navbar__badge d-none d-md-block"
           >
-            <Button 
-              type="text" 
-              icon={<BellOutlined />} 
-              size="large" 
+            <Button
+              type="text"
+              icon={<BellOutlined />}
+              size="large"
               className="owner-navbar__notifications-btn "
             />
           </Badge>
         </Tooltip>
 
-        <Dropdown 
-          overlay={menu} 
-          trigger={['click']}
+        <Dropdown
+          overlay={menu}
+          trigger={["click"]}
           overlayClassName="owner-navbar__dropdown"
         >
           <div className="owner-navbar__user">
-    <Avatar
-  src={
-    user?.profilePic
-      ? user.profilePic.startsWith('http')
-        ? user.profilePic
-        : `${BACKEND_URI}${user.profilePic}`
-      : null
-  }
-  size="large"
-  className="owner-navbar__avatar"
-  icon={!user?.profilePic ? <UserOutlined /> : null}
-/>
-
-
-
-
+            <Avatar
+              src={
+                user?.profilePic
+                  ? user.profilePic.startsWith("http")
+                    ? user.profilePic
+                    : `${BACKEND_URI}${user.profilePic}`
+                  : null
+              }
+              size="large"
+              className="owner-navbar__avatar"
+              icon={!user?.profilePic ? <UserOutlined /> : null}
+            />
 
             <div className="owner-navbar__user-info">
               <span className="owner-navbar__username">
-                {user?.username || 'Owner'}
+                {user?.username || "Owner"}
               </span>
-              <span className="owner-navbar__role d-none d-md-block">Property Owner</span>
+              <span className="owner-navbar__role d-none d-md-block">
+                Property Owner
+              </span>
             </div>
           </div>
         </Dropdown>
