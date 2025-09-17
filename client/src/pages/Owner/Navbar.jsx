@@ -109,18 +109,28 @@ const OwnerNavbar = ({
           overlayClassName="owner-navbar__dropdown"
         >
           <div className="owner-navbar__user">
-            <Avatar
-              src={
-                user?.profilePic
-                  ? user.profilePic.startsWith("http")
-                    ? user.profilePic
-                    : `${BACKEND_URI}${user.profilePic}`
-                  : null
-              }
-              size="large"
-              className="owner-navbar__avatar"
-              icon={!user?.profilePic ? <UserOutlined /> : null}
-            />
+           <Avatar
+  src={
+    // 1️⃣ Use user's own profile pic if available
+    user?.profilePic
+      ? user.profilePic.startsWith("http")
+        ? user.profilePic
+        : `${BACKEND_URI}${user.profilePic}`
+      // 2️⃣ Fallback: use "author/owner" profile pic if user pic is missing
+      : user?.authorProfilePic
+      ? user.authorProfilePic.startsWith("http")
+        ? user.authorProfilePic
+        : `${BACKEND_URI}${user.authorProfilePic}`
+      // 3️⃣ Fallback: default icon
+      : null
+  }
+  size="large"
+  className="owner-navbar__avatar"
+  icon={
+    !user?.profilePic && !user?.authorProfilePic ? <UserOutlined /> : null
+  }
+/>
+
 
             <div className="owner-navbar__user-info">
               <span className="owner-navbar__username">

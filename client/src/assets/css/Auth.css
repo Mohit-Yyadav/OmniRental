@@ -124,3 +124,256 @@ border-radius: 8px;
 }
 
 }
+
+/* Register.css */
+
+
+
+.register-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f6fa;
+}
+
+.mobile-logo {
+  width: 200px;
+  height: auto;
+  cursor: pointer;
+}
+
+.register-card {
+  background-color: #ffffff;
+  border-radius: 15px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 900px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+
+.left-image {
+  position: relative;
+  flex: 1;
+  background-image: url('../../assets/images/bghome.jpg');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #fff;
+}
+
+.left-image .overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 1;
+}
+
+.left-logo { position: absolute; top: 20px; left: 20px; z-index: 2; }
+.left-logo-img { width: 100px; cursor: pointer; }
+
+.left-text { position: absolute; top: 100px; width: 100%; z-index: 2; text-align: center; padding: 0 20px; }
+.left-text h1 { font-size: 2rem; font-weight: bold; color: #fff; margin-bottom: 10px; }
+.left-text p { font-size: 1rem; color: #e0e0e0; margin: 0; }
+
+.form-container { flex: 1; padding: 2rem; display: flex; flex-direction: column; justify-content: center; }
+
+.register-form { width: 100%; }
+.register-form .form-check-label { cursor: pointer; font-weight: 500; }
+.register-form .form-control:focus { border-color: #0e287c; box-shadow: 0 0 5px rgba(14,40,124,0.5); }
+.register-form .input-group-text { background-color: #f8f9fa; border-left: 0; cursor: pointer; }
+
+.register-form button[type="submit"] {
+  background-color: #0e287c; border: none; padding: 0.6rem 1.2rem; font-size: 1rem; font-weight: 600; transition: 0.3s;
+}
+.register-form button[type="submit"]:hover { background-color: #0a1a55; }
+
+.register-form .btn-secondary { background-color: #6c757d; border: none; }
+.register-form .btn-secondary:hover { background-color: #5a6268; }
+
+.register-form .text-center span { font-size: 0.9rem; }
+
+.alert { font-size: 0.9rem; padding: 0.6rem 1rem; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .register-card { flex-direction: column; }
+  .left-image { display: none; }
+  .form-container { padding: 1.5rem; }
+  .left-text h1 { font-size: 1.8rem; }
+  .left-text p { font-size: 0.9rem; }
+}
+
+
+
+/* Auth.css */
+
+/* Page wrapper */
+.min-vh-100 {
+  min-height: 100vh !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Card styling */
+.card {
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* Left image panel */
+.left-col {
+  position: relative;
+  background-image: url('../../assets/images/bghome.jpg');
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.left-col .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(79, 78, 78, 0.5);
+  z-index: 1;
+}
+
+/* Logo inside left panel */
+.left-col .Logo img {
+  width: 100px;
+  cursor: pointer;
+  position: absolute;
+  top: -12px;
+  left: -18px;
+  z-index: 2;
+}
+
+/* Left panel text */
+.left-col h1 {
+  color: #0e287c;
+  font-weight: 700;
+  font-size: 2rem;
+  margin: 0;
+  z-index: 2;
+  text-align: left;
+  padding-left: 30px;
+}
+
+.left-col p {
+  color: #e0e0e0;
+  font-size: 1rem;
+  margin-top: 10px;
+  z-index: 2;
+  padding-left: 30px;
+}
+
+/* Right form panel */
+.right-col {
+  background-color: #ffffff;
+}
+
+/* Form container padding */
+.p-4, .p-md-5 {
+  padding: 2rem !important;
+}
+
+/* Mobile logo at top */
+.d-md-none img {
+  width: 200px;
+  height: auto;
+  cursor: pointer;
+}
+
+/* Form heading */
+.right-col p.fs-4 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+/* Input group icons */
+.input-group-text {
+  background-color: #f8f9fa;
+  border-left: 0;
+}
+
+/* Password toggle cursor */
+.input-group-text.bg-white {
+  cursor: pointer;
+}
+
+/* Form control focus */
+.form-control:focus {
+  border-color: #0e287c;
+  box-shadow: 0 0 5px rgba(14, 40, 124, 0.3);
+}
+
+/* Submit button */
+button[type="submit"] {
+  background-color: #0e287c;
+  border: none;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+button[type="submit"]:hover {
+  background-color: #0a1a55;
+}
+
+/* Social login buttons */
+.google-login-button {
+  flex-grow: 1;
+}
+
+/* Divider 'or' */
+.position-relative .border-bottom {
+  border-bottom: 1px solid #ddd;
+}
+
+.position-relative .position-absolute {
+  background-color: #fff;
+  padding: 0 0.5rem;
+}
+
+/* Remember me & forgot password */
+.d-flex .form-check-label {
+  cursor: pointer;
+}
+
+/* Alerts */
+.alert {
+  font-size: 0.9rem;
+  padding: 0.6rem 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .left-col {
+    display: none;
+  }
+
+  .right-col {
+    padding: 1.5rem !important;
+  }
+
+  .left-col h1 {
+    font-size: 1.8rem;
+  }
+
+  .left-col p {
+    font-size: 0.9rem;
+  }
+}
