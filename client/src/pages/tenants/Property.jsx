@@ -2,130 +2,186 @@
 import React, { useEffect, useState } from "react";
 import {
   Card,
-  Form,
-  Input,
-  Button,
-  DatePicker,
-  Select,
-  Divider,
   Tag,
+  Descriptions,
+  Image,
+  Spin,
+  Alert,
+  Divider,
+  Collapse,
   Row,
   Col,
+  List,
+  Button,
 } from "antd";
 import dayjs from "dayjs";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const { TextArea } = Input;
-const { Option } = Select;
+const { Panel } = Collapse;
 
 const Property = () => {
-  const [form] = Form.useForm();
-  const [propertyData, setPropertyData] = useState({
-    propertyName: "Sunshine Apartments",
-    roomNumber: "304",
-    address: "456 Sunshine Ave, New York, NY 10002",
-    rentAmount: 1200,
-    deposit: 2400,
-    leaseStart: "2023-01-15",
-    leaseEnd: "2024-01-14",
-    amenities: ["WiFi", "Laundry", "Parking"],
-    status: "approved",
-  });
+  const [data, setData] = useState(null); // { tenant, property }
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    form.setFieldsValue({
-      ...propertyData,
-      leaseStart: dayjs(propertyData.leaseStart),
-      leaseEnd: dayjs(propertyData.leaseEnd),
-    });
-  }, [form, propertyData]);
+    const fetchTenantProperty = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem("token"); // JWT token
+        if (!token) throw new Error("No token found. Please login.");
 
-  const handleSave = () => {
-    const updated = form.getFieldsValue();
-    setPropertyData({
-      ...updated,
-      leaseStart: updated.leaseStart.format("YYYY-MM-DD"),
-      leaseEnd: updated.leaseEnd.format("YYYY-MM-DD"),
-    });
-    console.log("Saved property details:", updated);
-  };
+        const res = await axios.get("/api/tenants/my-property", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setData(res.data);
+      } catch (err) {
+        console.error("Error fetching property:", err);
+        setError(err.response?.data?.message || err.message || "Failed to fetch property");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTenantProperty();
+  }, []);
+
+  if (loading)
+    return (
+      <div style={{ textAlign: "center", marginTop: 50 }}>
+        <Spin size="large" tip="Loading property details..." />
+      </div>
+    );
+  if (error) return <Alert message="Error" description={error} type="error" showIcon />;
+
+  if (!data) return <p>No property data available.</p>;
+
+  const { property: prop, tenant: tenantData } = data;
 
   const statusColor = {
-    approved: "green",
-    pending: "orange",
-    rejected: "red",
+    Occupied: "green",
+    Vacant: "orange",
+    Pending: "blue",
+    Rejected: "red",
+    active: "green",
+  };
+
+  const handleSeeProperty = () => {
+    if (prop?._id) {
+      navigate(`/property/${prop._id}`);
+    }
   };
 
   return (
-    <div className="property-page" style={{ padding: "10px" }}>
-      <Card
-        title="Property Details"
-        extra={
-          <Button type="primary" onClick={handleSave}>
-            Save Changes
-          </Button>
-        }
-      >
-        <div style={{ marginBottom: 20 }}>
-          <Tag color={statusColor[propertyData.status]}>
-            {propertyData.status.toUpperCase()}
-          </Tag>
-        </div>
+    <div style={{ padding: "20px", maxWidth: 1200, margin: "0 auto" }}>
+      <Row gutter={[24, 24]}>
+        {/* Property Card */}
+        <Col xs={24} md={12}>
+          <Card
+            title={`${prop.name} (${prop.roomNo})`}
+            bordered
+            extra={
+              <Button type="primary" onClick={handleSeeProperty}>
+                See Property
+              </Button>
+            }
+          >
+            <Tag color={statusColor[prop.status]} style={{ marginBottom: 20 }}>
+              {prop.status.toUpperCase()}
+            </Tag>
 
-        <Form layout="vertical" form={form}>
-          <Form.Item label="Property Name" name="propertyName">
-            <Input />
-          </Form.Item>
+            <Descriptions bordered column={1} size="middle" layout="vertical">
+              <Descriptions.Item label="Address">{prop.address}</Descriptions.Item>
+              <Descriptions.Item label="Status">{prop.status}</Descriptions.Item>
+              <Descriptions.Item label="Location">
+                {prop.location ? (
+                  <a href={prop.location} target="_blank" rel="noopener noreferrer">
+                    View on Map
+                  </a>
+                ) : (
+                  <p>Not available</p>
+                )}
+              </Descriptions.Item>
+            </Descriptions>
 
-          <Form.Item label="Room Number" name="roomNumber">
-            <Input />
-          </Form.Item>
+            <Divider />
 
-          <Form.Item label="Address" name="address">
-            <TextArea rows={2} />
-          </Form.Item>
+            <Collapse ghost>
+              <Panel header="Property Features" key="1">
+                {prop.personRents?.length > 0 ? (
+                  <List
+                    dataSource={prop.personRents}
+                    renderItem={(person) => (
+                      <List.Item>
+                        <strong>{person.type}</strong> - {person.furnished}, Sharing: {person.sharing}, Description: {person.description}
+                      </List.Item>
+                    )}
+                    size="small"
+                  />
+                ) : (
+                  <p>No features listed</p>
+                )}
+              </Panel>
 
-          <Divider orientation="left">Lease Information</Divider>
+              <Panel header="Amenities" key="2">
+                {prop.amenities?.length > 0 ? (
+                  <List
+                    dataSource={prop.amenities}
+                    renderItem={(item) => <List.Item>- {item}</List.Item>}
+                    size="small"
+                  />
+                ) : (
+                  <p>No amenities listed</p>
+                )}
+              </Panel>
 
-          {/* Rent + Deposit */}
-          <Row gutter={[16, 16]}>
-            <Col xs={24} md={12}>
-              <Form.Item label="Monthly Rent" name="rentAmount">
-                <Input prefix="$" type="number" />
-              </Form.Item>
-            </Col>
-            <Col xs={24} md={12}>
-              <Form.Item label="Security Deposit" name="deposit">
-                <Input prefix="$" type="number" />
-              </Form.Item>
-            </Col>
-          </Row>
+              <Panel header="Images" key="3">
+                {prop.images?.length > 0 ? (
+                  <div style={{ display: "flex", flexWrap: "wrap" }}>
+                    {prop.images.map((img, idx) => (
+                      <Image
+                        key={idx}
+                        src={img}
+                        width="100%"
+                        style={{
+                          marginBottom: 10,
+                          objectFit: "cover",
+                          borderRadius: 8,
+                        }}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <p>No images available</p>
+                )}
+              </Panel>
+            </Collapse>
+          </Card>
+        </Col>
 
-          {/* Lease Dates */}
-          <Row gutter={[16, 16]}>
-            <Col xs={24} md={12}>
-              <Form.Item label="Lease Start Date" name="leaseStart">
-                <DatePicker style={{ width: "100%" }} />
-              </Form.Item>
-            </Col>
-            <Col xs={24} md={12}>
-              <Form.Item label="Lease End Date" name="leaseEnd">
-                <DatePicker style={{ width: "100%" }} />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Form.Item label="Amenities" name="amenities">
-            <Select mode="multiple" placeholder="Select available amenities">
-              <Option value="WiFi">WiFi</Option>
-              <Option value="Laundry">Laundry</Option>
-              <Option value="Parking">Parking</Option>
-              <Option value="Gym">Gym</Option>
-              <Option value="Pool">Swimming Pool</Option>
-              <Option value="AC">Air Conditioning</Option>
-            </Select>
-          </Form.Item>
-        </Form>
-      </Card>
+        {/* Tenant Card */}
+        <Col xs={24} md={12}>
+          <Card title={`Tenant: ${tenantData.tenantId?.name || "-"}`} bordered>
+            <Descriptions bordered column={1} size="middle" layout="vertical">
+              <Descriptions.Item label="Name">{tenantData.tenantId?.name || "-"}</Descriptions.Item>
+              <Descriptions.Item label="Members">{tenantData.members}</Descriptions.Item>
+              <Descriptions.Item label="Rent Amount">₹{tenantData.rent}</Descriptions.Item>
+              <Descriptions.Item label="Meter Number">{tenantData.meterNumber}</Descriptions.Item>
+              <Descriptions.Item label="Price per Unit">₹{tenantData.pricePerUnit}</Descriptions.Item>
+              <Descriptions.Item label="Lease Start Date">
+                {dayjs(tenantData.startDate).format("YYYY-MM-DD")}
+              </Descriptions.Item>
+              <Descriptions.Item label="Lease End Date">
+                {dayjs(tenantData.endDate).format("YYYY-MM-DD")}
+              </Descriptions.Item>
+              <Descriptions.Item label="Status">{tenantData.status}</Descriptions.Item>
+            </Descriptions>
+          </Card>
+        </Col>
+      </Row>
     </div>
   );
 };

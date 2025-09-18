@@ -107,10 +107,6 @@ exports.addTenant = async (req, res) => {
 
 
 
-
-
-
-
 // ✅ Get monthly records of a tenant
 exports.getMonthlyRecords = async (req, res) => {
   try {
@@ -267,5 +263,25 @@ exports.getMyInvoices = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch invoices' });
   }
 };
+
+
+// Get property assigned to a specific tenant
+// tenantController.js
+exports.getTenantProperty = async (req, res) => {
+  try {
+    const tenant = await Tenant.findOne({ tenantId: req.user._id }).lean();
+    if (!tenant) return res.status(404).json({ message: "Tenant not found" });
+
+    const property = await Property.findById(tenant.property).lean();
+    if (!property) return res.status(404).json({ message: "Property not found" });
+
+    res.json({ tenant, property });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch property" });
+  }
+};
+
+
 
 

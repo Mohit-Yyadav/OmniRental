@@ -8,6 +8,7 @@ const {
   generateInvoice,
   getMyHistory,
   getMyInvoices,
+  getTenantProperty,
   
 } = require('../controllers/tenantController');
 
@@ -33,6 +34,9 @@ router.get('/my-invoices', protect, getMyInvoices);
 router.post('/order', protect, createOrder);
 
 router.post('/verify-invoice-payment',protect,verifyPayment );
+
+// Get property assigned to the logged-in tenant
+router.get('/my-property', protect, getTenantProperty);
 
 
 module.exports = router;
