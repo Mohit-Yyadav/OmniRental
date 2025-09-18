@@ -32,7 +32,7 @@ import axios from "axios";
 // import { left } from "@popperjs/core";
 const Login = () => {
   const navigate = useNavigate();
-const { login, googleLogin, isAuthenticated, user } = useAuth();
+  const { login, googleLogin, isAuthenticated, user } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -363,37 +363,35 @@ const { login, googleLogin, isAuthenticated, user } = useAuth();
 
                       {/* Social Login Options */}
                       <div className="d-flex gap-2 mb-4">
-<GoogleLogin
-  onSuccess={async (credentialResponse) => {
-    try {
-      const tokenId = credentialResponse.credential;
+                        <GoogleLogin
+                          onSuccess={async (credentialResponse) => {
+                            try {
+                              const tokenId = credentialResponse.credential;
 
-      const userData = await googleLogin(tokenId);
+                              const userData = await googleLogin(tokenId);
 
-      const redirectPath =
-        userData.role === "tenant"
-          ? "/tenant/dashboard"
-          : "/owner/dashboard";
+                              const redirectPath =
+                                userData.role === "tenant"
+                                  ? "/tenant/dashboard"
+                                  : "/owner/dashboard";
 
-      navigate(redirectPath, { replace: true });
-    } catch (err) {
-      console.error(err);
-      setMessage({
-        text: "Google login failed. Please try again.",
-        type: "danger",
-      });
-    }
-  }}
-  onError={() => {
-    setMessage({
-      text: "Google login was unsuccessful.",
-      type: "danger",
-    });
-  }}
-  useOneTap
-/>
-
-
+                              navigate(redirectPath, { replace: true });
+                            } catch (err) {
+                              console.error(err);
+                              setMessage({
+                                text: "Google login failed. Please try again.",
+                                type: "danger",
+                              });
+                            }
+                          }}
+                          onError={() => {
+                            setMessage({
+                              text: "Google login was unsuccessful.",
+                              type: "danger",
+                            });
+                          }}
+                          useOneTap
+                        />
 
                         {/* <Button
                           variant="outline-dark"
