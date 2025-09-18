@@ -84,51 +84,71 @@ const Register = () => {
     }
   };
 
-  const submitHandler = async (e) => {
-    e.preventDefault();
-    if (
-      !formData.username ||
-      !formData.email ||
-      !formData.password ||
-      !formData.confirmPassword
-    ) {
-      setMessage("All fields are required");
-      setMessageType("danger");
-      return;
-    }
-    if (formData.password !== formData.confirmPassword) {
-      setMessage("Passwords do not match");
-      setMessageType("danger");
-      return;
-    }
-    if (!isOTPVerified) {
-      setMessage("Please verify your email first");
-      setMessageType("danger");
-      return;
-    }
+ const submitHandler = async (e) => {
+  e.preventDefault();
 
-    try {
-      const res = await fetch(`${BACKEND_URI}/api/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-          role: formData.role,
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Registration failed");
+  if (
+    !formData.username ||
+    !formData.email ||
+    !formData.password ||
+    !formData.confirmPassword
+  ) {
+    setMessage("All fields are required");
+    setMessageType("danger");
+    return;
+  }
 
-      setMessage("Registration Successful! Redirecting to login...");
-      setMessageType("success");
-      setTimeout(() => navigate("/login"), 1000);
-    } catch (error) {
-      setMessage(error.message || "Something went wrong. Please try again.");
-      setMessageType("danger");
-    }
-  };
+  // ✅ Password length check
+  if (formData.password.length < 6) {
+    setMessage("Password must be at least 6 characters long");
+    setMessageType("danger");
+    return;
+  }
+
+  // ✅ Password must contain at least one number
+  if (!/\d/.test(formData.password)) {
+    setMessage("Password must contain at least one number");
+    setMessageType("danger");
+    return;
+  }
+
+  // ✅ Passwords match
+  if (formData.password !== formData.confirmPassword) {
+    setMessage("Passwords do not match");
+    setMessageType("danger");
+    return;
+  }
+
+  if (!isOTPVerified) {
+    setMessage("Please verify your email first");
+    setMessageType("danger");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${BACKEND_URI}/api/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+      }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Registration failed");
+
+    setMessage("Registration Successful! Redirecting to login...");
+    setMessageType("success");
+    setTimeout(() => navigate("/login"), 1000);
+  } catch (error) {
+    setMessage(error.message || "Something went wrong. Please try again.");
+    setMessageType("danger");
+  }
+};
+
 
   return (
     <div

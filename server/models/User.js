@@ -58,7 +58,11 @@ const bcrypt = require('bcryptjs');
 const userSchema = new mongoose.Schema(
   {
     // 🔹 Login Info
-    username: { type: String, required: false }, // Optional for Google users
+    username: {
+    type: String,
+    required: true,
+    unique: true, // ✅ ensures uniqueness at the DB level
+  }, // Optional for Google users
     email: { type: String, required: true, unique: true },
     password: { type: String }, // Optional for Google OAuth
     role: { type: String, enum: ['tenant', 'owner'], default: 'tenant' },

@@ -109,21 +109,22 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Regular email/password login
-  const login = async (email, password) => {
-    try {
-      const res = await axios.post(`${BACKEND_URL}/api/auth/login`, {
-        email,
-        password,
-      });
+const login = async (identifier, password) => {
+  try {
+    const res = await axios.post(`${BACKEND_URL}/api/auth/login`, {
+      identifier, // can be email or username
+      password,
+    });
 
-      localStorage.setItem("token", res.data.token);
-      setUser(res.data.user);
-      setIsAuthenticated(true);
-      return res.data.user;
-    } catch (err) {
-      throw new Error(err?.response?.data?.message || "Login failed");
-    }
-  };
+    localStorage.setItem("token", res.data.token);
+    setUser(res.data.user);
+    setIsAuthenticated(true);
+    return res.data.user; // return user for Login.jsx redirect
+  } catch (err) {
+    throw new Error(err?.response?.data?.message || "Login failed");
+  }
+};
+
 
   // Google login
   const googleLogin = async (tokenId) => {

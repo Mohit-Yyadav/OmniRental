@@ -35,9 +35,10 @@ const Login = () => {
   const { login, googleLogin, isAuthenticated, user } = useAuth();
 
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  identifier: "", // can be username or email
+  password: "",
+});
+
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
   const [isLoading, setIsLoading] = useState(false);
@@ -54,25 +55,26 @@ const Login = () => {
     }
   }, [isAuthenticated, user, navigate]);
 
-  const validateForm = () => {
-    const errors = {};
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const validateForm = () => {
+  const errors = {};
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!formData.email.trim()) {
-      errors.email = "Email is required";
-    } else if (!emailRegex.test(formData.email)) {
-      errors.email = "Please enter a valid email address";
-    }
+  if (!formData.identifier.trim()) {
+    errors.identifier = "Email or Username is required";
+  } else if (formData.identifier.includes("@") && !emailRegex.test(formData.identifier)) {
+    errors.identifier = "Please enter a valid email address";
+  }
 
-    if (!formData.password) {
-      errors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      errors.password = "Password must be at least 6 characters";
-    }
+  if (!formData.password) {
+    errors.password = "Password is required";
+  } else if (formData.password.length < 6) {
+    errors.password = "Password must be at least 6 characters";
+  }
 
-    setValidationErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
+  setValidationErrors(errors);
+  return Object.keys(errors).length === 0;
+};
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -90,38 +92,27 @@ const Login = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!validateForm()) return;
 
-    if (!validateForm()) return;
+  setIsLoading(true);
+  setMessage({ text: "", type: "" });
 
-    setIsLoading(true);
-    setMessage({ text: "", type: "" });
+  try {
+    const user = await login(formData.identifier, formData.password);
+    const redirectPath = user.role === "tenant" ? "/tenant/dashboard" : "/owner/dashboard";
 
-    try {
-      const user = await login(formData.email, formData.password); // ✅ Now user is returned
+    setMessage({ text: "Login successful! Redirecting...", type: "success" });
+    setTimeout(() => navigate(redirectPath, { replace: true }), 1000);
+  } catch (error) {
+    setMessage({ text: error.message || "Invalid credentials. Please try again.", type: "danger" });
+    setFormData(prev => ({ ...prev, password: "" }));
+  } finally {
+    setIsLoading(false);
+  }
+};
 
-      const redirectPath =
-        user.role === "tenant" ? "/tenant/dashboard" : "/owner/dashboard";
-
-      setMessage({
-        text: "Login successful! Redirecting...",
-        type: "success",
-      });
-
-      setTimeout(() => {
-        navigate(redirectPath, { replace: true });
-      }, 1000);
-    } catch (error) {
-      setMessage({
-        text: error.message || "Invalid credentials. Please try again.",
-        type: "danger",
-      });
-      setFormData((prev) => ({ ...prev, password: "" }));
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div
@@ -263,7 +254,7 @@ const Login = () => {
                       <Form.Group className="mb-3 fs-6 inputbox">
                         <Form.Label>
                           <MdEmail className="me-2 " />
-                          Email Address
+                          Email or Username
                         </Form.Label>
                         <InputGroup hasValidation>
                           <InputGroup.Text className="d-none d-md-block">
@@ -271,17 +262,17 @@ const Login = () => {
                           </InputGroup.Text>
                           <Form.Control
                             className="rounded-md-0 "
-                            type="email"
-                            name="email"
-                            placeholder="Enter your email"
-                            value={formData.email}
+                            type="text"
+                            name="identifier"
+                            placeholder="Enter your email or username"
+                            value={formData.identifier}
                             onChange={handleChange}
-                            isInvalid={!!validationErrors.email}
+                            isInvalid={!!validationErrors.identifier}
                             required
                             autoComplete="username"
                           />
                           <Form.Control.Feedback type="invalid">
-                            {validationErrors.email}
+                            {validationErrors.identifier}
                           </Form.Control.Feedback>
                         </InputGroup>
                       </Form.Group>

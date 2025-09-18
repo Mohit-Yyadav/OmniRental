@@ -31,8 +31,12 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: "Please verify OTP first" });
     }
 
-    let user = await User.findOne({ email });
-    if (user) return res.status(400).json({ message: "User already exists" });
+   let user = await User.findOne({ $or: [{ email }, { username }] });
+if (user) {
+  if (user.email === email) return res.status(400).json({ message: "Email already registered" });
+  if (user.username === username) return res.status(400).json({ message: "Username already taken" });
+}
+
 
     user = new User({ username, email, password, role });
     await user.save();
@@ -61,43 +65,68 @@ exports.register = async (req, res) => {
 
 // @desc    Login user
 // @route   POST /api/auth/login
+// @desc    Login user
+// @route   POST /api/auth/login
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
-
   try {
-    // Check if user exists
-    const user = await User.findOne({ email });
+    const { identifier, password } = req.body;
+
+    if (!identifier) {
+      return res.status(400).json({ message: "Email or username is required" });
+    }
+
+    // Step 1: Find user by email or username (case-insensitive for email)
+    const user = await User.findOne({
+      $or: [
+        { email: identifier.toLowerCase() }, // email login
+        { username: identifier }             // username login
+      ]
+    });
+
     if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // Check password
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+    // Step 2: Handle local users
+    if (user.provider === "local") {
+      if (!password) {
+        return res.status(400).json({ message: "Password is required" });
+      }
+
+      const isMatch = await user.comparePassword(password);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
     }
 
-    // ✅ Generate token using helper
+    // Step 3: Handle Google OAuth users (no password check needed)
+    // ✅ Already logged in via Google if provider is google
+
+    // Step 4: Generate token
     const token = generateToken(user._id);
 
-    // ✅ Return token at root, not inside user object
+    // Step 5: Send response
     res.json({
       token,
       user: {
-        id: user.id,
+        id: user._id,
         username: user.username,
         email: user.email,
         role: user.role,
-        profileComplete: user.profileComplete,
         profilePic: user.profilePic,
+        profileComplete: user.profileComplete,
         accessToken: token,
-      }
+      },
     });
+
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server error' });
+    console.error("Login error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
+
+
+
 
 
 // @desc    Get current user
