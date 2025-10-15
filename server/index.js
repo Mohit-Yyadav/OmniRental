@@ -26,6 +26,13 @@ app.use(cors({
 // ✅ Middleware
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send({
+    active: true,
+    error: false
+  });
+});
+
 // ✅ Routes
 // app.use("/api/auth", require("./routes/auth")); // add other routes similarly
 // // app.use("/api/users", require("./routes/users"));
