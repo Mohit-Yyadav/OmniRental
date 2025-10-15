@@ -6,10 +6,10 @@ require("dotenv").config();
 const app = express();
 
 // ✅ CORS setup to allow both production and local dev frontend
-const allowedOrigins = [
-  "https://omnirental.onrender.com",
-  "http://localhost:5173"
-];
+// const allowedOrigins = [
+//   "https://omnirental.onrender.com",
+//   "http://localhost:5173"
+// ];
 
 app.use(cors({
   origin: function (origin, callback) {
